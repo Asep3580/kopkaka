@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasbor Anggota - KOPKAKA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="anggota.css">
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-red-900 text-white p-4 space-y-6 transform md:relative md:translate-x-0 -translate-x-full transition-transform duration-200 ease-in-out z-30">
+            <div class="flex items-center space-x-3 p-2 border-b border-red-950 pb-4">
+                <svg class="h-8 w-8 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                </svg>
+                <h2 class="text-xl font-bold">KOPKAKA</h2>
+            </div>
+            <nav class="space-y-2 flex-1">
+                <a href="#" class="sidebar-link active flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="dashboard">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Beranda</span>
+                </a>
+                <a href="#" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="profile">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span>Profil Saya</span>
+                </a>
+                <a href="#" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="savings">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span>Simpanan Saya</span>
+                </a>
+                <a href="#" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="loans">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+                    <span>Pinjaman Saya</span>
+                </a>
+                <a href="#" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="application">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>Pengajuan Baru</span>
+                </a>
+            </nav>
+            <div class="mt-auto">
+                <a href="#" id="logout-button" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span>Keluar</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Overlay for mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow p-4 flex justify-between items-center">
+                <button id="menu-button" class="md:hidden text-gray-500 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+                <h1 class="text-xl font-semibold text-gray-700">Dasbor Anggota</h1>
+                <div class="relative">
+                    <button class="flex items-center space-x-2">
+                        <span id="member-name-header" class="font-medium text-gray-600">Nama Anggota</span>
+                        <svg class="w-8 h-8 text-gray-400 rounded-full" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </button>
+                </div>
+            </header>
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                
+                <!-- Dashboard Section -->
+                <div id="dashboard-content" class="content-section active">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Selamat Datang, <span id="member-name-welcome">Anggota</span>!</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-medium text-gray-600">Total Simpanan</h3>
+                            <p id="total-savings" class="text-3xl font-bold text-green-600 mt-2">Rp 0</p>
+                            <p class="text-xs text-gray-500 mt-1">Pokok, Wajib, dan Sukarela</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-medium text-gray-600">Sisa Pinjaman Aktif</h3>
+                            <p id="active-loan" class="text-3xl font-bold text-red-600 mt-2">Rp 0</p>
+                            <p class="text-xs text-gray-500 mt-1">Total sisa pokok pinjaman</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-medium text-gray-600">SHU Tahun Lalu</h3>
+                            <p id="last-shu" class="text-3xl font-bold text-blue-600 mt-2">Rp 0</p>
+                            <p class="text-xs text-gray-500 mt-1">Sisa Hasil Usaha yang Anda terima</p>
+                        </div>
+                    </div>
+                    <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-gray-800">Akses Cepat</h3>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button data-target="application" class="quick-link-btn bg-red-500 text-white p-4 rounded-lg text-center hover:bg-red-600 transition">
+                                <span class="font-semibold">Ajukan Pinjaman Baru</span>
+                            </button>
+                             <button data-target="application" class="quick-link-btn bg-green-500 text-white p-4 rounded-lg text-center hover:bg-green-600 transition">
+                                <span class="font-semibold">Tambah Simpanan Sukarela</span>
+                            </button>
+                             <button data-target="savings" class="quick-link-btn bg-blue-500 text-white p-4 rounded-lg text-center hover:bg-blue-600 transition">
+                                <span class="font-semibold">Lihat Riwayat Transaksi</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profile-content" class="content-section">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Profil Saya</h2>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-semibold text-gray-800">Informasi Pribadi</h3>
+                            <div class="text-sm text-yellow-700 bg-yellow-100 p-2 rounded-md">
+                                <p>Untuk perubahan data, silakan hubungi admin koperasi.</p>
+                            </div>
+                        </div>
+                        <div id="profile-details" class="mt-6 border-t pt-6">
+                            <p class="text-center text-gray-500">Memuat data profil...</p>
+                        </div>
+
+                        <h3 class="text-xl font-semibold text-gray-800 mt-10">Informasi Ahli Waris</h3>
+                        <div id="heir-details" class="mt-6 border-t pt-6">
+                             <p class="text-center text-gray-500">Memuat data ahli waris...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings Section -->
+                <div id="savings-content" class="content-section">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Simpanan Saya</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Riwayat Transaksi Simpanan</h3>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600">Total Akumulasi Simpanan</p>
+                                <p id="savings-total-summary" class="text-xl font-bold text-green-600">Rp 0</p>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe Simpanan</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="savings-table-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="5" class="text-center py-4 text-gray-500">Memuat riwayat simpanan...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loans Section -->
+                <div id="loans-content" class="content-section">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Pinjaman Saya</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold mb-4">Riwayat Pengajuan Pinjaman</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Pinjaman</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenor</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa Pokok</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loans-table-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="6" class="text-center py-4 text-gray-500">Memuat riwayat pinjaman...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application Section -->
+                <div id="application-content" class="content-section">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Pengajuan Baru</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Loan Application Form -->
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Formulir Pengajuan Pinjaman</h3>
+                            <form id="loan-application-form" class="space-y-4">
+                                <div>
+                                    <label for="loan-term-id" class="block text-sm font-medium text-gray-700">Pilih Produk Pinjaman</label>
+                                    <select id="loan-term-id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                                        <option value="">Memuat produk...</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="loan-amount" class="block text-sm font-medium text-gray-700">Jumlah Pinjaman (Rp)</label>
+                                    <input type="number" id="loan-amount" required placeholder="Contoh: 5000000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                                    <p class="text-xs text-gray-500 mt-1">Plafon maksimal pinjaman Anda adalah <strong id="max-loan-info">Rp 0</strong>.</p>
+                                </div>
+                                <div class="pt-2">
+                                    <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-200 font-semibold">Ajukan Pinjaman</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Voluntary Saving Form -->
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Formulir Simpanan Sukarela</h3>
+                            <form id="saving-application-form" class="space-y-4">
+                                <div>
+                                    <label for="saving-amount" class="block text-sm font-medium text-gray-700">Jumlah Setoran (Rp)</label>
+                                    <input type="number" id="saving-amount" required placeholder="Contoh: 500000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="saving-description" class="block text-sm font-medium text-gray-700">Keterangan (Opsional)</label>
+                                    <textarea id="saving-description" rows="2" placeholder="Contoh: Transfer via BCA tgl 25/12/2025" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"></textarea>
+                                </div>
+                                <div class="pt-2">
+                                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-200 font-semibold">Ajukan Setoran</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Pending Applications Table -->
+                    <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold mb-4">Status Pengajuan Anda</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe Pengajuan</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="applications-table-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="4" class="text-center py-4 text-gray-500">Tidak ada pengajuan yang sedang diproses.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Loan Details Modal -->
+    <div id="loan-details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 class="text-lg font-semibold text-gray-900">Detail Angsuran Pinjaman</h3>
+                <button id="close-loan-details-modal-btn" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="mt-4">
+                <div id="loan-summary-section" class="mb-6 p-4 bg-gray-50 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <!-- Summary details will be populated here -->
+                </div>
+                <h4 class="text-md font-semibold mb-4 text-gray-800">Jadwal Angsuran</h4>
+                <div class="overflow-x-auto max-h-96">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Angsuran Ke-</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jatuh Tempo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Bayar</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Bayar</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loan-installments-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Installment rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="anggota.js"></script>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koperasi Karyawan KAGUM Group Sejahtera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tautan ke file CSS eksternal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream">
+
+    <header class="bg-red-900 shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-3">
+                <!-- Ganti SVG ini dengan logo Anda. Ukuran direkomendasikan: h-8 w-8 -->
+                <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                </svg>
+                <span class="text-2xl font-bold text-white">KOPKAKA</span>
+            </a>
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 text-white">
+                <a href="#tentang" class="hover:text-gray-300 transition-colors">Tentang Kami</a>
+                <a href="#manfaat" class="hover:text-gray-300 transition-colors">Manfaat</a>
+                <a href="#simpanan" class="hover:text-gray-300 transition-colors">Simpanan</a>
+                <a href="#pinjaman" class="hover:text-gray-300 transition-colors">Pinjaman</a>
+                <a href="#shu" class="hover:text-gray-300 transition-colors">SHU</a>
+            </div>
+            <!-- Desktop Auth Buttons -->
+            <div class="hidden md:flex items-center space-x-2">
+                <a href="login.html" class="text-white hover:bg-red-800 transition-colors px-4 py-2 rounded-lg font-semibold">
+                    Masuk
+                </a>
+                <a href="registrasi.html" class="bg-white text-red-900 hover:bg-gray-200 transition-colors px-4 py-2 rounded-lg font-semibold">
+                    Gabung Sekarang
+                </a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-red-900">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#tentang" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Tentang Kami</a>
+                <a href="#manfaat" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Manfaat</a>
+                <a href="#simpanan" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Simpanan</a>
+                <a href="#pinjaman" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Pinjaman</a>
+                <a href="#shu" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">SHU</a>
+            </div>
+            <div class="px-4 py-3 border-t border-red-800">
+                <a href="login.html" class="block text-center w-full text-white hover:bg-red-800 transition-colors px-4 py-2 rounded-lg font-semibold border border-white/50">Masuk</a>
+                <a href="registrasi.html" class="mt-2 block text-center w-full bg-white text-red-900 hover:bg-gray-200 transition-colors px-4 py-2 rounded-lg font-semibold">Gabung Sekarang</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-accent leading-tight">Koperasi Karyawan KAGUM Group Sejahtera</h1>
+                <h2 class="mt-4 text-xl md:text-2xl text-gray-600">"Dari Kita, Oleh Kita, Untuk Kesejahteraan Bersama"</h2>
+                <p class="mt-8 max-w-2xl mx-auto text-gray-500">
+                    Selamat datang di KOPKAKA Sejahtera, wadah usaha bersama yang dibangun di atas asas kekeluargaan untuk meningkatkan kemandirian ekonomi dan mempererat solidaritas seluruh karyawan KAGUM Group.
+                </p>
+            </div>
+        </section>
+
+        <section id="tentang" class="py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-accent">Visi & Misi Kami</h2>
+                    <p class="mt-2 text-gray-500">Landasan dan tujuan kami dalam melayani anggota.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="p-8 bg-gray-50 rounded-lg">
+                        <h3 class="text-2xl font-semibold mb-4 text-accent">VISI</h3>
+                        <p class="text-lg italic text-gray-600">
+                            "Menjadi koperasi karyawan yang mandiri, profesional, dan terpercaya dalam meningkatkan kesejahteraan ekonomi dan sosial seluruh anggota."
+                        </p>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-accent">MISI</h3>
+                        <ul class="space-y-4 list-inside">
+                            <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">&#10004;</span> Menyelenggarakan usaha simpan pinjam yang mudah, aman, dan menguntungkan.</li>
+                            <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">&#10004;</span> Menyediakan barang dan jasa kebutuhan anggota dengan harga yang kompetitif.</li>
+                            <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">&#10004;</span> Meningkatkan pengetahuan anggota dalam bidang keuangan melalui edukasi.</li>
+                            <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">&#10004;</span> Membangun solidaritas dan rasa kekeluargaan di antara anggota.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="manfaat" class="py-16 bg-cream">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-accent">Manfaat Bergabung Dengan Koperasi</h2>
+                    <p class="mt-2 text-gray-500">Anda bukan hanya nasabah, Anda adalah pemilik.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold mb-4 text-accent">Manfaat Ekonomi</h3>
+                        <ul class="space-y-4 text-gray-600">
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V6.375c0-.621.504-1.125 1.125-1.125h.375m18 0h-4.5m-4.5 0h-4.5m0 0h-4.5m0 0h-4.5m4.5 0h.375a1.125 1.125 0 011.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m4.5 0h-4.5" /></svg>
+                                <span><strong>Pendanaan Mudah & Murah:</strong> Akses pinjaman dengan bunga ringan.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h12A2.25 2.25 0 0020.25 14.25V3M3.75 21h16.5M16.5 3.75h.008v.008h-.008V3.75z" /></svg>
+                                <span><strong>Investasi Masa Depan:</strong> Simpanan Anda adalah modal yang terus bertumbuh.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a8.25 8.25 0 01-16.5 0v-8.25a8.25 8.25 0 0116.5 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 15.75a3.75 3.75 0 003.75-3.75V4.5a3.75 3.75 0 00-7.5 0v7.5A3.75 3.75 0 0012 15.75z" /></svg>
+                                <span><strong>Bagi Hasil (SHU):</strong> Mendapat bagian keuntungan koperasi setiap tahun.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.343 1.087-.835l.383-1.437M7.5 14.25L5.106 5.162A1.125 1.125 0 016.227 4h11.546a1.125 1.125 0 011.122 1.162L18 14.25M7.5 14.25h10.5M16.5 18a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.75 18a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /></svg>
+                                <span><strong>Belanja Hemat:</strong> Harga khusus anggota di unit usaha koperasi.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-semibold mb-4 text-accent">Manfaat Sosial & Pendidikan</h3>
+                         <ul class="space-y-4 text-gray-600">
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962c.51.056 1.02.083 1.53.083a12.045 12.045 0 01-3.071 1.817M8.409 15.182A11.965 11.965 0 006 15.182m0 0A11.965 11.965 0 016 15.182m0 0A11.965 11.965 0 016 15.182M12 15.182A11.965 11.965 0 0114.591 15.182m0 0A11.965 11.965 0 0012 15.182m2.591 0A11.965 11.965 0 0112 15.182m-3.071-1.817a12.045 12.045 0 00-3.071 1.817M4.5 12.75a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25a.75.75 0 01-.75-.75z" /></svg>
+                                <span><strong>Mempererat Silaturahmi:</strong> Wadah interaksi antar rekan kerja.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0l-3.172 3.172a1.125 1.125 0 001.591 1.591l9.8-9.8a1.125 1.125 0 000-1.591l-3.172-3.172a1.125 1.125 0 00-1.591 1.591l3.172 3.172z" /></svg>
+                                <span><strong>Literasi Keuangan:</strong> Edukasi dan pelatihan pengelolaan keuangan.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-red-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                                <span><strong>Semangat Gotong Royong:</strong> Saling membantu melalui sistem milik bersama.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="simpanan" class="py-16 bg-white">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-accent">Aturan Simpanan Anggota</h2>
+                    <p class="mt-2 text-gray-500">Simpanan Anda adalah jantung dari koperasi kita.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="border-2 border-accent/20 p-8 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-accent">Simpanan Pokok</h3>
+                        <p class="text-4xl font-bold my-4">Rp 100.000</p>
+                        <p class="text-gray-500">Dibayar <strong>satu kali</strong> saat mendaftar. Sebagai tanda sah kepemilikan Anda.</p>
+                    </div>
+                    <div class="border-2 border-accent/20 p-8 rounded-lg bg-red-50">
+                        <h3 class="text-2xl font-semibold text-accent">Simpanan Wajib</h3>
+                        <p class="text-4xl font-bold my-4">Rp 100.000</p>
+                        <p class="text-gray-500">Dibayar <strong>rutin setiap bulan</strong>. Dapat dipotong langsung dari gaji (<em>payroll</em>).</p>
+                    </div>
+                    <div class="border-2 border-accent/20 p-8 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-accent">Simpanan Sukarela</h3>
+                         <p class="text-4xl font-bold my-4">Fleksibel</p>
+                        <p class="text-gray-500">Seperti menabung di bank. Jumlah dan waktu setoran <strong>tidak ditentukan</strong>.</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-16 mb-12">
+                    <h2 class="text-3xl font-bold text-accent">Ketentuan Penarikan Simpanan</h2>
+                    <p class="mt-2 text-gray-500">Pahami aturan penarikan untuk setiap jenis simpanan Anda.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <!-- Simpanan Pokok -->
+                    <div class="border-2 border-red-200 p-8 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-accent">Simpanan Pokok</h3>
+                        <p class="text-gray-500 mt-4">Hanya dapat ditarik saat anggota <strong>mengundurkan diri</strong> dari keanggotaan.</p>
+                        <p class="mt-4 text-sm text-red-600 font-semibold">Tidak dapat ditarik selama aktif</p>
+                    </div>
+                    <!-- Simpanan Wajib -->
+                    <div class="border-2 border-red-200 p-8 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-accent">Simpanan Wajib</h3>
+                        <p class="text-gray-500 mt-4">Akumulasi simpanan dapat ditarik saat anggota <strong>mengundurkan diri</strong> dari keanggotaan.</p>
+                        <p class="mt-4 text-sm text-red-600 font-semibold">Tidak dapat ditarik selama aktif</p>
+                    </div>
+                    <!-- Simpanan Sukarela -->
+                    <div class="border-2 border-green-200 p-8 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-accent">Simpanan Sukarela</h3>
+                        <p class="text-gray-500 mt-4">Dapat ditarik <strong>kapan saja</strong> sesuai kebutuhan, dengan mengikuti prosedur yang berlaku.</p>
+                        <p class="mt-4 text-sm text-green-600 font-semibold">Dapat ditarik kapan saja</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pinjaman" class="py-16 bg-cream">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-accent">Aturan & Simulasi Pinjaman</h2>
+                    <p class="mt-2 text-gray-500">Tujuan kami adalah membantu, bukan memberatkan.</p>
+                </div>
+                <div class="flex justify-center">
+                    <div class="w-full lg:w-3/5 bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-2 text-accent">Simulasi Pinjaman Interaktif</h3>
+                        <p class="text-sm text-gray-500 mb-6">Geser slider atau isi kolom untuk melihat estimasi plafon dan cicilan. Plafon pinjaman dihitung sebesar <strong>1.5x dari total simpanan</strong> Anda.</p>
+
+                        <!-- HASIL KALKULASI -->
+                        <div class="grid grid-cols-2 gap-4 mb-6 text-center">
+                            <div id="result" class="bg-red-50 p-4 rounded-lg">
+                                <p class="text-sm text-gray-600">Estimasi Plafon</p>
+                                <p id="plafonText" class="text-2xl font-bold text-accent">Rp 0</p>
+                            </div>
+                            <div id="cicilan" class="bg-red-50 p-4 rounded-lg">
+                                <p class="text-sm text-gray-600">Estimasi Cicilan</p>
+                                <p id="cicilanText" class="text-2xl font-bold text-accent">Rp 0</p>
+                            </div>
+                        </div>
+
+                        <!-- INPUT FORM -->
+                        <div class="space-y-6">
+                            <div>
+                                <label for="savingsInput" class="block text-sm font-medium text-gray-700">Total Simpanan Anda (Rp)</label>
+                                <input type="range" id="savingsSlider" min="600000" max="50000000" step="100000" value="600000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                                <input type="text" inputmode="numeric" id="savingsInput" value="600.000" class="mt-2 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-center font-semibold">
+                            </div>
+                            <div>
+                                <label for="tenor" class="block text-sm font-medium text-gray-700">Tenor Pinjaman (Bulan)</label>
+                                <div id="tenor-options" class="grid grid-cols-6 gap-2 mt-2">
+                                    <button data-tenor="1" class="tenor-btn border border-gray-300 py-2 rounded-md text-sm">1</button>
+                                    <button data-tenor="2" class="tenor-btn border border-gray-300 py-2 rounded-md text-sm">2</button>
+                                    <button data-tenor="3" class="tenor-btn border border-gray-300 py-2 rounded-md text-sm">3</button>
+                                    <button data-tenor="4" class="tenor-btn border border-gray-300 py-2 rounded-md text-sm">4</button>
+                                    <button data-tenor="5" class="tenor-btn border border-gray-300 py-2 rounded-md text-sm">5</button>
+                                    <button data-tenor="6" class="tenor-btn border border-gray-300 py-2 rounded-md text-sm active">6</button>
+                                </div>
+                                <input type="hidden" id="tenor" value="6">
+                            </div>
+                            <div>
+                                <label for="interest-rate" class="block text-sm font-medium text-gray-700">Suku Bunga Tahunan (%)</label>
+                                <input type="number" id="interest-rate" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 text-center font-semibold" value="24" step="0.1" min="0">
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-6 text-center">*) Hasil ini adalah estimasi berdasarkan aturan umum dan dapat berbeda dari persetujuan akhir.</p>
+                    </div>
+                </div>
+                <!-- New section for Amortization Table -->
+                <div id="amortization-section" class="mt-8 bg-white p-8 rounded-lg shadow-md hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-accent">Rincian Cicilan Per Bulan</h3>
+                        <button id="download-excel-btn" class="btn-primary text-sm px-3 py-1 rounded-md hidden">Unduh Excel</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bulan Ke-</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cicilan Pokok</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bunga</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cicilan</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa Pinjaman</th>
+                                </tr>
+                            </thead>
+                            <tbody id="amortization-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Table rows will be inserted here by JavaScript -->
+                            </tbody>
+                            <tfoot id="amortization-table-footer" class="bg-gray-50 font-bold">
+                                <!-- Total row will be inserted here by JavaScript -->
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="shu" class="py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-accent">Sisa Hasil Usaha (SHU)</h2>
+                    <p class="mt-2 text-gray-500">Pahami bagaimana keuntungan koperasi dibagikan kembali kepada Anda sebagai anggota.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-12 items-start">
+                    <!-- Penjelasan SHU -->
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-accent">Apa itu SHU?</h3>
+                        <p class="text-gray-600 mb-4">
+                            Sisa Hasil Usaha (SHU) adalah pendapatan koperasi yang diperoleh dalam satu tahun buku dikurangi dengan biaya, penyusutan, dan kewajiban lainnya termasuk pajak. Sederhananya, ini adalah "laba bersih" koperasi yang akan dibagikan kembali kepada anggota.
+                        </p>
+                        <h3 class="text-xl font-semibold mb-4 text-accent">Bagaimana SHU Dibagikan?</h3>
+                        <p class="text-gray-600 mb-4">
+                            SHU yang diterima setiap anggota bersumber dari dua kegiatan ekonomi yang dilakukan anggota sendiri:
+                        </p>
+                        <ul class="space-y-4 text-gray-600">
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span><strong>SHU atas Jasa Usaha:</strong> Bagian ini diterima berdasarkan kontribusi transaksi Anda terhadap koperasi. Semakin sering Anda bertransaksi (misalnya, meminjam), semakin besar SHU jasa yang Anda dapatkan.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span><strong>SHU atas Jasa Modal:</strong> Bagian ini diterima berdasarkan jumlah simpanan (Simpanan Pokok dan Wajib) yang Anda miliki. Ini adalah imbal hasil dari modal yang Anda tanamkan di koperasi.</span>
+                            </li>
+                        </ul>
+                        <p class="mt-4 text-sm italic text-gray-500">
+                            Pembagian ini mencerminkan asas keadilan, di mana anggota yang aktif bertransaksi dan memiliki modal lebih besar akan mendapatkan porsi SHU yang lebih besar pula.
+                        </p>
+                    </div>
+                    <!-- Simulasi SHU -->
+                    <div class="w-full bg-gray-50 p-8 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-2 text-accent">Simulasi Perhitungan SHU</h3>
+                        <p class="text-sm text-gray-500 mb-6">Masukkan data di bawah untuk melihat estimasi SHU yang akan Anda terima di akhir tahun. Angka di bawah adalah contoh.</p>
+
+                        <!-- HASIL KALKULASI -->
+                        <div class="bg-green-100 border border-green-200 p-4 rounded-lg mb-6">
+                            <p class="text-sm text-center text-green-800 mb-2">Estimasi SHU yang Anda Terima</p>
+                            <p id="shuTotalText" class="text-3xl font-bold text-green-700 text-center">Rp 0</p>
+                            <div class="grid grid-cols-2 gap-2 mt-2 text-center text-xs">
+                                <div class="bg-white/50 p-2 rounded">
+                                    <p class="text-gray-600">Dari Jasa</p>
+                                    <p id="shuJasaText" class="font-semibold text-green-800">Rp 0</p>
+                                </div>
+                                <div class="bg-white/50 p-2 rounded">
+                                    <p class="text-gray-600">Dari Modal</p>
+                                    <p id="shuModalText" class="font-semibold text-green-800">Rp 0</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- INPUT FORM -->
+                        <div class="space-y-4 text-sm">
+                            <div>
+                                <label for="shuTotalKoperasi" class="block font-medium text-gray-700">Total SHU Koperasi Tahun Ini (Rp)</label>
+                                <input type="text" inputmode="numeric" id="shuTotalKoperasi" value="50000000" class="shu-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="shuPersenJasa" class="block font-medium text-gray-700">% SHU untuk Jasa</label>
+                                    <input type="number" id="shuPersenJasa" value="40" class="shu-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                                </div>
+                                <div>
+                                    <label for="shuPersenModal" class="block font-medium text-gray-700">% SHU untuk Modal</label>
+                                    <input type="number" id="shuPersenModal" value="20" class="shu-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                                </div>
+                            </div>
+                            <div class="pt-2 border-t">
+                                <label for="shuTotalTransaksi" class="block font-medium text-gray-700">Total Transaksi Seluruh Anggota (Rp)</label>
+                                <input type="text" inputmode="numeric" id="shuTotalTransaksi" value="500000000" class="shu-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                            </div>
+                            <div>
+                                <label for="shuTotalSimpanan" class="block font-medium text-gray-700">Total Simpanan Seluruh Anggota (Rp)</label>
+                                <input type="text" inputmode="numeric" id="shuTotalSimpanan" value="1000000000" class="shu-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                            </div>
+                            <div class="pt-2 border-t">
+                                <label for="shuTransaksiAnda" class="block font-medium text-gray-700">Total Transaksi Anda (Rp)</label>
+                                <input type="text" inputmode="numeric" id="shuTransaksiAnda" value="5000000" class="shu-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                            </div>
+                            <div>
+                                <label for="shuSimpananAnda" class="block font-medium text-gray-700">Total Simpanan Anda (Rp)</label>
+                                <input type="text" inputmode="numeric" id="shuSimpananAnda" value="2500000" class="shu-input mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-6 text-center">*) Hasil ini adalah estimasi. Persentase dan total SHU ditetapkan dalam Rapat Anggota Tahunan (RAT).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="bergabung" class="py-16 bg-accent text-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold">Mari Bergabung & Tumbuh Bersama!</h2>
+                <p class="mt-4 max-w-2xl mx-auto">Jadilah bagian dari keluarga besar KOPKAKA Sejahtera dan nikmati manfaatnya.</p>
+                <div class="mt-8 grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                    <div class="bg-white/20 p-6 rounded-lg">
+                        <p class="text-5xl">1</p>
+                        <h3 class="font-semibold mt-2">Isi Formulir</h3>
+                        <p class="text-sm opacity-80">Dapatkan dan isi formulir pendaftaran yang tersedia di sekretariat.</p>
+                    </div>
+                    <div class="bg-white/20 p-6 rounded-lg">
+                         <p class="text-5xl">2</p>
+                        <h3 class="font-semibold mt-2">Lengkapi Dokumen</h3>
+                        <p class="text-sm opacity-80">Lampirkan fotokopi KTP & ID Karyawan Anda.</p>
+                    </div>
+                    <div class="bg-white/20 p-6 rounded-lg">
+                        <p class="text-5xl">3</p>
+                        <h3 class="font-semibold mt-2">Bayar Simpanan Pokok</h3>
+                        <p class="text-sm opacity-80">Selesaikan pembayaran simpanan pokok untuk mengaktifkan keanggotaan.</p>
+                    </div>
+                </div>
+
+                <div class="mt-12">
+                    <h3 class="text-xl font-semibold">Hubungi Kami</h3>
+                    <p class="mt-2 opacity-80">Sekretariat Koperasi: Ruang -</p>
+                    <p class="opacity-80">Email: -</p>
+                    <p class="mt-2 opacity-80">Narahubung: Bapak Dulkifli Lubis (0813-9516-2709) / Bapak Rizal (0896-9546-1286) / Ibu Marlina (0817-0246-848)</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6 text-center text-sm">
+            <p>&copy; 2025 Koperasi Karyawan KAGUM Group Sejahtera. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Tautan ke file JavaScript eksternal -->
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Mobile Menu ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when a link is clicked
+                mobileMenuLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+            }
+
+            // --- SHU Simulation ---
+            const shuContainer = document.getElementById('shu');
+            if (shuContainer) {
+                const shuInputs = shuContainer.querySelectorAll('.shu-input');
+                const shuTotalKoperasiEl = document.getElementById('shuTotalKoperasi');
+                const shuPersenJasaEl = document.getElementById('shuPersenJasa');
+                const shuPersenModalEl = document.getElementById('shuPersenModal');
+                const shuTotalTransaksiEl = document.getElementById('shuTotalTransaksi');
+                const shuTotalSimpananEl = document.getElementById('shuTotalSimpanan');
+                const shuTransaksiAndaEl = document.getElementById('shuTransaksiAnda');
+                const shuSimpananAndaEl = document.getElementById('shuSimpananAnda');
+
+                const shuJasaTextEl = document.getElementById('shuJasaText');
+                const shuModalTextEl = document.getElementById('shuModalText');
+                const shuTotalTextEl = document.getElementById('shuTotalText');
+
+                const formatCurrency = (value) => {
+                    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
+                };
+                
+                const formatNumber = (value) => {
+                    return value.toLocaleString('id-ID');
+                }
+
+                const parseNumber = (value) => {
+                    return Number(String(value).replace(/[^0-9]/g, ''));
+                };
+
+                const calculateSHU = () => {
+                    const totalSHU = parseNumber(shuTotalKoperasiEl.value);
+                    const persenJasa = parseFloat(shuPersenJasaEl.value) / 100;
+                    const persenModal = parseFloat(shuPersenModalEl.value) / 100;
+                    const totalTransaksi = parseNumber(shuTotalTransaksiEl.value);
+                    const totalSimpanan = parseNumber(shuTotalSimpananEl.value);
+                    const transaksiAnda = parseNumber(shuTransaksiAndaEl.value);
+                    const simpananAnda = parseNumber(shuSimpananAndaEl.value);
+
+                    if (isNaN(totalSHU) || isNaN(persenJasa) || isNaN(persenModal) || isNaN(totalTransaksi) || isNaN(totalSimpanan) || isNaN(transaksiAnda) || isNaN(simpananAnda)) {
+                        return;
+                    }
+
+                    const alokasiSHUJasa = totalSHU * persenJasa;
+                    const alokasiSHUModal = totalSHU * persenModal;
+
+                    const shuJasa = (totalTransaksi > 0) ? (transaksiAnda / totalTransaksi) * alokasiSHUJasa : 0;
+                    const shuModal = (totalSimpanan > 0) ? (simpananAnda / totalSimpanan) * alokasiSHUModal : 0;
+                    const totalSHUAnda = shuJasa + shuModal;
+
+                    shuJasaTextEl.textContent = formatCurrency(shuJasa);
+                    shuModalTextEl.textContent = formatCurrency(shuModal);
+                    shuTotalTextEl.textContent = formatCurrency(totalSHUAnda);
+                };
+
+                shuInputs.forEach(input => {
+                    if (input.getAttribute('inputmode') === 'numeric') {
+                        input.addEventListener('blur', (e) => {
+                            const value = parseNumber(e.target.value);
+                            e.target.value = isNaN(value) ? '' : formatNumber(value);
+                        });
+                    }
+                    input.addEventListener('input', calculateSHU);
+                });
+
+                shuInputs.forEach(input => {
+                     if (input.getAttribute('inputmode') === 'numeric') {
+                        const value = parseNumber(input.value);
+                        input.value = isNaN(value) ? '' : formatNumber(value);
+                    }
+                });
+                calculateSHU();
+            }
+        });
+    </script>
+
+    <!-- Floating WhatsApp Icon -->
+    <a href="https://wa.me/6285121003580" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-transform transform hover:scale-110 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.487 5.235 3.487 8.413 0 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.655 4.357 1.849 6.067l-1.254 4.587 4.68-1.231zm9.35-6.413c-.273-.136-1.612-.795-1.862-.885-.25-.09-.433-.136-.617.137-.182.272-.703.885-.861 1.063-.159.177-.319.197-.599.06-.28-.136-1.187-.44-2.259-1.385-.835-.734-1.395-1.646-1.554-1.915-.16-.272-.017-.42.119-.557.121-.121.273-.318.41-.478.137-.16.182-.272.273-.455.09-.182.045-.341-.045-.477-.09-.137-.617-1.479-.841-2.015-.224-.536-.448-.463-.617-.472-.15-.01-.318-.01-.477-.01-.16 0-.42.06-.644.318-.224.252-.861.84-.861 2.015s.885 2.338 1.004 2.515c.12.177 1.739 2.66 4.225 3.725 2.487 1.065 2.487.71 2.921.684.433-.026 1.365-.557 1.554-1.096.19-.54.19-.995.136-1.096-.054-.101-.199-.16-.433-.295z"/>
+        </svg>
+    </a>
+</body>
+</html>
