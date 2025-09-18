@@ -17,16 +17,25 @@
     <header class="bg-red-900 shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="index.html" class="flex items-center space-x-3">
-                <!-- Ganti SVG ini dengan logo Anda. Ukuran direkomendasikan: h-8 w-8 -->
-                <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                </svg>
+                <img src="logo/logo.png" alt="Logo KOPKAKA" class="h-8 w-auto">
                 <span class="text-2xl font-bold text-white">KOPKAKA</span>
             </a>
             <!-- Desktop Menu -->
             <div class="hidden md:flex space-x-8 text-white">
                 <a href="#tentang" class="hover:text-gray-300 transition-colors">Tentang Kami</a>
                 <a href="#manfaat" class="hover:text-gray-300 transition-colors">Manfaat</a>
+                <!-- Dropdown Toko Online -->
+                <div class="relative" id="toko-dropdown-container">
+                    <button id="toko-dropdown-button" class="hover:text-gray-300 transition-colors flex items-center">
+                        Toko Online
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="toko-dropdown-menu" class="absolute hidden bg-white text-gray-700 mt-2 py-2 w-48 rounded-lg shadow-xl z-20">
+                        <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Sembako</a>
+                        <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Elektronik</a>
+                        <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Aplikasi</a>
+                    </div>
+                </div>
                 <a href="#simpanan" class="hover:text-gray-300 transition-colors">Simpanan</a>
                 <a href="#pinjaman" class="hover:text-gray-300 transition-colors">Pinjaman</a>
                 <a href="#shu" class="hover:text-gray-300 transition-colors">SHU</a>
@@ -52,6 +61,12 @@
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="#tentang" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Tentang Kami</a>
                 <a href="#manfaat" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Manfaat</a>
+                <div class="border-t border-red-800/50 my-2"></div>
+                <span class="px-3 py-2 text-white/70 text-xs font-semibold uppercase">Toko Online</span>
+                <a href="#" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Sembako</a>
+                <a href="#" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Elektronik</a>
+                <a href="#" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Aplikasi</a>
+                <div class="border-t border-red-800/50 my-2"></div>
                 <a href="#simpanan" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Simpanan</a>
                 <a href="#pinjaman" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Pinjaman</a>
                 <a href="#shu" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">SHU</a>
@@ -427,6 +442,24 @@
                     link.addEventListener('click', () => {
                         mobileMenu.classList.add('hidden');
                     });
+                });
+            }
+
+            // --- Toko Online Dropdown ---
+            const tokoDropdownButton = document.getElementById('toko-dropdown-button');
+            const tokoDropdownMenu = document.getElementById('toko-dropdown-menu');
+
+            if (tokoDropdownButton && tokoDropdownMenu) {
+                tokoDropdownButton.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Mencegah window click event terpicu
+                    tokoDropdownMenu.classList.toggle('hidden');
+                });
+
+                // Tutup dropdown jika diklik di luar
+                window.addEventListener('click', function(e) {
+                    if (!tokoDropdownButton.contains(e.target) && !tokoDropdownMenu.contains(e.target)) {
+                        tokoDropdownMenu.classList.add('hidden');
+                    }
                 });
             }
 
