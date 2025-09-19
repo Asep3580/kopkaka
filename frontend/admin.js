@@ -63,7 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
             items.forEach(item => {
                 const option = document.createElement('option');
                 option.value = item[valueKey];
-                option.textContent = item[textKey];
+                // If textKey is a function, use it to generate the text
+                if (typeof textKey === 'function') {
+                    option.textContent = textKey(item);
+                } else {
+                    option.textContent = item[textKey];
+                }
                 selectElement.appendChild(option);
             });
         } catch (error) {
@@ -72,6 +77,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const renderPagination = (containerId, pagination, loadDataFunction) => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+    
+        const { totalItems, totalPages, currentPage, limit } = pagination;
+    
+        if (totalItems === 0) {
+            container.innerHTML = '';
+            return;
+        }
+    
+        const startItem = (currentPage - 1) * limit + 1;
+        const endItem = Math.min(currentPage * limit, totalItems);
+    
+        container.innerHTML = `
+            <div>
+                Menampilkan <span class="font-semibold">${startItem}</span> - <span class="font-semibold">${endItem}</span> dari <span class="font-semibold">${totalItems}</span> hasil
+            </div>
+            <div class="flex items-center space-x-2">
+                <button data-page="${currentPage - 1}" class="pagination-btn bg-white border border-gray-300 rounded-md px-3 py-1 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" ${currentPage === 1 ? 'disabled' : ''}>
+                    Sebelumnya
+                </button>
+                <span class="px-2">Halaman ${currentPage} dari ${totalPages}</span>
+                <button data-page="${currentPage + 1}" class="pagination-btn bg-white border border-gray-300 rounded-md px-3 py-1 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" ${currentPage >= totalPages ? 'disabled' : ''}>
+                    Berikutnya
+                </button>
+            </div>
+        `;
+    
+        container.querySelectorAll('.pagination-btn:not([disabled])').forEach(button => {
+            button.addEventListener('click', () => loadDataFunction(parseInt(button.dataset.page, 10)));
+        });
+    };
 
     // --- FUNGSI UNTUK MENU MOBILE ---
     const toggleMenu = () => {
@@ -81,43 +119,59 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menuButton) menuButton.addEventListener('click', toggleMenu);
     if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleMenu);
 
+    // --- FUNGSI UNTUK MENU COLLAPSIBLE USAHA KOPERASI ---
+    const usahaMenuButton = document.getElementById('usaha-koperasi-menu-button');
+    if (usahaMenuButton) {
+        usahaMenuButton.addEventListener('click', () => {
+            const submenu = document.getElementById('usaha-koperasi-submenu');
+            const arrow = document.getElementById('usaha-koperasi-arrow');
+            submenu.classList.toggle('hidden');
+            arrow.classList.toggle('rotate-180');
+        });
+    }
+
+
     // --- FUNGSI UNTUK DASHBOARD ---
     const loadDashboardData = async () => {
         try {
-            // Endpoint ini perlu dibuat di backend untuk menyediakan statistik
-            const response = await apiFetch(`${ADMIN_API_URL}/stats`);
-            if (!response.ok) throw new Error('Gagal memuat statistik.');
-            const stats = await response.json();
+            // 1. Ambil statistik umum (simpanan, pinjaman, pendaftar baru)
+            const statsResponse = await apiFetch(`${ADMIN_API_URL}/stats`);
+            if (!statsResponse.ok) throw new Error('Gagal memuat statistik.');
+            const stats = await statsResponse.json();
 
-            document.getElementById('total-members').textContent = stats.totalMembers || 0;
             document.getElementById('total-savings').textContent = formatCurrency(stats.totalSavings);
             document.getElementById('total-loans').textContent = formatCurrency(stats.totalActiveLoans);
             document.getElementById('pending-members-count').textContent = stats.pendingMembers || 0;
+            document.getElementById('total-members').textContent = stats.totalMembers || 0;
+
         } catch (error) {
             console.error('Error loading dashboard data:', error);
-            // Biarkan nilai default jika terjadi error
+            document.getElementById('total-members').textContent = 'N/A';
         }
     };
 
     // --- FUNGSI UNTUK ANGGOTA ---
-    const loadMembers = async (filters = {}) => {
+    let currentMemberFilters = {};
+    const loadMembers = async (page = 1) => {
         const tableBody = document.getElementById('members-table-body');
         if (!tableBody) return;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Memuat data anggota...</td></tr>`;
+
         try {
-            // Hanya ambil anggota yang sudah aktif
-            filters.status = 'Active';
+            const filters = { ...currentMemberFilters, status: 'Active', page, limit: 10 };
             const queryParams = new URLSearchParams(filters).toString();
             
             const response = await apiFetch(`${API_URL}/members?${queryParams}`);
             if (!response.ok) throw new Error('Gagal memuat data anggota.');
-            const members = await response.json();
+            const { data: members, pagination } = await response.json();
 
             // Saring daftar untuk hanya menampilkan pengguna dengan peran 'member'
             const memberOnlyList = members.filter(user => user.role === 'member');
 
             tableBody.innerHTML = '';
             if (memberOnlyList.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Belum ada anggota aktif.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Tidak ada anggota yang cocok dengan filter.</td></tr>`;
+                renderPagination('members-pagination-controls', { totalItems: 0 }, loadMembers);
                 return;
             }
 
@@ -137,6 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                 `;
             });
+
+            // Render pagination controls
+            renderPagination('members-pagination-controls', pagination, loadMembers);
         } catch (error) {
             console.error('Error loading members:', error);
             tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
@@ -160,72 +217,84 @@ document.addEventListener('DOMContentLoaded', () => {
 
         membersFilterForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const filters = {
+            currentMemberFilters = {
                 search: document.getElementById('members-filter-search').value,
                 companyId: document.getElementById('members-filter-company').value,
             };
-            Object.keys(filters).forEach(key => !filters[key] && delete filters[key]);
-            loadMembers(filters);
+            Object.keys(currentMemberFilters).forEach(key => !currentMemberFilters[key] && delete currentMemberFilters[key]);
+            loadMembers(1);
         });
 
         document.getElementById('members-filter-reset-btn').addEventListener('click', () => {
             membersFilterForm.reset();
-            loadMembers();
+            currentMemberFilters = {};
+            loadMembers(1);
         });
     }
 
     // --- FUNGSI UNTUK SIMPANAN ---
-    const loadSavings = async (filters = {}) => {
-    const tableBody = document.getElementById('savings-table-body');
-    if (!tableBody) return;
-    try {
-        const queryParams = new URLSearchParams(filters).toString();
-        const response = await apiFetch(`${API_URL}/savings?${queryParams}`);
-        if (!response.ok) throw new Error('Gagal memuat data simpanan.');
-        const savings = await response.json();
+    let currentSavingsFilters = {};
+    const loadSavings = async (page = 1) => {
+        const tableBody = document.getElementById('savings-table-body');
+        if (!tableBody) return;
+        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">Memuat data simpanan...</td></tr>`;
+        try {
+            const filters = { ...currentSavingsFilters, page, limit: 10 };
+            const queryParams = new URLSearchParams(filters).toString();
+            const response = await apiFetch(`${API_URL}/savings?${queryParams}`);
+            if (!response.ok) throw new Error('Gagal memuat data simpanan.');
+            const { data: savings, pagination } = await response.json();
 
-        tableBody.innerHTML = '';
-        if (savings.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">Tidak ada data simpanan ditemukan.</td></tr>`;
-            return;
+            tableBody.innerHTML = '';
+            if (savings.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">Tidak ada data simpanan ditemukan.</td></tr>`;
+                renderPagination('savings-pagination-controls', { totalItems: 0 }, loadSavings);
+                return;
+            }
+            
+            savings.forEach(saving => {
+                const row = tableBody.insertRow();
+                const statusClass = saving.status === 'Approved' ? 'bg-green-100 text-green-800' : (saving.status === 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800');
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm text-gray-900">${saving.memberName}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${saving.savingTypeName}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(saving.amount)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${formatDate(saving.date)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${saving.description || '-'}</td>
+                    <td class="px-6 py-4 text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${saving.status}</span></td>
+                    <td class="px-6 py-4 text-sm font-medium space-x-2">
+                        ${userRole === 'admin' && saving.status === 'Pending' ? `<button class="edit-saving-btn text-indigo-600 hover:text-indigo-900" data-id="${saving.id}">Ubah</button>` : ''}
+                        ${userRole === 'admin' && saving.status === 'Pending' ? `<button class="delete-saving-btn text-red-600 hover:text-red-900" data-id="${saving.id}">Hapus</button>` : ''}
+                    </td>
+                `;
+            });
+            
+            renderPagination('savings-pagination-controls', pagination, loadSavings);
+
+        } catch (error) {
+            console.error('Error loading savings:', error);
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
         }
-        
-        savings.forEach(saving => {
-            const row = tableBody.insertRow();
-            const statusClass = saving.status === 'Approved' ? 'bg-green-100 text-green-800' : (saving.status === 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800');
-            row.innerHTML = `
-                <td class="px-6 py-4 text-sm text-gray-900">${saving.memberName}</td>
-                <td class="px-6 py-4 text-sm text-gray-500">${saving.savingTypeName}</td>
-                <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(saving.amount)}</td>
-                <td class="px-6 py-4 text-sm text-gray-500">${formatDate(saving.date)}</td>
-                <td class="px-6 py-4 text-sm text-gray-500">${saving.description || '-'}</td>
-                <td class="px-6 py-4 text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${saving.status}</span></td>
-                <td class="px-6 py-4 text-sm font-medium space-x-2">
-                    ${userRole === 'admin' ? `<button class="edit-saving-btn text-indigo-600 hover:text-indigo-900" data-id="${saving.id}">Ubah</button>` : ''}
-                    ${userRole === 'admin' ? `<button class="delete-saving-btn text-red-600 hover:text-red-900" data-id="${saving.id}">Hapus</button>` : ''}
-                </td>
-            `;
-        });
-
-    } catch (error) {
-        console.error('Error loading savings:', error);
-        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
-    }
-};
+    };
 
     // --- FUNGSI UNTUK PINJAMAN ---
-    const loadLoans = async () => {
+    let currentLoansFilters = {};
+    const loadLoans = async (page = 1) => {
         const tableBody = document.getElementById('loans-table-body');
         if (!tableBody) return;
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Memuat data pinjaman...</td></tr>`;
         try {
+            const filters = { ...currentLoansFilters, page, limit: 10 };
+            const queryParams = new URLSearchParams(filters).toString();
             // Diasumsikan endpoint /api/loans sudah ada dan melakukan join yang diperlukan
-            const response = await apiFetch(`${API_URL}/loans`);
+            const response = await apiFetch(`${API_URL}/loans?${queryParams}`);
             if (!response.ok) throw new Error('Gagal memuat data pinjaman.');
-            const loans = await response.json();
+            const { data: loans, pagination } = await response.json();
 
             tableBody.innerHTML = '';
             if (loans.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Tidak ada data pinjaman.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Tidak ada data pinjaman ditemukan.</td></tr>`;
+                renderPagination('loans-pagination-controls', { totalItems: 0 }, loadLoans);
                 return;
             }
 
@@ -245,14 +314,255 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(totalPayment)}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${formatDate(loan.date)}</td>
                     <td class="px-6 py-4 text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${loan.status}</span></td>
-                    <td class="px-6 py-4 text-sm font-medium space-x-2">
-                        <button class="details-loan-btn text-indigo-600 hover:text-indigo-900" data-id="${loan.id}">Detail</button>
+                    <td class="px-6 py-4 text-sm font-medium space-x-2 whitespace-nowrap">
+                        <button class="details-loan-btn text-blue-600 hover:text-blue-900" data-id="${loan.id}">Detail</button>
+                        ${userRole === 'admin' && loan.status === 'Pending' ? `<button class="edit-loan-btn text-indigo-600 hover:text-indigo-900" data-id="${loan.id}">Ubah</button>` : ''}
+                        ${userRole === 'admin' && loan.status === 'Pending' ? `<button class="delete-loan-btn text-red-600 hover:text-red-900" data-id="${loan.id}">Hapus</button>` : ''}
                     </td>
                 `;
             });
+
+            renderPagination('loans-pagination-controls', pagination, loadLoans);
         } catch (error) {
             console.error('Error loading loans:', error);
             tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+        }
+    };
+
+    // --- EVENT LISTENERS UNTUK FILTER PINJAMAN ---
+    const loansFilterForm = document.getElementById('loans-filter-form');
+    if (loansFilterForm) {
+        loansFilterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentLoansFilters = {
+                status: document.getElementById('loans-filter-status').value,
+                startDate: document.getElementById('loans-filter-start-date').value,
+                endDate: document.getElementById('loans-filter-end-date').value,
+                search: document.getElementById('loans-filter-search').value,
+            };
+            // Hapus filter kosong
+            Object.keys(currentLoansFilters).forEach(key => !currentLoansFilters[key] && delete currentLoansFilters[key]);
+            loadLoans(1);
+        });
+
+        document.getElementById('loans-filter-reset-btn').addEventListener('click', () => {
+            loansFilterForm.reset();
+            currentLoansFilters = {};
+            loadLoans(1);
+        });
+    }
+
+    const loansTableBody = document.getElementById('loans-table-body');
+    if (loansTableBody) {
+        loansTableBody.addEventListener('click', async (e) => {
+            const button = e.target;
+            const loanId = button.dataset.id;
+
+            if (button.matches('.details-loan-btn')) {
+                showAdminLoanDetailsModal(loanId);
+            }
+
+            if (button.matches('.edit-loan-btn')) {
+                showEditLoanModal(loanId);
+            }
+
+            if (button.matches('.delete-loan-btn')) {
+                if (confirm('Anda yakin ingin menghapus pengajuan pinjaman ini? Tindakan ini tidak dapat dibatalkan.')) {
+                    try {
+                        const response = await apiFetch(`${ADMIN_API_URL}/loans/${loanId}`, {
+                            method: 'DELETE',
+                        });
+
+                        if (!response.ok) {
+                            const err = await response.json();
+                            throw new Error(err.error || 'Gagal menghapus pinjaman.');
+                        }
+                        
+                        alert('Pengajuan pinjaman berhasil dihapus.');
+                        loadLoans(); // Reload the list
+                    } catch (error) {
+                        alert(`Terjadi kesalahan: ${error.message}`);
+                        console.error('Error deleting loan:', error);
+                    }
+                }
+            }
+        });
+    }
+
+    // --- FUNGSI UNTUK MODAL UBAH PINJAMAN ---
+    const loanEditModal = document.getElementById('loan-edit-modal');
+    const loanEditForm = document.getElementById('loan-edit-form');
+    if (loanEditModal) {
+        document.getElementById('close-loan-edit-modal').addEventListener('click', () => loanEditModal.classList.add('hidden'));
+        document.getElementById('cancel-loan-edit-modal').addEventListener('click', () => loanEditModal.classList.add('hidden'));
+
+        loanEditForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const loanId = document.getElementById('loan-edit-id-input').value;
+            const loan_term_id = document.getElementById('loan-edit-term-select').value;
+            const amount = document.getElementById('loan-edit-amount-input').value;
+
+            try {
+                const response = await apiFetch(`${ADMIN_API_URL}/loans/${loanId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ loan_term_id, amount }),
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Gagal memperbarui pinjaman.');
+                }
+
+                alert('Pengajuan pinjaman berhasil diperbarui.');
+                loanEditModal.classList.add('hidden');
+                loadLoans(); // Muat ulang daftar pinjaman
+            } catch (error) {
+                alert(`Terjadi kesalahan: ${error.message}`);
+                console.error('Error updating loan:', error);
+            }
+        });
+    }
+
+    const showEditLoanModal = async (loanId) => {
+        loanEditForm.reset();
+        loanEditModal.classList.remove('hidden');
+        try {
+            const loanResponse = await apiFetch(`${ADMIN_API_URL}/loans/${loanId}`);
+            if (!loanResponse.ok) throw new Error('Gagal memuat data pinjaman.');
+            const loan = await loanResponse.json();
+
+            document.getElementById('loan-edit-id-input').value = loan.id;
+            document.getElementById('loan-edit-member-name').textContent = loan.member_name;
+            document.getElementById('loan-edit-amount-input').value = loan.amount;
+
+            const termSelect = document.getElementById('loan-edit-term-select');
+            await populateDropdown(termSelect, 'loanterms', 'id', 
+                (item) => `${item.loan_type_name} - ${item.tenor_months} bulan (${item.interest_rate}%)`, 
+                'Produk Pinjaman');
+            termSelect.value = loan.loan_term_id;
+        } catch (error) {
+            alert(`Terjadi kesalahan: ${error.message}`);
+            loanEditModal.classList.add('hidden');
+        }
+    };
+
+    // --- FUNGSI UNTUK MODAL DETAIL PINJAMAN (ADMIN) ---
+    const adminLoanDetailsModal = document.getElementById('admin-loan-details-modal');
+    if (adminLoanDetailsModal) {
+        document.getElementById('close-admin-loan-details-modal-btn').addEventListener('click', () => {
+            adminLoanDetailsModal.classList.add('hidden');
+        });
+
+        adminLoanDetailsModal.addEventListener('click', async (e) => {
+            if (!e.target.matches('.pay-installment-btn')) return;
+    
+            const button = e.target;
+            const { loanId, installmentNumber } = button.dataset;
+    
+            if (!confirm(`Anda yakin ingin mencatat pembayaran untuk angsuran ke-${installmentNumber}?`)) {
+                return;
+            }
+    
+            button.disabled = true;
+            button.textContent = 'Memproses...';
+    
+            try {
+                const response = await apiFetch(`${ADMIN_API_URL}/loans/payment`, {
+                    method: 'POST',
+                    body: JSON.stringify({ loanId, installmentNumber }),
+                });
+    
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Gagal mencatat pembayaran.');
+                }
+                
+                const result = await response.json();
+                alert(result.message);
+    
+                // Refresh the modal content to show the updated status
+                showAdminLoanDetailsModal(loanId);
+    
+                // If the loan is now 'Lunas', refresh the main loans list as well
+                if (result.loanStatus === 'Lunas') {
+                    loadLoans();
+                }
+    
+            } catch (error) {
+                alert(`Terjadi kesalahan: ${error.message}`);
+                button.disabled = false;
+                button.textContent = 'Bayar';
+            }
+        });
+    }
+
+    const showAdminLoanDetailsModal = async (loanId) => {
+        if (!adminLoanDetailsModal) return;
+        
+        const titleEl = document.getElementById('admin-loan-details-modal-title');
+        const summarySection = document.getElementById('admin-loan-summary-section');
+        const installmentsTableBody = document.getElementById('admin-loan-installments-table-body');
+
+        adminLoanDetailsModal.classList.remove('hidden');
+        titleEl.textContent = 'Memuat Detail Pinjaman...';
+        summarySection.innerHTML = `<p class="text-gray-500 col-span-full text-center">Memuat ringkasan...</p>`;
+        installmentsTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Memuat jadwal angsuran...</td></tr>`;
+
+        try {
+            const response = await apiFetch(`${ADMIN_API_URL}/loans/${loanId}/details`);
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error || 'Gagal memuat detail pinjaman.');
+            }
+            const data = await response.json();
+            const { summary, installments } = data;
+
+            titleEl.textContent = `Detail Pinjaman - ${summary.memberName}`;
+
+            const isLoanPayable = summary.status === 'Approved';
+
+            // Populate summary
+            const renderSummaryDetail = (label, value) => `<div class="p-2"><p class="text-xs text-gray-500">${label}</p><p class="font-semibold text-gray-800">${value}</p></div>`;
+            summarySection.innerHTML = `
+                ${renderSummaryDetail('Jumlah Pinjaman', formatCurrency(summary.amount))}
+                ${renderSummaryDetail('Angsuran/Bulan (Awal)', formatCurrency(summary.monthlyInstallment))}
+                ${renderSummaryDetail('Tenor', `${summary.tenor_months} bulan`)}
+                ${renderSummaryDetail('Total Terbayar', formatCurrency(summary.totalPaid))}
+            `;
+
+            // Populate installments table
+            if (installments.length === 0) {
+                installmentsTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Jadwal angsuran tidak tersedia.</td></tr>`;
+                return;
+            }
+            
+            installmentsTableBody.innerHTML = '';
+            installments.forEach(inst => {
+                const statusClass = inst.status === 'Lunas' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+
+                let actionButton = '';
+                if (inst.status !== 'Lunas' && isLoanPayable && ['admin', 'akunting'].includes(userRole)) {
+                    actionButton = `<button class="pay-installment-btn text-sm bg-green-600 text-white py-1 px-3 rounded-md hover:bg-green-700" data-loan-id="${summary.id}" data-installment-number="${inst.installmentNumber}">Bayar</button>`;
+                } else if (inst.status !== 'Lunas') {
+                    actionButton = `<span class="text-xs text-gray-400">-</span>`;
+                }
+
+                const row = installmentsTableBody.insertRow();
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm text-gray-500 text-center">${inst.installmentNumber}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${formatDate(inst.dueDate)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 text-right">${formatCurrency(inst.amount)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${formatDate(inst.paymentDate)}</td>
+                    <td class="px-6 py-4 text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${inst.status}</span></td>
+                    <td class="px-6 py-4 text-sm font-medium">${actionButton}</td>
+                `;
+            });
+
+        } catch (error) {
+            console.error('Error loading loan details for admin:', error);
+            titleEl.textContent = 'Gagal Memuat Data';
+            summarySection.innerHTML = `<p class="text-red-500 col-span-full text-center">${error.message}</p>`;
+            installmentsTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-500">Gagal memuat jadwal angsuran.</td></tr>`;
         }
     };
 
@@ -269,21 +579,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error('Gagal memuat data pendaftar baru.');
             }
-            const pendingMembers = await response.json();
+            const { data: pendingMembers } = await response.json();
             
             pendingMembersTableBody.innerHTML = ''; // Kosongkan tabel
 
-            if (pendingMembers.length === 0) {
-                pendingMembersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">Tidak ada pendaftaran baru.</td></tr>`;
+            if (!pendingMembers || pendingMembers.length === 0) {
+                pendingMembersTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Tidak ada pendaftaran baru.</td></tr>`;
                 return;
             }
 
             pendingMembers.forEach(member => {
                 const row = document.createElement('tr');
-                // Asumsikan backend mengembalikan 'company_name' dan 'registration_date'
+                // cooperative_number akan kosong untuk pendaftar baru
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${member.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${member.employee_id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${member.cooperative_number || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${member.ktp_number || '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${member.company_name || '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(member.registration_date).toLocaleDateString('id-ID')}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -296,7 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             console.error('Error fetching pending members:', error);
-            pendingMembersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+            pendingMembersTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
         }
     };
 
@@ -376,6 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${renderDetail('Nomor Koperasi', member.cooperative_number)}
                         ${renderDetail('Nomor KTP', member.ktp_number)}
                         ${renderDetail('Email', member.email)}
+                        ${renderDetail('No. Telepon', member.phone)}
                     </dl>
                     <dl class="space-y-4">
                         ${renderDetail('Perusahaan', member.company_name)}
@@ -425,14 +737,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const isLoan = type === 'loans';
         const url = isLoan ? `${ADMIN_API_URL}/pending-loans` : `${API_URL}/savings?status=Pending`;
+        const colspan = isLoan ? 6 : 5;
 
         try {
             const response = await apiFetch(url);
             if (!response.ok) throw new Error(`Gagal memuat data ${type} menunggu persetujuan.`);
-            const items = await response.json();
+            const responseData = await response.json();
+            // Handle both paginated (has .data) and non-paginated responses
+            const items = responseData.data || responseData;
+
             tableBody.innerHTML = '';
             if (items.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">Tidak ada pengajuan baru.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-gray-500">Tidak ada pengajuan baru.</td></tr>`;
                 return;
             }
             items.forEach(item => {
@@ -456,6 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 row.innerHTML = `
                     <td class="px-6 py-4 text-sm text-gray-900">${item.memberName || 'N/A'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${item.cooperativeNumber || '-'}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${formatCurrency(item.amount)}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${formatDate(item.date)}</td>
                     ${isLoan ? `<td class="px-6 py-4 text-sm text-gray-500">${item.status}</td>` : ''}
@@ -464,7 +781,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             console.error(`Error loading pending ${type}:`, error);
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
         }
     };
 
@@ -726,12 +1043,16 @@ document.addEventListener('DOMContentLoaded', () => {
         addBtn: document.getElementById('show-add-employer-form-btn'),
         endpoint: 'employers',
         title: 'Perusahaan',
-        fields: ['name', 'address', 'phone'],
+        fields: ['name', 'address', 'phone', 'contract_number', 'document_url'],
         renderRow: (item, role) => `
             <tr>
                 <td class="px-6 py-4 text-sm text-gray-900">${item.name}</td>
                 <td class="px-6 py-4 text-sm text-gray-500">${item.address || '-'}</td>
                 <td class="px-6 py-4 text-sm text-gray-500">${item.phone || '-'}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">${item.contract_number || '-'}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">
+                    ${item.document_url ? `<a href="${item.document_url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Lihat Dokumen</a>` : '-'}
+                </td>
                 <td class="px-6 py-4 text-sm font-medium space-x-2">
                     <button class="edit-perusahaan-btn text-indigo-600 hover:text-indigo-900" data-id="${item.id}">Ubah</button>
                     ${role === 'admin' ? `<button class="delete-perusahaan-btn text-red-600 hover:text-red-900" data-id="${item.id}">Hapus</button>` : ''}
@@ -980,6 +1301,190 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // --- FUNGSI UNTUK KELOLA TOKO (USAHA KOPERASI) ---
+    const loadShopProducts = async (shopType) => {
+        const tableBody = document.getElementById(`toko-${shopType}-table-body`);
+        if (!tableBody) return;
+
+        tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Memuat produk...</td></tr>`;
+
+        try {
+            // Menggunakan endpoint admin untuk mengambil produk
+            const response = await apiFetch(`${ADMIN_API_URL}/products?shop=${shopType}`);
+            if (!response.ok) throw new Error(`Gagal memuat produk untuk ${shopType}`);
+            const products = await response.json();
+
+            tableBody.innerHTML = '';
+            if (products.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Belum ada produk. Klik "Tambah Produk Baru" untuk memulai.</td></tr>`;
+                return;
+            }
+
+            products.forEach(product => {
+                const row = tableBody.insertRow();
+                let imageUrl = 'https://placehold.co/100x100?text=No+Image';
+                if (product.image_url) {
+                    // Check if it's an external URL or a local path
+                    imageUrl = product.image_url.startsWith('http') 
+                        ? product.image_url 
+                        : `${API_URL.replace('/api', '')}${product.image_url}`;
+                }
+                row.innerHTML = `
+                    <td class="px-6 py-4"><img src="${imageUrl}" alt="${product.name}" class="h-12 w-12 object-cover rounded"></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${product.name}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" title="${product.description}">${product.description || '-'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${formatCurrency(product.price)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${product.stock}</td>
+                    <td class="px-6 py-4 text-sm font-medium space-x-2">
+                        <button class="edit-product-btn text-indigo-600 hover:text-indigo-900" data-id="${product.id}" data-shop-type="${shopType}">Ubah</button>
+                        <button class="delete-product-btn text-red-600 hover:text-red-900" data-id="${product.id}" data-shop-type="${shopType}">Hapus</button>
+                    </td>
+                `;
+            });
+
+        } catch (error) {
+            console.error(`Error loading ${shopType} products:`, error);
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+        }
+    };
+
+    // --- FUNGSI UNTUK MODAL PRODUK ---
+    const productModal = document.getElementById('product-modal');
+    const productForm = document.getElementById('product-form');
+    const productModalTitle = document.getElementById('product-modal-title');
+
+    const imagePreview = document.getElementById('product-image-preview');
+    const currentImageUrlInput = document.getElementById('product-current-image-url');
+    const showProductModal = (product = null, shopType) => {
+        if (!productModal) return;
+        productForm.reset();
+        document.getElementById('product-id-input').value = '';
+        document.getElementById('product-shop-type-input').value = shopType;
+
+        if (product) {
+            // Mode Ubah
+            productModalTitle.textContent = 'Ubah Produk';
+            document.getElementById('product-id-input').value = product.id;
+            document.getElementById('product-name-input').value = product.name;
+            document.getElementById('product-description-input').value = product.description;
+            document.getElementById('product-price-input').value = product.price;
+            document.getElementById('product-stock-input').value = product.stock;
+            // Tampilkan gambar yang sudah ada
+            if (product.image_url) {
+                imagePreview.src = product.image_url.startsWith('http')
+                    ? product.image_url
+                    : `${API_URL.replace('/api', '')}${product.image_url}`;
+            } else {
+                imagePreview.src = 'https://placehold.co/100x100?text=No+Image';
+            }
+            currentImageUrlInput.value = product.image_url || '';
+        } else {
+            // Mode Tambah
+            productModalTitle.textContent = 'Tambah Produk Baru';
+            imagePreview.src = 'https://placehold.co/100x100?text=No+Image';
+            currentImageUrlInput.value = '';
+        }
+        productModal.classList.remove('hidden');
+    };
+
+    if (productModal) {
+        document.getElementById('close-product-modal').addEventListener('click', () => productModal.classList.add('hidden'));
+        document.getElementById('cancel-product-modal').addEventListener('click', () => productModal.classList.add('hidden'));
+
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('product-id-input').value;
+            const shopType = document.getElementById('product-shop-type-input').value;
+
+            const formData = new FormData();
+            formData.append('name', document.getElementById('product-name-input').value);
+            formData.append('description', document.getElementById('product-description-input').value);
+            formData.append('price', parseFloat(document.getElementById('product-price-input').value));
+            formData.append('stock', parseInt(document.getElementById('product-stock-input').value, 10));
+            formData.append('shop_type', shopType);
+
+            const imageInput = document.getElementById('product-image-input');
+            if (imageInput.files[0]) {
+                formData.append('productImage', imageInput.files[0]);
+            }
+
+            const url = id ? `${ADMIN_API_URL}/products/${id}` : `${ADMIN_API_URL}/products`;
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await apiFetch(url, {
+                    method,
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || `Gagal menyimpan produk.`);
+                }
+
+                alert(`Produk berhasil ${id ? 'diperbarui' : 'ditambahkan'}.`);
+                productModal.classList.add('hidden');
+                loadShopProducts(shopType); // Muat ulang daftar produk
+
+            } catch (error) {
+                alert(`Terjadi kesalahan: ${error.message}`);
+                console.error('Error saving product:', error);
+            }
+        });
+
+        // Event listener untuk pratinjau gambar
+        document.getElementById('product-image-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Event listener untuk semua tombol "Tambah Produk Baru"
+    document.querySelectorAll('.add-product-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const shopType = button.dataset.shopType;
+            showProductModal(null, shopType);
+        });
+    });
+
+    // --- FUNGSI UNTUK KELOLA TOKO (USAHA KOPERASI) ---
+    // This function is defined earlier in the file. This is a duplicate.
+
+    // Event delegation for product actions
+    document.querySelector('main').addEventListener('click', async (e) => {
+        const button = e.target;
+        const { id, shopType } = button.dataset;
+
+        if (button.matches('.edit-product-btn')) {
+            const response = await apiFetch(`${ADMIN_API_URL}/products/${id}`);
+            if (!response.ok) return alert('Gagal memuat data produk untuk diubah.');
+            const product = await response.json();
+            showProductModal(product, shopType);
+        }
+
+        if (button.matches('.delete-product-btn')) {
+            if (confirm('Anda yakin ingin menghapus produk ini?')) {
+                try {
+                    const response = await apiFetch(`${ADMIN_API_URL}/products/${id}`, { method: 'DELETE' });
+                    if (!response.ok) {
+                        const err = await response.json();
+                        throw new Error(err.error || 'Gagal menghapus produk.');
+                    }
+                    alert('Produk berhasil dihapus.');
+                    loadShopProducts(shopType);
+                } catch (error) {
+                    alert(`Terjadi kesalahan: ${error.message}`);
+                }
+            }
+        }
+    });
+
     // --- FUNGSI UNTUK NAVIGASI KONTEN UTAMA ---
     const switchContent = (targetId) => {
         contentSections.forEach(section => {
@@ -1019,19 +1524,46 @@ document.addEventListener('DOMContentLoaded', () => {
             if (loadFunction) loadFunction();
         }
 
-        // Perbarui status 'active' pada link sidebar
+        // Load data for shop pages
+        if (targetId.startsWith('toko-')) {
+            const shopType = targetId.replace('toko-', '');
+            loadShopProducts(shopType);
+        }
+
+        // Perbarui status 'active' pada link sidebar dan tombol menu
         sidebarLinks.forEach(link => {
             link.classList.remove('active');
         });
-
-        // Jika target ada di dalam 'Pengaturan' atau 'Akunting', tandai juga menu utamanya sebagai aktif
-        const parentLink = document.querySelector(`.sidebar-link[data-target="${targetId.split('-')[0]}"]`);
-        if (parentLink) {
-            parentLink.classList.add('active');
-        }
         const directLink = document.querySelector(`.sidebar-link[data-target="${targetId}"]`);
+        
+        // Activate the direct link if it exists
         if (directLink) {
             directLink.classList.add('active');
+        }
+
+        // Handle parent menu activation
+        let parentMenuButton = null;
+        if (targetId.startsWith('manage-')) {
+            // For settings sub-pages
+            parentMenuButton = document.querySelector('.sidebar-link[data-target="settings"]');
+        } else if (targetId.startsWith('bulk-')) {
+            // For accounting sub-pages
+            parentMenuButton = document.querySelector('.sidebar-link[data-target="accounting"]');
+        } else if (['toko-sembako', 'toko-elektronik', 'toko-aplikasi'].includes(targetId)) {
+            // For Usaha Koperasi sub-pages
+            parentMenuButton = document.getElementById('usaha-koperasi-menu-button');
+            
+            // Also expand the menu if it's not open when navigating to a child
+            const submenu = document.getElementById('usaha-koperasi-submenu');
+            const arrow = document.getElementById('usaha-koperasi-arrow');
+            if (submenu && submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                if(arrow) arrow.classList.add('rotate-180');
+            }
+        }
+
+        if(parentMenuButton) {
+            parentMenuButton.classList.add('active');
         }
     };
 
@@ -1118,22 +1650,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- EVENT LISTENERS UNTUK FILTER SIMPANAN ---
     const savingsFilterForm = document.getElementById('savings-filter-form');
     if (savingsFilterForm) {
+        const savingTypeSelect = document.getElementById('savings-filter-type');
+        populateDropdown(savingTypeSelect, 'savingtypes', 'id', 'name', 'Semua Tipe');
+
         savingsFilterForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const filters = {
+            currentSavingsFilters = {
+                search: document.getElementById('savings-filter-search').value,
+                savingTypeId: document.getElementById('savings-filter-type').value,
                 status: document.getElementById('savings-filter-status').value,
                 startDate: document.getElementById('savings-filter-start-date').value,
                 endDate: document.getElementById('savings-filter-end-date').value,
-                search: document.getElementById('savings-filter-search').value,
             };
             // Hapus filter kosong
-            Object.keys(filters).forEach(key => !filters[key] && delete filters[key]);
-            loadSavings(filters);
+            Object.keys(currentSavingsFilters).forEach(key => !currentSavingsFilters[key] && delete currentSavingsFilters[key]);
+            loadSavings(1);
         });
-
         document.getElementById('savings-filter-reset-btn').addEventListener('click', () => {
             savingsFilterForm.reset();
-            loadSavings();
+            currentSavingsFilters = {};
+            loadSavings(1);
         });
     }
 

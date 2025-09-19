@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const logout = () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('member_name');
+        localStorage.removeItem('user_name');
         window.location.href = 'index.html';
     };
 
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadDashboardData = async () => {
         try {
-            const stats = await fetchData('/member/stats'); // Endpoint perlu dibuat di backend
+            const stats = await fetchData('/members/stats'); // Endpoint perlu dibuat di backend
             document.getElementById('total-savings').textContent = formatCurrency(stats.totalSavings);
             document.getElementById('active-loan').textContent = formatCurrency(stats.activeLoan);
             document.getElementById('last-shu').textContent = formatCurrency(stats.lastSHU);
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadProfileData = async () => {
         try {
-            const profile = await fetchData('/member/profile'); // Endpoint perlu dibuat
+            const profile = await fetchData('/members/profile'); // Endpoint perlu dibuat
             const profileDetails = document.getElementById('profile-details');
             const heirDetails = document.getElementById('heir-details');
 
@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${renderDetail('Nomor Koperasi', profile.cooperative_number)}
                     ${renderDetail('Email', profile.email)}
                     ${renderDetail('Nomor KTP', profile.ktp_number)}
+                    ${renderDetail('No. Telepon', profile.phone)}
                     ${renderDetail('Perusahaan', profile.company_name)}
                     ${renderDetail('Jabatan', profile.position_name)}
                     ${renderDetail('Tanggal Bergabung', formatDate(profile.approval_date))}
@@ -156,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById('savings-table-body');
         tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">Memuat...</td></tr>`;
         try {
-            const savings = await fetchData('/member/savings'); // Endpoint perlu dibuat
+            const savings = await fetchData('/members/savings'); // Endpoint perlu dibuat
             let totalSavings = 0;
             
             if (savings.length === 0) {
@@ -190,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById('loans-table-body');
         tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Memuat...</td></tr>`;
         try {
-            const loans = await fetchData('/member/loans'); // Endpoint perlu dibuat
+            const loans = await fetchData('/members/loans'); // Endpoint perlu dibuat
             if (loans.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Belum ada riwayat pinjaman.</td></tr>`;
                 return;
@@ -231,11 +232,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Load max loan info
-            const stats = await fetchData('/member/stats');
+            const stats = await fetchData('/members/stats');
             document.getElementById('max-loan-info').textContent = formatCurrency(stats.maxLoanAmount);
 
             // Load pending applications
-            const applications = await fetchData('/member/applications'); // Endpoint perlu dibuat
+            const applications = await fetchData('/members/applications'); // Endpoint perlu dibuat
             if (applications.length === 0) {
                 applicationsTableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">Tidak ada pengajuan yang sedang diproses.</td></tr>`;
                 return;
@@ -269,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loanInstallmentsTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">Memuat jadwal angsuran...</td></tr>`;
 
         try {
-            const data = await fetchData(`/member/loans/${loanId}/details`);
+            const data = await fetchData(`/members/loans/${loanId}/details`);
             const { summary, installments } = data;
 
             // Populate summary
@@ -340,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const amount = document.getElementById('loan-amount').value;
 
             try {
-                await fetchData('/member/loans', {
+                await fetchData('/members/loans', {
                     method: 'POST',
                     body: {
                         loan_term_id: loanTermId,
@@ -375,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const description = document.getElementById('saving-description').value;
 
             try {
-                await fetchData('/member/savings', {
+                await fetchData('/members/savings', {
                     method: 'POST',
                     body: {
                         amount: parseFloat(amount),
@@ -434,8 +435,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INITIALIZATION ---
     checkAuth();
-    const memberName = localStorage.getItem('member_name') || 'Anggota';
-    document.getElementById('member-name-header').textContent = memberName;
-    document.getElementById('member-name-welcome').textContent = memberName;
+    const userName = localStorage.getItem('user_name') || 'Anggota';
+    document.getElementById('member-name-header').textContent = userName;
+    document.getElementById('member-name-welcome').textContent = userName;
     switchContent('dashboard');
 });

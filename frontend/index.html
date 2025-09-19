@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koperasi Karya Kagum Sejahtera</title>
+    <title>Koperasi Karya Kagum Abadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,10 +24,10 @@
             <div class="hidden md:flex space-x-8 text-white">
                 <a href="#tentang" class="hover:text-gray-300 transition-colors">Tentang Kami</a>
                 <a href="#manfaat" class="hover:text-gray-300 transition-colors">Manfaat</a>
-                <!-- Dropdown Toko Online -->
+                <!-- Dropdown Unit Usaha -->
                 <div class="relative" id="toko-dropdown-container">
                     <button id="toko-dropdown-button" class="hover:text-gray-300 transition-colors flex items-center">
-                        Toko Online
+                        Unit Usaha
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div id="toko-dropdown-menu" class="absolute hidden bg-white text-gray-700 mt-2 py-2 w-48 rounded-lg shadow-xl z-20">
@@ -38,6 +38,7 @@
                 </div>
                 <a href="#pinjaman" class="hover:text-gray-300 transition-colors">Pinjaman</a>
                 <a href="#shu" class="hover:text-gray-300 transition-colors">SHU</a>
+                <a href="#testimonials" class="hover:text-gray-300 transition-colors">Testimoni</a>
             </div>
             <!-- Desktop Auth Buttons -->
             <div class="hidden md:flex items-center space-x-2">
@@ -61,13 +62,14 @@
                 <a href="#tentang" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Tentang Kami</a>
                 <a href="#manfaat" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Manfaat</a>
                 <div class="border-t border-red-800/50 my-2"></div>
-                <span class="px-3 py-2 text-white/70 text-xs font-semibold uppercase">Toko Online</span>
+                <span class="px-3 py-2 text-white/70 text-xs font-semibold uppercase">Unit Usaha</span>
                 <a href="toko-sembako.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Sembako</a>
                 <a href="toko-elektronik.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Elektronik</a>
                 <a href="toko-aplikasi.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Aplikasi</a>
                 <div class="border-t border-red-800/50 my-2"></div>
                 <a href="#pinjaman" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Pinjaman</a>
                 <a href="#shu" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">SHU</a>
+                <a href="#testimonials" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Testimoni</a>
             </div>
             <div class="px-4 py-3 border-t border-red-800">
                 <a href="login.html" class="block text-center w-full text-white hover:bg-red-800 transition-colors px-4 py-2 rounded-lg font-semibold border border-white/50">Masuk</a>
@@ -82,10 +84,10 @@
             <div class="absolute inset-0 bg-red-900/70"></div>
             
             <div class="relative container mx-auto px-6 text-center">
-                <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight">Koperasi Karya Kagum Sejahtera</h1>
+                <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight">Koperasi Karya Kagum Abadi</h1>
                 <h2 class="mt-4 text-xl md:text-2xl text-gray-200">"Dari Kita, Oleh Kita, Untuk Kesejahteraan Bersama"</h2>
                 <p class="mt-8 max-w-2xl mx-auto text-gray-300">
-                    Selamat datang di KOPKAKA Sejahtera, wadah usaha bersama yang dibangun di atas asas kekeluargaan untuk meningkatkan kemandirian ekonomi dan mempererat solidaritas antar sesama.
+                    Selamat datang di KOPKAKA (Koperasi Karya Kagum Abadi)! Kami adalah sebuah koperasi, wadah usaha bersama yang dibangun di atas asas kekeluargaan untuk meningkatkan kemandirian ekonomi dan mempererat solidaritas antar sesama.
                 </p>
             </div>
         </section>
@@ -96,14 +98,19 @@
                     <h2 class="text-3xl font-bold text-accent">Visi & Misi Kami</h2>
                     <p class="mt-2 text-gray-500">Landasan dan tujuan kami dalam melayani anggota.</p>
                 </div>
-                <div class="grid md:grid-cols-2 gap-12 items-stretch">
-                    <div class="scroll-animate p-12 bg-orange-100 rounded-lg opacity-0 transform translate-y-5 transition-all duration-700 ease-out">
+                <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+                    <!-- Video Section -->
+                    <div class="scroll-animate rounded-lg opacity-0 transform translate-y-5 transition-all duration-700 ease-out overflow-hidden shadow-lg">
+                        <div class="relative w-full pt-[56.25%]"> <!-- 16:9 Aspect Ratio -->
+                            <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/evqMo7H6puo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <!-- Visi & Misi Section -->
+                    <div class="scroll-animate p-8 md:p-12 opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 200ms;">
                         <h3 class="text-2xl font-semibold mb-4 text-accent">VISI</h3>
-                        <p class="text-lg italic text-gray-600">
+                        <p class="text-lg italic text-gray-600 mb-8 border-b border-accent/20 pb-6">
                             "Menjadi koperasi yang mandiri, profesional, dan terpercaya dalam meningkatkan kesejahteraan ekonomi dan sosial seluruh anggota."
                         </p>
-                    </div>
-                    <div class="scroll-animate p-12 bg-orange-100 rounded-lg opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 200ms;">
                         <h3 class="text-2xl font-semibold mb-4 text-accent">MISI</h3>
                         <ul class="space-y-4 list-inside">
                             <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">&#10004;</span> Menyelenggarakan usaha simpan pinjam yang mudah, aman, dan menguntungkan.</li>
@@ -338,7 +345,7 @@
         <section id="bergabung" class="py-16 bg-accent text-white">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold">Mari Bergabung & Tumbuh Bersama!</h2>
-                <p class="mt-4 max-w-2xl mx-auto">Jadilah bagian dari keluarga besar KOPKAKA Sejahtera dan nikmati manfaatnya.</p>
+                <p class="mt-4 max-w-2xl mx-auto">Jadilah bagian dari keluarga besar KOPKAKA dan nikmati manfaatnya.</p>
                 <div class="mt-8 grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                     <div class="bg-white/20 p-6 rounded-lg">
                         <p class="text-5xl">1</p>
@@ -348,7 +355,7 @@
                     <div class="bg-white/20 p-6 rounded-lg">
                          <p class="text-5xl">2</p>
                         <h3 class="font-semibold mt-2">Lengkapi Dokumen</h3>
-                        <p class="text-sm opacity-80">Lampirkan fotokopi KTP & ID Karyawan Anda.</p>
+                        <p class="text-sm opacity-80">Lampirkan fotokopi KTP & KK Anda.</p>
                     </div>
                     <div class="bg-white/20 p-6 rounded-lg">
                         <p class="text-5xl">3</p>
@@ -365,11 +372,55 @@
                 </div>
             </div>
         </section>
+
+        <section id="testimonials" class="py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-accent">Apa Kata Anggota Kami?</h2>
+                    <p class="mt-2 text-gray-500">Pengalaman nyata dari keluarga besar KOPKAKA.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="scroll-animate bg-gray-50 p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out">
+                        <p class="text-gray-600 italic">"Proses pinjaman di KOPKAKA sangat cepat dan bunganya ringan. Benar-benar membantu saat ada kebutuhan mendadak. Saya merasa lebih tenang karena ada koperasi yang bisa diandalkan."</p>
+                        <div class="flex items-center mt-6">
+                            <img class="h-12 w-12 rounded-full object-cover" src="https://i.pravatar.cc/150?img=1" alt="Foto Budi Santoso">
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-800">Budi Santoso</p>
+                                <p class="text-sm text-gray-500">Divisi Produksi</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 2 -->
+                    <div class="scroll-animate bg-gray-50 p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 200ms;">
+                        <p class="text-gray-600 italic">"Setiap tahun selalu menantikan pembagian SHU. Rasanya senang sekali karena simpanan kita tidak hanya aman, tapi juga menghasilkan. Ini bukti nyata kalau koperasi ini dari kita untuk kita."</p>
+                        <div class="flex items-center mt-6">
+                            <img class="h-12 w-12 rounded-full object-cover" src="https://i.pravatar.cc/150?img=5" alt="Foto Siti Aminah">
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-800">Siti Aminah</p>
+                                <p class="text-sm text-gray-500">Departemen HRD</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 3 -->
+                    <div class="scroll-animate bg-gray-50 p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 400ms;">
+                        <p class="text-gray-600 italic">"Lebih dari sekadar simpan pinjam, KOPKAKA ini seperti keluarga kedua di tempat kerja. Kita jadi lebih akrab dan saling bantu. Program-programnya juga sangat bermanfaat untuk semua anggota."</p>
+                        <div class="flex items-center mt-6">
+                            <img class="h-12 w-12 rounded-full object-cover" src="https://i.pravatar.cc/150?img=8" alt="Foto Eko Prasetyo">
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-800">Eko Prasetyo</p>
+                                <p class="text-sm text-gray-500">Tim IT</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer class="bg-gray-800 text-white py-6">
         <div class="container mx-auto px-6 text-center text-sm">
-            <p>&copy; 2025 Koperasi Karya Kagum Sejahtera. All Rights Reserved.</p>
+            <p>&copy; 2025 Koperasi Karya Kagum Abadi. All Rights Reserved.</p>
         </div>
     </footer>
 

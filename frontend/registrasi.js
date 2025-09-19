@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners untuk Dropdown Wilayah ---
     // 1. Muat Provinsi saat halaman siap
-    fetchAndPopulate(`${API_BASE_URL}/provinces.json`, provinsiSelect, 'Provinsi');
+    fetchAndPopulate(`${WILAYAH_API_URL}/provinces.json`, provinsiSelect, 'Provinsi');
 
     // 2. Muat Kota/Kabupaten saat Provinsi dipilih
     provinsiSelect.addEventListener('change', () => {
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         kelurahanSelect.innerHTML = '<option value="">Pilih kecamatan terlebih dahulu</option>';
         kelurahanSelect.disabled = true;
         if (provinsiId) {
-            fetchAndPopulate(`${API_BASE_URL}/regencies/${provinsiId}.json`, kotaSelect, 'Kabupaten/Kota');
+            fetchAndPopulate(`${WILAYAH_API_URL}/regencies/${provinsiId}.json`, kotaSelect, 'Kabupaten/Kota');
         } else {
             kotaSelect.innerHTML = '<option value="">Pilih provinsi terlebih dahulu</option>';
             kotaSelect.disabled = true;
@@ -117,8 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Muat data Perusahaan dan Jabatan dari API ---
-    populateDropdownFromAPI('employers', perusahaanSelect, 'id', 'name', 'Perusahaan');
-    populateDropdownFromAPI('positions', jabatanSelect, 'id', 'name', 'Jabatan');
+    populateDropdownFromAPI('public/employers', perusahaanSelect, 'id', 'name', 'Perusahaan');
+    populateDropdownFromAPI('public/positions', jabatanSelect, 'id', 'name', 'Jabatan');
 
     // --- Fungsi untuk toggle password visibility ---
     passwordToggles.forEach(toggle => {
@@ -216,6 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Append data teks
         formData.append('name', document.getElementById('reg-nama').value);
         formData.append('ktp_number', document.getElementById('reg-ktp').value);
+        formData.append('phone', document.getElementById('reg-telepon').value);
         formData.append('company_id', perusahaanSelect.value);
         formData.append('position_id', jabatanSelect.value);
         formData.append('email', document.getElementById('reg-email').value);
@@ -261,12 +262,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 3. Tampilkan pesan sukses dan sembunyikan form
             form.classList.add('hidden');
+            // Ubah pesan sukses
+            successMessage.innerHTML = `
+                <h3 class="text-2xl font-bold text-green-700 mb-2">Pendaftaran Berhasil!</h3>
+                <p class="text-gray-600">Terima kasih telah mendaftar. Kami telah mengirimkan email konfirmasi ke alamat email Anda.</p>
+                <p class="text-gray-600 mt-2">Silakan tunggu persetujuan dari admin koperasi. Anda akan mendapatkan notifikasi lebih lanjut setelah akun Anda diaktifkan.</p>
+                <p class="mt-4 text-sm text-gray-500">Anda akan diarahkan ke halaman login dalam beberapa detik...</p>
+            `;
             successMessage.classList.remove('hidden');
 
-            // 4. Arahkan kembali ke halaman utama setelah beberapa detik
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 4000);
+            // 4. Arahkan kembali ke halaman login setelah beberapa detik
+            setTimeout(() => { window.location.href = 'login.html'; }, 5000);
 
         } catch (error) {
             console.error('Error during registration:', error);

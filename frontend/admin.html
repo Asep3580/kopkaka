@@ -38,6 +38,30 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
                     <span>Pinjaman</span>
                 </a>
+                <!-- Usaha Koperasi Collapsible Menu -->
+                <div>
+                    <button type="button" id="usaha-koperasi-menu-button" class="sidebar-link w-full flex items-center justify-between space-x-2 py-2.5 px-4 rounded-lg text-left">
+                        <span class="flex items-center space-x-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            <span>Usaha Koperasi</span>
+                        </span>
+                        <svg id="usaha-koperasi-arrow" class="w-5 h-5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="usaha-koperasi-submenu" class="hidden mt-2 space-y-2 pl-8 pr-2">
+                        <a href="#" class="sidebar-link flex items-center space-x-2 py-2 px-4 rounded-lg text-sm" data-target="toko-sembako">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            <span>Toko Sembako</span>
+                        </a>
+                        <a href="#" class="sidebar-link flex items-center space-x-2 py-2 px-4 rounded-lg text-sm" data-target="toko-elektronik">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span>Toko Elektronik</span>
+                        </a>
+                        <a href="#" class="sidebar-link flex items-center space-x-2 py-2 px-4 rounded-lg text-sm" data-target="toko-aplikasi">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            <span>Toko Aplikasi</span>
+                        </a>
+                    </div>
+                </div>
                 <a href="#" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="accounting">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h3m-3 0v-3m-3 3h3m-3 0v-3m8-5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V9a2 2 0 00-2-2z"></path></svg>
                     <span>Akunting</span>
@@ -80,17 +104,20 @@
                 <div id="dashboard-content" class="content-section active">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Ringkasan Koperasi</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
                             <h3 class="text-lg font-medium text-gray-600">Total Anggota Aktif</h3>
                             <p id="total-members" class="text-3xl font-bold text-blue-600 mt-2">0</p>
+                            <a href="#" data-target="members" class="sidebar-link text-sm text-blue-500 hover:underline mt-auto pt-2">Lihat Detail</a>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
                             <h3 class="text-lg font-medium text-gray-600">Total Simpanan</h3>
                             <p id="total-savings" class="text-3xl font-bold text-green-600 mt-2">Rp 0</p>
+                            <a href="#" data-target="savings" class="sidebar-link text-sm text-green-500 hover:underline mt-auto pt-2">Lihat Detail</a>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
                             <h3 class="text-lg font-medium text-gray-600">Total Pinjaman Aktif</h3>
                             <p id="total-loans" class="text-3xl font-bold text-red-600 mt-2">Rp 0</p>
+                            <a href="#" data-target="loans" class="sidebar-link text-sm text-red-500 hover:underline mt-auto pt-2">Lihat Detail</a>
                         </div>
                         <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
                             <h3 class="text-lg font-medium text-gray-600">Pendaftaran Baru</h3>
@@ -130,6 +157,7 @@
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Koperasi</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">NIK</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Perusahaan</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Daftar</th>
@@ -153,6 +181,7 @@
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Anggota</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Koperasi</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jumlah</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Pengajuan</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
@@ -173,6 +202,7 @@
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Anggota</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Koperasi</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jumlah</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Pengajuan</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status Saat Ini</th>
@@ -200,9 +230,9 @@
                                 <label for="members-filter-company" class="block text-sm font-medium text-gray-700">Perusahaan</label>
                                 <select id="members-filter-company" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></select>
                             </div>
-                            <div class="flex space-x-2">
-                                <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Filter</button>
-                                <button type="button" id="members-filter-reset-btn" class="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Reset</button>
+                            <div class="flex justify-end space-x-2">
+                                <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Filter</button>
+                                <button type="button" id="members-filter-reset-btn" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Reset</button>
                             </div>
                         </form>
                         <div class="overflow-x-auto">
@@ -223,6 +253,10 @@
                                 <tbody id="members-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                             </table>
                         </div>
+                        <!-- Pagination Controls -->
+                        <div id="members-pagination-controls" class="mt-4 flex justify-between items-center text-sm text-gray-600">
+                            <!-- Rendered by JS -->
+                        </div>
                     </div>
                 </div>
 
@@ -236,6 +270,19 @@
                                 <input type="text" id="savings-filter-search" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                             </div>
                             <div>
+                                <label for="savings-filter-type" class="block text-sm font-medium text-gray-700">Tipe Simpanan</label>
+                                <select id="savings-filter-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></select>
+                            </div>
+                            <div>
+                                <label for="savings-filter-status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="savings-filter-status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                    <option value="">Semua Status</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div>
                                 <label for="savings-filter-start-date" class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
                                 <input type="date" id="savings-filter-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                             </div>
@@ -243,9 +290,9 @@
                                 <label for="savings-filter-end-date" class="block text-sm font-medium text-gray-700">Sampai Tanggal</label>
                                 <input type="date" id="savings-filter-end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                             </div>
-                            <div class="md:col-start-4 flex space-x-2">
-                                <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Filter</button>
-                                <button type="button" id="savings-filter-reset-btn" class="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Reset</button>
+                            <div class="md:col-span-2 flex justify-end space-x-2">
+                                <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Filter</button>
+                                <button type="button" id="savings-filter-reset-btn" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Reset</button>
                             </div>
                         </form>
                         <div class="overflow-x-auto">
@@ -264,6 +311,10 @@
                                 <tbody id="savings-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                             </table>
                         </div>
+                        <!-- Pagination Controls for Savings -->
+                        <div id="savings-pagination-controls" class="mt-4 flex justify-between items-center text-sm text-gray-600">
+                            <!-- Rendered by JS -->
+                        </div>
                     </div>
                 </div>
 
@@ -271,6 +322,35 @@
                 <div id="loans-content" class="content-section">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Daftar Pinjaman</h2>
                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <form id="loans-filter-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 items-end">
+                            <div class="md:col-span-2">
+                                <label for="loans-filter-search" class="block text-sm font-medium text-gray-700">Cari Nama Anggota</label>
+                                <input type="text" id="loans-filter-search" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="loans-filter-status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="loans-filter-status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                    <option value="">Semua Status</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Approved by Accounting">Approved by Accounting</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Lunas">Lunas</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="loans-filter-start-date" class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
+                                <input type="date" id="loans-filter-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            </div>
+                            <div>
+                                <label for="loans-filter-end-date" class="block text-sm font-medium text-gray-700">Sampai Tanggal</label>
+                                <input type="date" id="loans-filter-end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            </div>
+                            <div class="md:col-span-2 flex justify-end space-x-2">
+                                <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Filter</button>
+                                <button type="button" id="loans-filter-reset-btn" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Reset</button>
+                            </div>
+                        </form>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -287,6 +367,92 @@
                                     </tr>
                                 </thead>
                                 <tbody id="loans-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination Controls for Loans -->
+                        <div id="loans-pagination-controls" class="mt-4 flex justify-between items-center text-sm text-gray-600">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usaha Koperasi: Toko Sembako Section -->
+                <div id="toko-sembako-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Produk Toko Sembako</h2>
+                        <button class="add-product-btn bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700" data-shop-type="sembako">Tambah Produk Baru</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gambar</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Produk</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stok</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="toko-sembako-table-body" class="bg-white divide-y divide-gray-200">
+                                    <!-- Contoh Baris Data -->
+                                    <tr>
+                                        <td class="px-6 py-4"><img src="https://images.unsplash.com/photo-1586201375765-c124a2734441?q=80&w=100&h=100&auto=format&fit=crop" alt="Beras" class="h-12 w-12 object-cover rounded"></td>
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">Beras Premium 5kg</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">Kualitas terbaik, pulen dan wangi.</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">Rp 65.000</td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">150</td>
+                                        <td class="px-6 py-4 text-sm font-medium space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900">Ubah</button>
+                                            <button class="text-red-600 hover:text-red-900">Hapus</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Data produk lainnya akan dimuat di sini -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usaha Koperasi: Toko Elektronik Section -->
+                <div id="toko-elektronik-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Produk Toko Elektronik</h2>
+                        <button class="add-product-btn bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700" data-shop-type="elektronik">Tambah Produk Baru</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gambar</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Produk</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stok</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="toko-elektronik-table-body" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="6" class="text-center py-4 text-gray-500">Belum ada produk. Klik "Tambah Produk Baru" untuk memulai.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usaha Koperasi: Toko Aplikasi Section -->
+                <div id="toko-aplikasi-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Produk Toko Aplikasi</h2>
+                        <button class="add-product-btn bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700" data-shop-type="aplikasi">Tambah Produk Baru</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ikon</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Aplikasi/Lisensi</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stok/Lisensi</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th></tr></thead>
+                                <tbody id="toko-aplikasi-table-body" class="bg-white divide-y divide-gray-200"><tr><td colspan="6" class="text-center py-4 text-gray-500">Belum ada produk. Klik "Tambah Produk Baru" untuk memulai.</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -394,6 +560,8 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Perusahaan</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Alamat</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Telepon</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Kontrak</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dokumen</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                                     </tr>
                                 </thead>
@@ -533,6 +701,8 @@
                 <div><label for="employer-name-input" class="block text-sm font-medium text-gray-700">Nama Perusahaan</label><input type="text" id="employer-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
                 <div><label for="employer-address-input" class="block text-sm font-medium text-gray-700">Alamat</label><textarea id="employer-address-input" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></textarea></div>
                 <div><label for="employer-phone-input" class="block text-sm font-medium text-gray-700">Telepon</label><input type="text" id="employer-phone-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="employer-contract-input" class="block text-sm font-medium text-gray-700">Nomor Kontrak Kerjasama</label><input type="text" id="employer-contract-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="employer-document-input" class="block text-sm font-medium text-gray-700">Link Dokumen Kontrak (PDF)</label><input type="url" id="employer-document-input" placeholder="https://..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
                 <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-employer-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
             </form>
         </div>
@@ -610,6 +780,81 @@
                     <select id="user-role-select" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"><option value="admin">Admin</option><option value="manager">Manager</option><option value="akunting">Akunting</option><option value="member">Member</option></select>
                 </div>
                 <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-user-role-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan Perubahan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loan Details Modal (for Admin) -->
+    <div id="admin-loan-details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 p-4">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 id="admin-loan-details-modal-title" class="text-lg font-semibold text-gray-900">Detail Pinjaman</h3>
+                <button id="close-admin-loan-details-modal-btn" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="mt-4 max-h-[80vh] overflow-y-auto p-2">
+                <!-- Summary Section -->
+                <div id="admin-loan-summary-section" class="mb-6 bg-gray-50 p-4 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Summary content will be populated by JS -->
+                </div>
+                <!-- Installments Table -->
+                <h4 class="text-md font-semibold text-gray-800 mb-4">Jadwal Angsuran</h4>
+                <div class="overflow-x-auto border rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Ke-</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jatuh Tempo</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Jumlah Angsuran</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tgl Bayar</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-loan-installments-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loan Edit Modal -->
+    <div id="loan-edit-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="loan-edit-modal-title" class="text-lg font-semibold text-gray-900">Ubah Pengajuan Pinjaman</h3><button id="close-loan-edit-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="loan-edit-form" class="mt-4 space-y-4">
+                <input type="hidden" id="loan-edit-id-input">
+                <div><label for="loan-edit-member-name" class="block text-sm font-medium text-gray-700">Nama Anggota</label><p id="loan-edit-member-name" class="mt-1 text-gray-900 font-semibold"></p></div>
+                <div><label for="loan-edit-term-select" class="block text-sm font-medium text-gray-700">Produk Pinjaman (Tipe & Tenor)</label><select id="loan-edit-term-select" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></select></div>
+                <div><label for="loan-edit-amount-input" class="block text-sm font-medium text-gray-700">Jumlah Pinjaman (Rp)</label><input type="number" step="1000" id="loan-edit-amount-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-loan-edit-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan Perubahan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="product-modal-title" class="text-lg font-semibold text-gray-900"></h3><button id="close-product-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="product-form" class="mt-4 space-y-4">
+                <input type="hidden" id="product-id-input">
+                <input type="hidden" id="product-shop-type-input">
+                <div><label for="product-name-input" class="block text-sm font-medium text-gray-700">Nama Produk</label><input type="text" id="product-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="product-description-input" class="block text-sm font-medium text-gray-700">Deskripsi</label><textarea id="product-description-input" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></textarea></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label for="product-price-input" class="block text-sm font-medium text-gray-700">Harga (Rp)</label><input type="number" id="product-price-input" required min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                    <div><label for="product-stock-input" class="block text-sm font-medium text-gray-700">Stok</label><input type="number" id="product-stock-input" required min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                </div>
+                <div>
+                    <label for="product-image-input" class="block text-sm font-medium text-gray-700">Gambar Produk</label>
+                    <div class="mt-1 flex items-center space-x-4">
+                        <img id="product-image-preview" src="https://placehold.co/100x100?text=No+Image" alt="Pratinjau Gambar" class="h-16 w-16 object-cover rounded bg-gray-100">
+                        <input type="file" id="product-image-input" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                    </div>
+                    <input type="hidden" id="product-current-image-url">
+                </div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-product-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
             </form>
         </div>
     </div>
