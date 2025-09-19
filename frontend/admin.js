@@ -35,8 +35,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const apiFetch = async (endpoint, options = {}) => {
-        const response = await fetch(endpoint, { ...options, headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...options.headers } });
-        if (response.status === 401 || response.status === 403) checkAdminAuth();
+        const currentToken = localStorage.getItem('token');
+        const headers = { 'Authorization': `Bearer ${currentToken}`, ...options.headers };
+
+        // Do not set Content-Type for FormData, browser will do it with boundary
+        if (!(options.body instanceof FormData)) {
+            headers['Content-Type'] = 'application/json';
+        }
+        
+        const response = await fetch(endpoint, { ...options, headers });
+        if (response.status === 401 || response.status === 403) {
+            alert('Sesi Anda telah berakhir atau tidak valid. Silakan masuk kembali.');
+            localStorage.clear();
+            window.location.href = 'login.html';
+            throw new Error('Unauthorized'); // Stop further execution
+        }
         return response;
     };
 
@@ -99,17 +112,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Gagal memuat data anggota.');
             const members = await response.json();
 
+            // Saring daftar untuk hanya menampilkan pengguna dengan peran 'member'
+            const memberOnlyList = members.filter(user => user.role === 'member');
+
             tableBody.innerHTML = '';
-            if (members.length === 0) {
+            if (memberOnlyList.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Belum ada anggota aktif.</td></tr>`;
                 return;
             }
 
-            members.forEach(member => {
+            memberOnlyList.forEach(member => {
                 const row = tableBody.insertRow();
                 row.innerHTML = `
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">${member.name}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">${member.employee_id || '-'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${member.cooperative_number || '-'}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${member.ktp_number || '-'}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${member.company_name || '-'}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${member.position_name || '-'}</td>
@@ -249,8 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!pendingMembersTableBody) return;
         
         try {
-            // Ganti URL ini dengan URL API backend Anda
-            const response = await apiFetch('http://localhost:3000/api/members?status=Pending');
+            const response = await apiFetch(`${API_URL}/members?status=Pending`);
             if (!response.ok) {
                 throw new Error('Gagal memuat data pendaftar baru.');
             }
@@ -358,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
                     <dl class="space-y-4">
                         ${renderDetail('Nama Lengkap', member.name)}
-                        ${renderDetail('NIK Karyawan', member.employee_id)}
+                        ${renderDetail('Nomor Koperasi', member.cooperative_number)}
                         ${renderDetail('Nomor KTP', member.ktp_number)}
                         ${renderDetail('Email', member.email)}
                     </dl>
@@ -490,6 +505,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const setupSimpleCrud = (config) => {
         const { modal, form, tableBody, addBtn, endpoint, title, fields, renderRow } = config;
+
+        // Defensive check: If the required HTML elements for this CRUD don't exist, skip setup.
+        if (!modal || !form || !tableBody) {
+            return () => {}; // Return an empty function to prevent errors on call.
+        }
+
         const idInput = form.querySelector('input[type="hidden"]');
         const modalTitle = modal.querySelector('[id$="-modal-title"]');
         const finalEndpoint = endpoint.startsWith('admin/') ? `${API_URL}/${endpoint}` : `${ADMIN_API_URL}/${endpoint}`;
@@ -572,6 +593,130 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return loadData;
     };
+
+    // --- FUNGSI UNTUK KELOLA USER & ROLE ---
+    const loadUsers = async () => {
+        const tableBody = document.getElementById('users-table-body');
+        if (!tableBody) return;
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Memuat...</td></tr>`;
+        try {
+            const response = await apiFetch(`${ADMIN_API_URL}/users`);
+            if (!response.ok) throw new Error('Gagal memuat data pengguna.');
+            const users = await response.json();
+
+            tableBody.innerHTML = '';
+            if (users.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Tidak ada pengguna ditemukan.</td></tr>`;
+                return;
+            }
+
+            users.forEach(user => {
+                const statusClass = user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${user.name}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${user.email}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${user.role}</td>
+                    <td class="px-6 py-4 text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${user.status}</span></td>
+                    <td class="px-6 py-4 text-sm font-medium">
+                        <button class="edit-user-role-btn text-indigo-600 hover:text-indigo-900" data-id="${user.id}" data-name="${user.name}" data-role="${user.role}">Ubah Role</button>
+                    </td>
+                `;
+            });
+        } catch (error) {
+            console.error('Error loading users:', error);
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+        }
+    };
+
+    const renderRolePermissions = async () => {
+        const container = document.getElementById('role-permissions-container');
+        if (!container) return;
+        container.innerHTML = `<div class="col-span-full text-center py-8"><p class="text-gray-500">Memuat hak akses...</p></div>`;
+
+        try {
+            // 1. Dapatkan semua kemungkinan hak akses dari backend
+            const permissionsResponse = await apiFetch(`${ADMIN_API_URL}/permissions`);
+            if (!permissionsResponse.ok) throw new Error('Gagal memuat daftar hak akses.');
+            const allPermissions = await permissionsResponse.json();
+
+            // 2. Definisikan peran yang akan dikelola
+            const rolesToManage = ['admin', 'manager', 'akunting'];
+
+            // 3. Ambil dan render kartu untuk setiap peran
+            const rolePromises = rolesToManage.map(async (role) => {
+                const rolePermsResponse = await apiFetch(`${ADMIN_API_URL}/roles/${role}/permissions`);
+                if (!rolePermsResponse.ok) throw new Error(`Gagal memuat hak akses untuk peran ${role}.`);
+                const rolePerms = await rolePermsResponse.json();
+                const userHasPermissionSet = new Set(rolePerms);
+
+                // Tentukan apakah kartu ini dapat diedit
+                const isEditable = userRole === 'admin' && role !== 'admin';
+
+                const permissionsHTML = allPermissions.map(perm => {
+                    const isChecked = userHasPermissionSet.has(perm.key);
+                    return `
+                        <label class="flex items-center space-x-3 ${isEditable ? 'cursor-pointer' : 'cursor-not-allowed'}">
+                            <input type="checkbox" data-permission-key="${perm.key}" ${isChecked ? 'checked' : ''} ${!isEditable ? 'disabled' : ''} class="permission-checkbox rounded border-gray-300 text-red-600 shadow-sm focus:border-red-300 focus:ring focus:ring-offset-0 focus:ring-red-200 focus:ring-opacity-50">
+                            <span class="text-gray-700">${perm.description}</span>
+                        </label>
+                    `;
+                }).join('');
+
+                const saveButtonHTML = isEditable ? `
+                    <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                        <button data-role="${role}" class="save-role-permissions-btn bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan Perubahan</button>
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                        <div class="px-4 py-5 sm:px-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 capitalize">${role}</h3>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500">${role === 'admin' ? 'Akses penuh ke sistem (tidak dapat diubah).' : `Hak akses untuk peran ${role}.`}</p>
+                        </div>
+                        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+                            <h4 class="text-md font-semibold text-gray-800 mb-4">Hak Akses:</h4>
+                            <div class="space-y-4">${permissionsHTML}</div>
+                        </div>
+                        ${saveButtonHTML}
+                    </div>
+                `;
+            });
+
+            const cardsHTML = await Promise.all(rolePromises);
+            container.innerHTML = cardsHTML.join('');
+
+        } catch (error) {
+            console.error('Error rendering role permissions:', error);
+            container.innerHTML = `<div class="col-span-full text-center py-8"><p class="text-red-500">${error.message}</p></div>`;
+        }
+    };
+
+    const userRoleModal = document.getElementById('user-role-modal');
+    const userRoleForm = document.getElementById('user-role-form');
+
+    userRoleForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = userRoleModal.querySelector('#user-role-id-input').value;
+        const newRole = userRoleModal.querySelector('#user-role-select').value;
+
+        try {
+            const response = await apiFetch(`${ADMIN_API_URL}/users/${id}/role`, {
+                method: 'PUT',
+                body: JSON.stringify({ role: newRole }),
+            });
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error || 'Gagal memperbarui role pengguna.');
+            }
+            alert('Role pengguna berhasil diperbarui.');
+            userRoleModal.classList.add('hidden');
+            loadUsers(); // Muat ulang daftar pengguna
+        } catch (error) {
+            alert(`Terjadi kesalahan: ${error.message}`);
+        }
+    });
 
     // 1. Kelola Perusahaan
     const loadEmployers = setupSimpleCrud({
@@ -713,6 +858,128 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>`
     });
 
+    // --- EVENT LISTENER UNTUK SIMPAN HAK AKSES ROLE ---
+    document.getElementById('role-permissions-container')?.addEventListener('click', async (e) => {
+        if (!e.target.matches('.save-role-permissions-btn')) return;
+
+        const button = e.target;
+        const role = button.dataset.role;
+        const card = button.closest('.bg-white.shadow');
+        
+        const checkedPermissions = Array.from(card.querySelectorAll('.permission-checkbox:checked'))
+                                        .map(checkbox => checkbox.dataset.permissionKey);
+
+        button.disabled = true;
+        button.textContent = 'Menyimpan...';
+
+        try {
+            const response = await apiFetch(`${ADMIN_API_URL}/roles/${role}/permissions`, {
+                method: 'PUT',
+                body: JSON.stringify({ permissions: checkedPermissions })
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.error || 'Gagal menyimpan hak akses.');
+            }
+
+            alert(`Hak akses untuk peran "${role}" berhasil diperbarui. Perubahan akan aktif pada sesi login berikutnya.`);
+        } catch (error) {
+            alert(`Terjadi kesalahan: ${error.message}`);
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Simpan Perubahan';
+        }
+    });
+
+    // --- FUNGSI UNTUK UNDUH TEMPLATE SIMPANAN ---
+    const handleDownloadSavingsTemplate = () => {
+        const downloadBtn = document.getElementById('download-savings-template-btn');
+        if (!downloadBtn) return;
+
+        downloadBtn.addEventListener('click', async () => {
+            const originalText = downloadBtn.textContent;
+            downloadBtn.textContent = 'Memproses...';
+            downloadBtn.disabled = true;
+
+            try {
+                // We fetch a file, so we don't use the standard apiFetch that expects JSON
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${ADMIN_API_URL}/savings/export-template`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => null);
+                    throw new Error(errorData?.error || `Gagal mengunduh template. Status: ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'template_simpanan_anggota.xlsx'; 
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            } catch (error) {
+                alert(`Terjadi kesalahan: ${error.message}`);
+            } finally {
+                downloadBtn.textContent = originalText;
+                downloadBtn.disabled = false;
+            }
+        });
+    };
+
+    // --- FUNGSI UNTUK UNGGAH SIMPANAN BULK ---
+    const handleBulkSavingsUpload = () => {
+        const form = document.getElementById('bulk-savings-form');
+        if (!form) return;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('bulk-savings-file');
+            const feedbackEl = document.getElementById('bulk-savings-feedback');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Silakan pilih file Excel untuk diunggah.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('savingsFile', file); // Key 'savingsFile' harus cocok dengan di backend (multer)
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Mengunggah...';
+            feedbackEl.classList.add('hidden');
+
+            try {
+                const response = await apiFetch(`${ADMIN_API_URL}/savings/bulk-upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Terjadi kesalahan saat mengunggah file.');
+
+                feedbackEl.textContent = result.message || 'File berhasil diunggah dan diproses.';
+                feedbackEl.className = 'p-3 rounded-md text-sm bg-green-100 text-green-800';
+                feedbackEl.classList.remove('hidden');
+                form.reset();
+            } catch (error) {
+                feedbackEl.textContent = `Error: ${error.message}`;
+                feedbackEl.className = 'p-3 rounded-md text-sm bg-red-100 text-red-800';
+                feedbackEl.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Unggah dan Proses';
+            }
+        });
+    };
+
     // --- FUNGSI UNTUK NAVIGASI KONTEN UTAMA ---
     const switchContent = (targetId) => {
         contentSections.forEach(section => {
@@ -737,16 +1004,19 @@ document.addEventListener('DOMContentLoaded', () => {
             loadPendingApprovals('savings');
             loadPendingApprovals('loans');
         }
-        // // Load data for settings pages (dinonaktifkan sementara)
-        // if (targetId.startsWith('manage-')) {
-        //     const loadFunction = { 'manage-employers': loadEmployers, 'manage-positions': loadPositions, 'manage-saving-types': loadSavingTypes, 'manage-loan-types': loadLoanTypes, 'manage-loan-terms': loadLoanTerms, 'manage-accounts': loadAccounts }[targetId];
-        //     if (loadFunction) loadFunction();
-        // }
+        if (targetId === 'manage-users-roles') {
+            loadUsers();
+            renderRolePermissions();
+        }
 
-        if (targetId === 'approvals') {
-            renderPendingMembers();
-            loadPendingApprovals('savings');
-            loadPendingApprovals('loans');
+        if (targetId === 'accounting' || targetId === 'bulk-savings-input') {
+            // Tidak ada data yang perlu dimuat saat halaman menu atau form ditampilkan
+        }
+
+        // Load data for settings pages
+        if (targetId.startsWith('manage-')) {
+            const loadFunction = { 'manage-employers': loadEmployers, 'manage-positions': loadPositions, 'manage-saving-types': loadSavingTypes, 'manage-loan-types': loadLoanTypes, 'manage-loan-terms': loadLoanTerms, 'manage-accounts': loadAccounts }[targetId];
+            if (loadFunction) loadFunction();
         }
 
         // Perbarui status 'active' pada link sidebar
@@ -765,6 +1035,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    document.querySelector('.back-to-settings-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchContent('settings');
+    });
+    document.querySelector('.back-to-accounting-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchContent('accounting');
+    });
     allLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -794,6 +1072,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- FUNGSI UNTUK TAB DI HALAMAN USER & ROLE ---
+    const userRoleTabBtns = document.querySelectorAll('.user-role-tab-btn');
+    const userRoleTabContents = document.querySelectorAll('.user-role-tab-content');
+    userRoleTabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = btn.dataset.target;
+            userRoleTabBtns.forEach(b => b.classList.remove('border-red-500', 'text-red-600'));
+            userRoleTabBtns.forEach(b => b.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300'));
+            btn.classList.add('border-red-500', 'text-red-600');
+            btn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            userRoleTabContents.forEach(content => content.classList.toggle('hidden', content.id !== targetId));
+        });
+    });
+
+    document.getElementById('users-table-body')?.addEventListener('click', (e) => {
+        if (!e.target.matches('.edit-user-role-btn')) return;
+        const { id, name, role } = e.target.dataset;
+        userRoleModal.querySelector('#user-role-id-input').value = id;
+        userRoleModal.querySelector('#user-role-name-text').textContent = name;
+        userRoleModal.querySelector('#user-role-select').value = role;
+        userRoleModal.classList.remove('hidden');
+    });
+
     // Tambahkan event listener untuk tombol persetujuan simpanan dan pinjaman
     document.getElementById('pending-savings-table-body')?.addEventListener('click', handleGenericApproval);
     document.getElementById('pending-loans-table-body')?.addEventListener('click', handleGenericApproval);
@@ -808,6 +1110,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Tambahkan penutup untuk modal user-role
+    document.getElementById('close-user-role-modal')?.addEventListener('click', () => userRoleModal.classList.add('hidden'));
+    document.getElementById('cancel-user-role-modal')?.addEventListener('click', () => userRoleModal.classList.add('hidden'));
 
     // --- EVENT LISTENERS UNTUK FILTER SIMPANAN ---
     const savingsFilterForm = document.getElementById('savings-filter-form');
@@ -833,12 +1139,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INISIALISASI ---
     checkAdminAuth();
+    handleBulkSavingsUpload();
+    handleDownloadSavingsTemplate();
 
     // Sembunyikan menu berdasarkan peran
-    if (userRole !== 'admin') {
-        document.querySelector('.sidebar-link[data-target="settings"]')?.parentElement.remove();
-        document.querySelector('.sidebar-link[data-target="accounting"]')?.parentElement.remove();
+    if (!['admin', 'akunting'].includes(userRole)) {
+        // Hanya admin & akunting yang bisa lihat menu Akunting
+        document.querySelector('.sidebar-link[data-target="accounting"]')?.remove();
     }
+    if (userRole !== 'admin') {
+        // Hanya admin yang bisa lihat menu Pengaturan
+        document.querySelector('.sidebar-link[data-target="settings"]')?.parentElement.remove();
+    }
+
 
     // Muat konten awal
     switchContent('dashboard');

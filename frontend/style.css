@@ -53,4 +53,15 @@
     .tenor-btn.active {
         @apply bg-red-600 text-white border-red-600;
     }
+    /* Styles for active sidebar links and content switching, used in admin.html and anggota.html */
+    .sidebar-link.active {
+        background-color: #991b1b; /* Equivalent to bg-red-800 */
+        color: #ffffff; /* Equivalent to text-white */
+    }
+    .content-section {
+        display: none;
+    }
+    .content-section.active {
+        display: block;
+    }
 }

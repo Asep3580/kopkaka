@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordStrengthText = document.getElementById('password-strength-text');
     const passwordStrengthBar = document.getElementById('password-strength-bar');
 
-    const API_BASE_URL = 'https://www.emsifa.com/api-wilayah-indonesia/api';
+    const WILAYAH_API_URL = 'https://www.emsifa.com/api-wilayah-indonesia/api';
+    const API_URL = 'http://localhost:3000/api'; // URL API Koperasi
 
     // --- Fungsi untuk mengambil data wilayah ---
     async function fetchAndPopulate(url, selectElement, defaultOptionText) {
@@ -50,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function populateDropdownFromAPI(endpoint, selectElement, valueKey, textKey, defaultOptionText) {
         try {
             selectElement.innerHTML = `<option value="">Memuat...</option>`;
-            const response = await fetch(`http://localhost:3000/api/${endpoint}`);
+            const response = await fetch(`${API_URL}/${endpoint}`);
             if (!response.ok) throw new Error(`Gagal memuat ${defaultOptionText}`);
             
             const data = await response.json();
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         kelurahanSelect.innerHTML = '<option value="">Pilih kecamatan terlebih dahulu</option>';
         kelurahanSelect.disabled = true;
         if (kotaId) {
-            fetchAndPopulate(`${API_BASE_URL}/districts/${kotaId}.json`, kecamatanSelect, 'Kecamatan');
+            fetchAndPopulate(`${WILAYAH_API_URL}/districts/${kotaId}.json`, kecamatanSelect, 'Kecamatan');
         } else {
             kecamatanSelect.innerHTML = '<option value="">Pilih kabupaten/kota terlebih dahulu</option>';
             kecamatanSelect.disabled = true;
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     kecamatanSelect.addEventListener('change', () => {
         const kecamatanId = kecamatanSelect.value;
         if (kecamatanId) {
-            fetchAndPopulate(`${API_BASE_URL}/villages/${kecamatanId}.json`, kelurahanSelect, 'Kelurahan/Desa');
+            fetchAndPopulate(`${WILAYAH_API_URL}/villages/${kecamatanId}.json`, kelurahanSelect, 'Kelurahan/Desa');
         } else {
             kelurahanSelect.innerHTML = '<option value="">Pilih kecamatan terlebih dahulu</option>';
             kelurahanSelect.disabled = true;
@@ -214,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Append data teks
         formData.append('name', document.getElementById('reg-nama').value);
-        formData.append('employee_id', document.getElementById('reg-nik').value);
         formData.append('ktp_number', document.getElementById('reg-ktp').value);
         formData.append('company_id', perusahaanSelect.value);
         formData.append('position_id', jabatanSelect.value);
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // 2. Kirim data ke backend
             // Ganti URL ini dengan URL API backend Anda yang sebenarnya
-            const response = await fetch('http://localhost:3000/api/auth/register', {
+            const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 body: formData, // Browser akan otomatis mengatur Content-Type ke multipart/form-data
             });

@@ -13,12 +13,13 @@
 
 @layer components {
     .sidebar-link.active {
-        @apply bg-red-800 text-white;
+        background-color: #991b1b; /* Equivalent to bg-red-800 */
+        color: #ffffff; /* Equivalent to text-white */
     }
     .content-section {
-        @apply hidden;
+        display: none;
     }
     .content-section.active {
-        @apply block;
+        display: block;
     }
 }

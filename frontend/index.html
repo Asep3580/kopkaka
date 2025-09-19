@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koperasi Karyawan KAGUM Group Sejahtera</title>
+    <title>Koperasi Karya Kagum Sejahtera</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,12 +31,11 @@
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div id="toko-dropdown-menu" class="absolute hidden bg-white text-gray-700 mt-2 py-2 w-48 rounded-lg shadow-xl z-20">
-                        <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Sembako</a>
-                        <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Elektronik</a>
-                        <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Aplikasi</a>
+                        <a href="toko-sembako.html" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Sembako</a>
+                        <a href="toko-elektronik.html" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Elektronik</a>
+                        <a href="toko-aplikasi.html" class="block px-4 py-2 text-sm hover:bg-gray-100">Toko Aplikasi</a>
                     </div>
                 </div>
-                <a href="#simpanan" class="hover:text-gray-300 transition-colors">Simpanan</a>
                 <a href="#pinjaman" class="hover:text-gray-300 transition-colors">Pinjaman</a>
                 <a href="#shu" class="hover:text-gray-300 transition-colors">SHU</a>
             </div>
@@ -63,11 +62,10 @@
                 <a href="#manfaat" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Manfaat</a>
                 <div class="border-t border-red-800/50 my-2"></div>
                 <span class="px-3 py-2 text-white/70 text-xs font-semibold uppercase">Toko Online</span>
-                <a href="#" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Sembako</a>
-                <a href="#" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Elektronik</a>
-                <a href="#" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Aplikasi</a>
+                <a href="toko-sembako.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Sembako</a>
+                <a href="toko-elektronik.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Elektronik</a>
+                <a href="toko-aplikasi.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Aplikasi</a>
                 <div class="border-t border-red-800/50 my-2"></div>
-                <a href="#simpanan" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Simpanan</a>
                 <a href="#pinjaman" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Pinjaman</a>
                 <a href="#shu" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">SHU</a>
             </div>
@@ -79,30 +77,33 @@
     </header>
 
     <main>
-        <section id="hero" class="py-20 md:py-32">
-            <div class="container mx-auto px-6 text-center">
-                <h1 class="text-4xl md:text-6xl font-bold text-accent leading-tight">Koperasi Karyawan KAGUM Group Sejahtera</h1>
-                <h2 class="mt-4 text-xl md:text-2xl text-gray-600">"Dari Kita, Oleh Kita, Untuk Kesejahteraan Bersama"</h2>
-                <p class="mt-8 max-w-2xl mx-auto text-gray-500">
-                    Selamat datang di KOPKAKA Sejahtera, wadah usaha bersama yang dibangun di atas asas kekeluargaan untuk meningkatkan kemandirian ekonomi dan mempererat solidaritas seluruh karyawan KAGUM Group.
+        <section id="hero" class="relative bg-cover bg-center py-20 md:py-32" style="background-image: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop');">
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-red-900/70"></div>
+            
+            <div class="relative container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight">Koperasi Karya Kagum Sejahtera</h1>
+                <h2 class="mt-4 text-xl md:text-2xl text-gray-200">"Dari Kita, Oleh Kita, Untuk Kesejahteraan Bersama"</h2>
+                <p class="mt-8 max-w-2xl mx-auto text-gray-300">
+                    Selamat datang di KOPKAKA Sejahtera, wadah usaha bersama yang dibangun di atas asas kekeluargaan untuk meningkatkan kemandirian ekonomi dan mempererat solidaritas antar sesama.
                 </p>
             </div>
         </section>
 
-        <section id="tentang" class="py-16 bg-white">
+        <section id="tentang" class="py-16 bg-cream">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-bold text-accent">Visi & Misi Kami</h2>
                     <p class="mt-2 text-gray-500">Landasan dan tujuan kami dalam melayani anggota.</p>
                 </div>
-                <div class="grid md:grid-cols-2 gap-8 items-center">
-                    <div class="p-8 bg-gray-50 rounded-lg">
+                <div class="grid md:grid-cols-2 gap-12 items-stretch">
+                    <div class="scroll-animate p-12 bg-orange-100 rounded-lg opacity-0 transform translate-y-5 transition-all duration-700 ease-out">
                         <h3 class="text-2xl font-semibold mb-4 text-accent">VISI</h3>
                         <p class="text-lg italic text-gray-600">
-                            "Menjadi koperasi karyawan yang mandiri, profesional, dan terpercaya dalam meningkatkan kesejahteraan ekonomi dan sosial seluruh anggota."
+                            "Menjadi koperasi yang mandiri, profesional, dan terpercaya dalam meningkatkan kesejahteraan ekonomi dan sosial seluruh anggota."
                         </p>
                     </div>
-                    <div class="p-8">
+                    <div class="scroll-animate p-12 bg-orange-100 rounded-lg opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 200ms;">
                         <h3 class="text-2xl font-semibold mb-4 text-accent">MISI</h3>
                         <ul class="space-y-4 list-inside">
                             <li class="flex items-start"><span class="text-red-500 mr-3 mt-1">&#10004;</span> Menyelenggarakan usaha simpan pinjam yang mudah, aman, dan menguntungkan.</li>
@@ -122,7 +123,7 @@
                     <p class="mt-2 text-gray-500">Anda bukan hanya nasabah, Anda adalah pemilik.</p>
                 </div>
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="scroll-animate bg-white p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out">
                         <h3 class="text-2xl font-semibold mb-4 text-accent">Manfaat Ekonomi</h3>
                         <ul class="space-y-4 text-gray-600">
                             <li class="flex items-start">
@@ -143,7 +144,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="scroll-animate bg-white p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 200ms;">
                         <h3 class="text-2xl font-semibold mb-4 text-accent">Manfaat Sosial & Pendidikan</h3>
                          <ul class="space-y-4 text-gray-600">
                             <li class="flex items-start">
@@ -159,57 +160,6 @@
                                 <span><strong>Semangat Gotong Royong:</strong> Saling membantu melalui sistem milik bersama.</span>
                             </li>
                         </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="simpanan" class="py-16 bg-white">
-            <div class="container mx-auto px-6">
-                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-accent">Aturan Simpanan Anggota</h2>
-                    <p class="mt-2 text-gray-500">Simpanan Anda adalah jantung dari koperasi kita.</p>
-                </div>
-                <div class="grid md:grid-cols-3 gap-8 text-center">
-                    <div class="border-2 border-accent/20 p-8 rounded-lg">
-                        <h3 class="text-2xl font-semibold text-accent">Simpanan Pokok</h3>
-                        <p class="text-4xl font-bold my-4">Rp 100.000</p>
-                        <p class="text-gray-500">Dibayar <strong>satu kali</strong> saat mendaftar. Sebagai tanda sah kepemilikan Anda.</p>
-                    </div>
-                    <div class="border-2 border-accent/20 p-8 rounded-lg bg-red-50">
-                        <h3 class="text-2xl font-semibold text-accent">Simpanan Wajib</h3>
-                        <p class="text-4xl font-bold my-4">Rp 100.000</p>
-                        <p class="text-gray-500">Dibayar <strong>rutin setiap bulan</strong>. Dapat dipotong langsung dari gaji (<em>payroll</em>).</p>
-                    </div>
-                    <div class="border-2 border-accent/20 p-8 rounded-lg">
-                        <h3 class="text-2xl font-semibold text-accent">Simpanan Sukarela</h3>
-                         <p class="text-4xl font-bold my-4">Fleksibel</p>
-                        <p class="text-gray-500">Seperti menabung di bank. Jumlah dan waktu setoran <strong>tidak ditentukan</strong>.</p>
-                    </div>
-                </div>
-
-                <div class="text-center mt-16 mb-12">
-                    <h2 class="text-3xl font-bold text-accent">Ketentuan Penarikan Simpanan</h2>
-                    <p class="mt-2 text-gray-500">Pahami aturan penarikan untuk setiap jenis simpanan Anda.</p>
-                </div>
-                <div class="grid md:grid-cols-3 gap-8 text-center">
-                    <!-- Simpanan Pokok -->
-                    <div class="border-2 border-red-200 p-8 rounded-lg">
-                        <h3 class="text-2xl font-semibold text-accent">Simpanan Pokok</h3>
-                        <p class="text-gray-500 mt-4">Hanya dapat ditarik saat anggota <strong>mengundurkan diri</strong> dari keanggotaan.</p>
-                        <p class="mt-4 text-sm text-red-600 font-semibold">Tidak dapat ditarik selama aktif</p>
-                    </div>
-                    <!-- Simpanan Wajib -->
-                    <div class="border-2 border-red-200 p-8 rounded-lg">
-                        <h3 class="text-2xl font-semibold text-accent">Simpanan Wajib</h3>
-                        <p class="text-gray-500 mt-4">Akumulasi simpanan dapat ditarik saat anggota <strong>mengundurkan diri</strong> dari keanggotaan.</p>
-                        <p class="mt-4 text-sm text-red-600 font-semibold">Tidak dapat ditarik selama aktif</p>
-                    </div>
-                    <!-- Simpanan Sukarela -->
-                    <div class="border-2 border-green-200 p-8 rounded-lg">
-                        <h3 class="text-2xl font-semibold text-accent">Simpanan Sukarela</h3>
-                        <p class="text-gray-500 mt-4">Dapat ditarik <strong>kapan saja</strong> sesuai kebutuhan, dengan mengikuti prosedur yang berlaku.</p>
-                        <p class="mt-4 text-sm text-green-600 font-semibold">Dapat ditarik kapan saja</p>
                     </div>
                 </div>
             </div>
@@ -419,7 +369,7 @@
 
     <footer class="bg-gray-800 text-white py-6">
         <div class="container mx-auto px-6 text-center text-sm">
-            <p>&copy; 2025 Koperasi Karyawan KAGUM Group Sejahtera. All Rights Reserved.</p>
+            <p>&copy; 2025 Koperasi Karya Kagum Sejahtera. All Rights Reserved.</p>
         </div>
     </footer>
 
@@ -427,6 +377,21 @@
     <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // --- Scroll Animation ---
+            const scrollObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', '!translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-5');
+                        observer.unobserve(entry.target); // Stop observing after animation
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.scroll-animate').forEach(el => scrollObserver.observe(el));
+
             // --- Mobile Menu ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');

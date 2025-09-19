@@ -6,18 +6,18 @@
     <title>Admin Panel - KOPKAKA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="anggota.css"> <!-- Menggunakan CSS yang sama dengan dasbor anggota -->
+    <link rel="stylesheet" href="style.css"> <!-- Menggunakan CSS utama proyek -->
 </head>
 <body class="bg-gray-100">
 
     <div class="flex h-screen bg-gray-100">
         <!-- Sidebar -->
-        <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-red-900 text-white p-4 space-y-6 transform md:relative md:translate-x-0 -translate-x-full transition-transform duration-200 ease-in-out z-30">
-            <div class="flex items-center space-x-3 p-2 border-b border-red-950 pb-4">                
+        <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-red-900 text-white p-4 flex flex-col transform md:relative md:translate-x-0 -translate-x-full transition-transform duration-200 ease-in-out z-30">
+            <div class="flex-shrink-0 flex items-center space-x-3 p-2 border-b border-red-950 pb-4">                
                 <img src="logo/logo.png" alt="Logo KOPKAKA" class="h-8 w-auto">
                 <h2 class="text-xl font-bold">Admin Panel</h2>
             </div>
-            <nav class="space-y-2 flex-1">
+            <nav class="flex-1 space-y-2 mt-6 overflow-y-auto">
                 <a href="#" class="sidebar-link active flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="dashboard">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                     <span>Beranda</span>
@@ -38,18 +38,18 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
                     <span>Pinjaman</span>
                 </a>
+                <a href="#" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="accounting">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h3m-3 0v-3m-3 3h3m-3 0v-3m8-5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V9a2 2 0 00-2-2z"></path></svg>
+                    <span>Akunting</span>
+                </a>
                 <div class="pt-4 mt-4 space-y-2 border-t border-red-800/50">
-                    <a href="#" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="accounting">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                        <span>Akunting</span>
-                    </a>
                     <a href="#" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg" data-target="settings">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         <span>Pengaturan</span>
                     </a>
                 </div>
             </nav>
-            <div class="mt-auto">
+            <div class="flex-shrink-0 mt-auto p-2 border-t border-red-950 pt-4">
                 <a href="#" id="logout-button" class="sidebar-link flex items-center space-x-2 py-2.5 px-4 rounded-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     <span>Keluar</span>
@@ -92,10 +92,10 @@
                             <h3 class="text-lg font-medium text-gray-600">Total Pinjaman Aktif</h3>
                             <p id="total-loans" class="text-3xl font-bold text-red-600 mt-2">Rp 0</p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
                             <h3 class="text-lg font-medium text-gray-600">Pendaftaran Baru</h3>
                             <p id="pending-members-count" class="text-3xl font-bold text-yellow-600 mt-2">0</p>
-                            <a href="#" data-target="approvals" class="sidebar-link text-sm text-blue-500 hover:underline">Lihat Detail</a>
+                            <a href="#" data-target="approvals" class="sidebar-link text-sm text-blue-500 hover:underline mt-auto pt-2">Lihat Detail</a>
                         </div>
                     </div>
                 </div>
@@ -193,7 +193,7 @@
                         <!-- Filter Form -->
                         <form id="members-filter-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 items-end">
                             <div class="md:col-span-2">
-                                <label for="members-filter-search" class="block text-sm font-medium text-gray-700">Cari Nama / NIK</label>
+                                <label for="members-filter-search" class="block text-sm font-medium text-gray-700">Cari Nama / No. Koperasi</label>
                                 <input type="text" id="members-filter-search" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                             </div>
                             <div>
@@ -210,7 +210,7 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">NIK</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Koperasi</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">KTP</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Perusahaan</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jabatan</th>
@@ -317,35 +317,200 @@
                             <h3 class="font-semibold text-lg text-gray-800">Kelola Tenor & Bunga</h3>
                             <p class="text-sm text-gray-500 mt-1">Atur tenor dan suku bunga untuk setiap tipe pinjaman.</p>
                         </div>
+                        <div data-target="manage-accounts" class="settings-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                            <h3 class="font-semibold text-lg text-gray-800">Daftar Akun (COA)</h3>
+                            <p class="text-sm text-gray-500 mt-1">Kelola Chart of Accounts.</p>
+                        </div>
+                        <div data-target="manage-users-roles" class="settings-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                            <h3 class="font-semibold text-lg text-gray-800">Kelola User & Role</h3>
+                            <p class="text-sm text-gray-500 mt-1">Atur pengguna dan hak akses sistem.</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Accounting Section -->
                 <div id="accounting-content" class="content-section">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Menu Akunting</h2>
-                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div data-target="manage-accounts" class="accounting-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-                            <h3 class="font-semibold text-lg text-gray-800">Daftar Akun (COA)</h3>
-                            <p class="text-sm text-gray-500 mt-1">Kelola Chart of Accounts.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div data-target="bulk-savings-input" class="accounting-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                            <h3 class="font-semibold text-lg text-gray-800">Input Simpanan Bulk</h3>
+                            <p class="text-sm text-gray-500 mt-1">Unggah data simpanan dari file Excel.</p>
                         </div>
-                     </div>
+                    </div>
+                </div>
+
+                <!-- Bulk Savings Input Section -->
+                <div id="bulk-savings-input-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-semibold text-gray-800">Input Simpanan Bulk via Excel</h2><button class="back-to-accounting-btn text-sm text-red-600 hover:underline">&larr; Kembali ke Akunting</button></div>
+                    <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto"><div class="prose prose-sm max-w-none"><h4>Panduan Unggah File</h4><ol><li>Unduh template Excel yang sudah diisi dengan daftar anggota aktif.</li><li>Isi kolom <strong>Tipe Simpanan</strong> (pilih dari dropdown), <strong>Jumlah</strong>, <strong>Tanggal</strong> (format YYYY-MM-DD, kosongkan untuk tanggal hari ini), dan <strong>Keterangan</strong> (opsional).</li><li>Hanya baris yang memiliki isian <strong>Jumlah</strong> yang akan diproses.</li><li>Simpanan yang diunggah akan otomatis berstatus <strong>"Approved"</strong> dan masuk ke daftar simpanan anggota.</li></ol><button id="download-savings-template-btn" class="no-underline inline-block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 text-sm">Unduh Template Anggota</button></div><form id="bulk-savings-form" class="mt-6 border-t pt-6"><div><label for="bulk-savings-file" class="block text-sm font-medium text-gray-700">Pilih File Excel (.xlsx)</label><input type="file" id="bulk-savings-file" required accept=".xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"></div><div id="bulk-savings-feedback" class="hidden mt-4 p-3 rounded-md text-sm"></div><div class="mt-6"><button type="submit" class="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition duration-200 font-semibold">Unggah dan Proses</button></div></form></div>
+                </div>
+
+                <!-- User & Role Management Section -->
+                <div id="manage-users-roles-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola User & Role</h2>
+                        <button class="back-to-settings-btn text-sm text-red-600 hover:underline">&larr; Kembali ke Pengaturan</button>
+                    </div>
+                    <!-- Tab Navigation -->
+                    <div class="border-b border-gray-200">
+                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                            <a href="#" data-target="manage-users-tab" class="user-role-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-red-500 text-red-600">Kelola User</a>
+                            <a href="#" data-target="manage-roles-tab" class="user-role-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Info Role</a>
+                        </nav>
+                    </div>
+
+                    <!-- Users Tab -->
+                    <div id="manage-users-tab" class="user-role-tab-content mt-6">
+                        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Daftar Pengguna Sistem</h3></div>
+                            <div class="border-t border-gray-200 overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th></tr></thead>
+                                    <tbody id="users-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Roles Tab -->
+                    <div id="manage-roles-tab" class="user-role-tab-content mt-6 hidden">
+                        <div id="role-permissions-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Kartu hak akses role akan dimuat di sini oleh JavaScript -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Sub-pages for Settings -->
-                <div id="manage-employers-content" class="content-section"></div>
-                <div id="manage-positions-content" class="content-section"></div>
-                <div id="manage-saving-types-content" class="content-section"></div>
-                <div id="manage-loan-types-content" class="content-section"></div>
-                <div id="manage-loan-terms-content" class="content-section"></div>
+                <div id="manage-employers-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Perusahaan</h2>
+                        <button id="show-add-employer-form-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Perusahaan</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Perusahaan</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Alamat</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Telepon</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employers-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="manage-positions-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Jabatan</h2>
+                        <button id="show-add-position-form-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Jabatan</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Jabatan</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="positions-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="manage-saving-types-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Tipe Simpanan</h2>
+                        <button id="show-add-saving-type-form-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Tipe</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Tipe</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="saving-types-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="manage-loan-types-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Tipe Pinjaman</h2>
+                        <button id="show-add-loan-type-form-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Tipe</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Tipe</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loan-types-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="manage-loan-terms-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Tenor & Bunga</h2>
+                        <button id="show-add-loan-term-form-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Tenor</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipe Pinjaman</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tenor (Bulan)</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bunga (%)</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loan-terms-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 <!-- Sub-pages for Accounting -->
-                <div id="manage-accounts-content" class="content-section"></div>
+                <div id="manage-accounts-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Daftar Akun (COA)</h2>
+                        <button id="show-add-account-form-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Akun</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Akun</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Akun</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipe Akun</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="accounts-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
             </main>
         </div>
     </div>
 
     <!-- Member Details Modal -->
-    <div id="member-details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div id="member-details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50 p-4">
         <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
             <div class="flex justify-between items-center pb-3 border-b">
                 <h3 id="member-details-modal-title" class="text-lg font-semibold text-gray-900">Detail Anggota</h3>
@@ -360,18 +525,94 @@
     </div>
 
     <!-- Generic Modals for Settings -->
-    <!-- Employer Modal -->
-    <div id="employer-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50"></div>
-    <!-- Position Modal -->
-    <div id="position-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50"></div>
-    <!-- Saving Type Modal -->
-    <div id="saving-type-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50"></div>
-    <!-- Loan Type Modal -->
-    <div id="loan-type-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50"></div>
-    <!-- Loan Term Modal -->
-    <div id="loan-term-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50"></div>
-    <!-- Account Modal -->
-    <div id="account-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50"></div>
+    <div id="employer-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="employer-modal-title" class="text-lg font-semibold text-gray-900"></h3><button id="close-employer-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="employer-form" class="mt-4 space-y-4">
+                <input type="hidden" id="employer-id-input">
+                <div><label for="employer-name-input" class="block text-sm font-medium text-gray-700">Nama Perusahaan</label><input type="text" id="employer-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="employer-address-input" class="block text-sm font-medium text-gray-700">Alamat</label><textarea id="employer-address-input" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></textarea></div>
+                <div><label for="employer-phone-input" class="block text-sm font-medium text-gray-700">Telepon</label><input type="text" id="employer-phone-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-employer-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="position-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="position-modal-title" class="text-lg font-semibold text-gray-900"></h3><button id="close-position-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="position-form" class="mt-4 space-y-4">
+                <input type="hidden" id="position-id-input">
+                <div><label for="position-name-input" class="block text-sm font-medium text-gray-700">Nama Jabatan</label><input type="text" id="position-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-position-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="saving-type-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="saving-type-modal-title" class="text-lg font-semibold text-gray-900"></h3><button id="close-saving-type-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="saving-type-form" class="mt-4 space-y-4">
+                <input type="hidden" id="saving-type-id-input">
+                <div><label for="saving-type-name-input" class="block text-sm font-medium text-gray-700">Nama Tipe</label><input type="text" id="saving-type-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="saving-type-description-input" class="block text-sm font-medium text-gray-700">Deskripsi</label><textarea id="saving-type-description-input" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></textarea></div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-saving-type-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="loan-type-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="loan-type-modal-title" class="text-lg font-semibold text-gray-900"></h3><button id="close-loan-type-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="loan-type-form" class="mt-4 space-y-4">
+                <input type="hidden" id="loan-type-id-input">
+                <div><label for="loan-type-name-input" class="block text-sm font-medium text-gray-700">Nama Tipe</label><input type="text" id="loan-type-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="loan-type-description-input" class="block text-sm font-medium text-gray-700">Deskripsi</label><textarea id="loan-type-description-input" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></textarea></div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-loan-type-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="loan-term-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="loan-term-modal-title" class="text-lg font-semibold text-gray-900"></h3><button id="close-loan-term-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="loan-term-form" class="mt-4 space-y-4">
+                <input type="hidden" id="loan-term-id-input">
+                <div><label for="loan-term-loantype-select" class="block text-sm font-medium text-gray-700">Tipe Pinjaman</label><select id="loan-term-loantype-select" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></select></div>
+                <div><label for="loan-term-tenor-input" class="block text-sm font-medium text-gray-700">Tenor (Bulan)</label><input type="number" id="loan-term-tenor-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="loan-term-interest-input" class="block text-sm font-medium text-gray-700">Suku Bunga (%)</label><input type="number" step="0.01" id="loan-term-interest-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-loan-term-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="account-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="account-modal-title" class="text-lg font-semibold text-gray-900"></h3><button id="close-account-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="account-form" class="mt-4 space-y-4">
+                <input type="hidden" id="account-id-input">
+                <div><label for="account-number-input" class="block text-sm font-medium text-gray-700">Nomor Akun</label><input type="text" id="account-number-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="account-name-input" class="block text-sm font-medium text-gray-700">Nama Akun</label><input type="text" id="account-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="account-type-select" class="block text-sm font-medium text-gray-700">Tipe Akun</label><select id="account-type-select" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"><option value="Aktiva">Aktiva</option><option value="Passiva">Passiva</option><option value="Pendapatan">Pendapatan</option><option value="HPP">HPP</option><option value="Biaya">Biaya</option></select></div>
+                <div><label for="parent-account-select" class="block text-sm font-medium text-gray-700">Akun Induk (Opsional)</label><select id="parent-account-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></select></div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-account-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Role Modal -->
+    <div id="user-role-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 id="user-role-modal-title" class="text-lg font-semibold text-gray-900">Ubah Role Pengguna</h3>
+                <button id="close-user-role-modal" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <form id="user-role-form" class="mt-4 space-y-4">
+                <input type="hidden" id="user-role-id-input">
+                <div><label class="block text-sm font-medium text-gray-700">Nama Pengguna</label><p id="user-role-name-text" class="mt-1 text-gray-900 font-semibold"></p></div>
+                <div>
+                    <label for="user-role-select" class="block text-sm font-medium text-gray-700">Role</label>
+                    <select id="user-role-select" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"><option value="admin">Admin</option><option value="manager">Manager</option><option value="akunting">Akunting</option><option value="member">Member</option></select>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-user-role-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan Perubahan</button></div>
+            </form>
+        </div>
+    </div>
 
     <script src="admin.js"></script>
 </body>

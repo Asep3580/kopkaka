@@ -127,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
             profileDetails.innerHTML = `
                 <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                     ${renderDetail('Nama Lengkap', profile.name)}
+                    ${renderDetail('Nomor Koperasi', profile.cooperative_number)}
                     ${renderDetail('Email', profile.email)}
-                    ${renderDetail('NIK Karyawan', profile.employee_id)}
                     ${renderDetail('Nomor KTP', profile.ktp_number)}
                     ${renderDetail('Perusahaan', profile.company_name)}
                     ${renderDetail('Jabatan', profile.position_name)}
