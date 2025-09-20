@@ -187,11 +187,11 @@
                         <div class="grid grid-cols-2 gap-4 mb-6 text-center">
                             <div id="result" class="bg-red-50 p-4 rounded-lg">
                                 <p class="text-sm text-gray-600">Estimasi Plafon</p>
-                                <p id="plafonText" class="text-2xl font-bold text-accent">Rp 0</p>
+                                <p id="plafonText" class="text-xl md:text-2xl font-bold text-accent">Rp 0</p>
                             </div>
                             <div id="cicilan" class="bg-red-50 p-4 rounded-lg">
                                 <p class="text-sm text-gray-600">Estimasi Cicilan</p>
-                                <p id="cicilanText" class="text-2xl font-bold text-accent">Rp 0</p>
+                                <p id="cicilanText" class="text-xl md:text-2xl font-bold text-accent">Rp 0</p>
                             </div>
                         </div>
 
@@ -379,40 +379,8 @@
                     <h2 class="text-3xl font-bold text-accent">Apa Kata Anggota Kami?</h2>
                     <p class="mt-2 text-gray-500">Pengalaman nyata dari keluarga besar KOPKAKA.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Testimonial 1 -->
-                    <div class="scroll-animate bg-gray-50 p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out">
-                        <p class="text-gray-600 italic">"Proses pinjaman di KOPKAKA sangat cepat dan bunganya ringan. Benar-benar membantu saat ada kebutuhan mendadak. Saya merasa lebih tenang karena ada koperasi yang bisa diandalkan."</p>
-                        <div class="flex items-center mt-6">
-                            <img class="h-12 w-12 rounded-full object-cover" src="https://i.pravatar.cc/150?img=1" alt="Foto Budi Santoso">
-                            <div class="ml-4">
-                                <p class="font-semibold text-gray-800">Budi Santoso</p>
-                                <p class="text-sm text-gray-500">Divisi Produksi</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Testimonial 2 -->
-                    <div class="scroll-animate bg-gray-50 p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 200ms;">
-                        <p class="text-gray-600 italic">"Setiap tahun selalu menantikan pembagian SHU. Rasanya senang sekali karena simpanan kita tidak hanya aman, tapi juga menghasilkan. Ini bukti nyata kalau koperasi ini dari kita untuk kita."</p>
-                        <div class="flex items-center mt-6">
-                            <img class="h-12 w-12 rounded-full object-cover" src="https://i.pravatar.cc/150?img=5" alt="Foto Siti Aminah">
-                            <div class="ml-4">
-                                <p class="font-semibold text-gray-800">Siti Aminah</p>
-                                <p class="text-sm text-gray-500">Departemen HRD</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Testimonial 3 -->
-                    <div class="scroll-animate bg-gray-50 p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 400ms;">
-                        <p class="text-gray-600 italic">"Lebih dari sekadar simpan pinjam, KOPKAKA ini seperti keluarga kedua di tempat kerja. Kita jadi lebih akrab dan saling bantu. Program-programnya juga sangat bermanfaat untuk semua anggota."</p>
-                        <div class="flex items-center mt-6">
-                            <img class="h-12 w-12 rounded-full object-cover" src="https://i.pravatar.cc/150?img=8" alt="Foto Eko Prasetyo">
-                            <div class="ml-4">
-                                <p class="font-semibold text-gray-800">Eko Prasetyo</p>
-                                <p class="text-sm text-gray-500">Tim IT</p>
-                            </div>
-                        </div>
-                    </div>
+                <div id="testimonials-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Testimonials will be loaded here by JavaScript -->
                 </div>
             </div>
         </section>
@@ -428,10 +396,11 @@
     <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const API_URL = 'http://localhost:3000/api';
             // --- Scroll Animation ---
             const scrollObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
-                    if (entry.isIntersecting) {
+                    if (entry.isIntersecting && !entry.target.classList.contains('opacity-100')) {
                         entry.target.classList.add('opacity-100', '!translate-y-0');
                         entry.target.classList.remove('opacity-0', 'translate-y-5');
                         observer.unobserve(entry.target); // Stop observing after animation
@@ -550,6 +519,59 @@
                 });
                 calculateSHU();
             }
+
+            // --- Load Public Testimonials ---
+            const loadPublicTestimonials = async () => {
+                const container = document.getElementById('testimonials-container');
+                if (!container) return;
+
+                container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Memuat testimoni...</p>';
+
+                try {
+                    // This public endpoint needs to be created.
+                    const response = await fetch(`${API_URL}/public/testimonials`);
+                    if (!response.ok) throw new Error('Gagal memuat data testimoni.');
+                    
+                    const testimonials = await response.json();
+                    container.innerHTML = ''; // Clear loading state
+
+                    if (testimonials.length === 0) {
+                        container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Belum ada testimoni.</p>';
+                        return;
+                    }
+
+                    testimonials.forEach((item, index) => {
+                        let photoUrl = 'https://i.pravatar.cc/150?u=' + encodeURIComponent(item.name); // Fallback avatar
+                        if (item.photo_url) {
+                            photoUrl = item.photo_url.startsWith('http') 
+                                ? item.photo_url 
+                                : `http://localhost:3000${item.photo_url}`;
+                        }
+
+                        const delay = index * 200;
+
+                        const testimonialCard = `
+                            <div class="scroll-animate bg-gray-50 p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: ${delay}ms;">
+                                <p class="text-gray-600 italic">"${item.text}"</p>
+                                <div class="flex items-center mt-6">
+                                    <img class="h-12 w-12 rounded-full object-cover" src="${photoUrl}" alt="Foto ${item.name}">
+                                    <div class="ml-4">
+                                        <p class="font-semibold text-gray-800">${item.name}</p>
+                                        <p class="text-sm text-gray-500">${item.division || 'Anggota'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', testimonialCard);
+                    });
+
+                    document.querySelectorAll('#testimonials-container .scroll-animate').forEach(el => scrollObserver.observe(el));
+                } catch (error) {
+                    console.error('Error loading testimonials:', error);
+                    container.innerHTML = `<p class="text-center text-red-500 col-span-full">${error.message}</p>`;
+                }
+            };
+            loadPublicTestimonials();
         });
     </script>
 
