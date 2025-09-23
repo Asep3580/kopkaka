@@ -50,7 +50,7 @@
         border-radius: 50%;
     }
     /* Gaya untuk tombol tenor yang aktif */
-    .tenor-btn.active {
+    .tenor-btn.active, .payment-tenor-btn.active {
         @apply bg-red-600 text-white border-red-600;
     }
     /* Styles for active sidebar links and content switching, used in admin.html and anggota.html */

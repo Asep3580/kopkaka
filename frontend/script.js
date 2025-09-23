@@ -13,6 +13,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const amortizationTableBody = document.getElementById('amortization-table-body');
     const amortizationTableFooter = document.getElementById('amortization-table-footer');
 
+    // --- FUNGSI KERANJANG (HANYA UNTUK UPDATE JUMLAH) ---
+    const updateCartCount = () => {
+        const cartCountElements = document.querySelectorAll('.cart-item-count');
+        if (cartCountElements.length === 0) return;
+
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+        cartCountElements.forEach(element => {
+            const displayCount = totalItems > 9 ? '9+' : totalItems;
+            element.textContent = displayCount;
+            if (totalItems > 0) {
+                element.classList.remove('hidden');
+            } else {
+                element.classList.add('hidden');
+            }
+        });
+    };
+
 
     // --- FUNGSI UTILITAS ---
     const formatCurrency = (value) => {
@@ -144,4 +163,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INISIALISASI ---
     // Panggil sekali saat halaman dimuat untuk menampilkan nilai awal
     calculateAndDisplay();
+    updateCartCount(); // Perbarui jumlah keranjang saat halaman utama dimuat
 });

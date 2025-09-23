@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (/[a-z]/.test(password)) score++;
         if (/[A-Z]/.test(password)) score++;
         if (/[0-9]/.test(password)) score++;
-        if (/[^a-zA-Z0-9]/.test(password)) score++;
+        if (/[@$!%*?&]/.test(password)) score++;
 
         if (password.length === 0) {
             return { text: '', color: '', width: '0%' };
@@ -207,6 +207,15 @@ document.addEventListener('DOMContentLoaded', () => {
             passwordError.classList.remove('hidden');
             passwordConfirmInput.focus(); // Fokus ke input konfirmasi
             return; // Hentikan eksekusi
+        }
+
+        // --- Validasi Kekuatan Password (Client-side) ---
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            passwordError.innerHTML = 'Password harus minimal 8 karakter dan mengandung:<ul class="list-disc list-inside mt-1"><li>Huruf besar (A-Z)</li><li>Huruf kecil (a-z)</li><li>Angka (0-9)</li><li>Simbol (@$!%*?&)</li></ul>';
+            passwordError.classList.remove('hidden');
+            passwordInput.focus();
+            return;
         }
 
         // 1. Buat objek FormData untuk mengirim data, termasuk file
