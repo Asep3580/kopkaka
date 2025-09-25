@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordStrengthBar = document.getElementById('password-strength-bar');
 
     const WILAYAH_API_URL = 'https://www.emsifa.com/api-wilayah-indonesia/api';
-    const API_URL = 'http://localhost:3000/api'; // URL API Koperasi
+    const API_URL = 'https://kopkaka.onrender.com/api'; // URL API Koperasi
 
     // --- Fungsi untuk mengambil data wilayah ---
     async function fetchAndPopulate(url, selectElement, defaultOptionText) {
@@ -366,4 +366,5 @@ document.addEventListener('DOMContentLoaded', () => {
             passwordError.classList.remove('hidden');
         }
     });
+
 });
