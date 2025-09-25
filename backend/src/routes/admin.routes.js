@@ -189,6 +189,8 @@ router.get('/sales/pending', authMiddleware, authorize(['approveLoanAccounting']
 router.get('/sales/:orderId/items', authMiddleware, authorize(['approveLoanAccounting']), getSaleItemsByOrderId);
 // Rute baru untuk verifikasi pesanan oleh kasir
 router.get('/sales/order/:orderId', authMiddleware, authorize(['approveLoanAccounting']), getSaleDetailsByOrderId);
+// Rute baru untuk membatalkan pesanan oleh admin/kasir
+router.put('/sales/:orderId/cancel', authMiddleware, authorize(['approveLoanAccounting']), require('../controllers/public.controller.js').cancelSaleOrder);
 
 // Rute baru untuk mengambil permintaan pengunduran diri
 router.get('/pending-resignations', authMiddleware, authorize(['admin']), getPendingResignations);
