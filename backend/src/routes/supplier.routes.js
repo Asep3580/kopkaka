@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getSuppliers, getSupplierById } = require('../controllers/supplier.controller.js');
+const { getSuppliers, getSupplierById, createSupplier } = require('../controllers/supplier.controller.js');
 const authMiddleware = require('../middleware/auth.middleware');
 const authorize = require('../middleware/role.middleware');
 
@@ -11,5 +11,8 @@ const allowedRoles = ['admin', 'akunting'];
 
 router.get('/suppliers', authMiddleware, authorize(allowedRoles), getSuppliers);
 router.get('/suppliers/:id', authMiddleware, authorize(allowedRoles), getSupplierById);
+
+// Tambahkan baris ini untuk menangani permintaan POST
+router.post('/suppliers', authMiddleware, authorize(['admin']), createSupplier);
 
 module.exports = router;
