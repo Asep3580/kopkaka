@@ -28,17 +28,6 @@ const getPartnerById = async (req, res) => {
     }
 };
 
-// @desc    Get active partners for public view
-// @route   GET /api/public/partners
-const getPublicPartners = async (req, res) => {
-    try {
-        const result = await pool.query("SELECT name, logo_url, website_url FROM partners WHERE is_active = TRUE ORDER BY display_order, name");
-        res.json(result.rows);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
 // @desc    Create a new partner
 // @route   POST /api/admin/partners
 const createPartner = async (req, res) => {
@@ -122,4 +111,4 @@ const deletePartner = async (req, res) => {
     }
 };
 
-module.exports = { getPartners, getPublicPartners, createPartner, updatePartner, deletePartner, getPartnerById };
+module.exports = { getPartners, createPartner, updatePartner, deletePartner, getPartnerById };
