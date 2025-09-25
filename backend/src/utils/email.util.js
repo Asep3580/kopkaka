@@ -1,23 +1,20 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-// Konfigurasi transporter Nodemailer
+// Konfigurasi transporter Nodemailer yang fleksibel
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: process.env.EMAIL_PORT || 587,
+    secure: (process.env.EMAIL_PORT === '465'), // true for 465, false for other ports
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
-    // Opsi TLS `rejectUnauthorized: false` digunakan untuk pengembangan lokal
-    // untuk mengizinkan sertifikat self-signed.
-    // PENTING: Opsi ini SANGAT TIDAK AMAN untuk produksi karena membuka celah
-    // untuk serangan man-in-the-middle. Hapus atau set ke `true` di produksi.
-    // Untuk pengembangan, pertimbangkan menggunakan layanan seperti Ethereal atau Mailtrap
-    // yang tidak memerlukan penonaktifan keamanan TLS.
-    ...(process.env.NODE_ENV === 'development' && {
-        // Untuk pengembangan lokal, jika Anda mengalami error sertifikat, gunakan:
-        // tls: { rejectUnauthorized: false }
-    })
+    // Opsi TLS ini penting untuk Gmail dan banyak provider lain
+    tls: {
+        // Jangan gagal pada sertifikat self-signed (berguna untuk beberapa setup lokal)
+        rejectUnauthorized: process.env.NODE_ENV === 'production'
+    }
 });
 
 const sendRegistrationEmail = async (to, name) => {
