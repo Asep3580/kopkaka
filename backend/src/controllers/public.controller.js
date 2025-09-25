@@ -16,8 +16,8 @@ const getPublicTestimonials = async (req, res) => {
 
 const getPublicPartners = async (req, res) => {
     try {
-        // Mengambil mitra yang aktif saja untuk ditampilkan di halaman utama
-        const result = await pool.query('SELECT name, logo_url, website_url FROM partners WHERE is_active = TRUE ORDER BY created_at DESC');
+        // Mengambil mitra yang aktif saja untuk ditampilkan di halaman utama, diurutkan berdasarkan display_order
+        const result = await pool.query('SELECT name, logo_url, website_url FROM partners WHERE is_active = TRUE ORDER BY display_order, name');
         res.json(result.rows);
     } catch (err) {
         console.error('Error fetching public partners:', err.message);
