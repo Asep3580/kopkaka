@@ -20,6 +20,7 @@ const userController = require('../controllers/user.controller');
 const announcementRoutes = require('./announcement.routes.js');
 const employerRoutes = require('./employer.routes.js');
 const partnerRoutes = require('./partner.routes.js');
+const supplierRoutes = require('./supplier.routes.js'); // 1. Impor router supplier
 
 const { 
     getSavings,
@@ -322,3 +323,4 @@ module.exports = router;
 router.use('/announcements', announcementRoutes);
 router.use('/employers', employerRoutes);
 router.use('/partners', partnerRoutes);
+router.use('/', supplierRoutes); // 2. Gunakan router supplier
