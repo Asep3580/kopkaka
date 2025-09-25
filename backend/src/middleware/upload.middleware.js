@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         let uploadPath = 'uploads/';
         // Bedakan tujuan berdasarkan nama field
-        if (file.fieldname === 'logo' || file.fieldname === 'partnerLogo') {
+        if (file.fieldname === 'logo' || file.fieldname === 'partnerLogo') { // Ditambahkan partnerLogo
             uploadPath = path.join(uploadPath, 'logo');
         } else if (file.fieldname === 'productImage') {
             uploadPath = path.join(uploadPath, 'products');
@@ -37,7 +37,7 @@ const storage = multer.diskStorage({
 // Filter file untuk hanya menerima gambar
 const fileFilter = (req, file, cb) => {
     // Hanya terima gambar untuk logo dan gambar produk
-    if (['logo', 'productImage', 'testimonialPhoto'].includes(file.fieldname) && !file.mimetype.startsWith('image/')) {
+    if (['logo', 'partnerLogo', 'productImage', 'testimonialPhoto'].includes(file.fieldname) && !file.mimetype.startsWith('image/')) {
         return cb(new Error('Hanya file gambar yang diizinkan!'), false);
     }
     cb(null, true);
