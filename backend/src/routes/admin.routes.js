@@ -14,6 +14,7 @@ const accountController = require('../controllers/account.controller'); // Diper
 const accountTypeController = require('../controllers/accounttype.controller');
 const supplierController = require('../controllers/supplier.controller');
 const membersController = require('../controllers/members.controller');
+const userController = require('../controllers/user.controller');
 
 // --- Sub-routers for specific admin resources ---
 const announcementRoutes = require('./announcement.routes.js');
@@ -54,7 +55,6 @@ const {
     createItem,
     updateItem,
     updateUser,
-    deleteUser,
     deleteItem,
     getAllUsers,
     getAllPermissions,
@@ -161,11 +161,11 @@ router.put('/loan-payments/:id/status', authMiddleware, authorize(['approveLoanA
 router.put('/loans/:id', authMiddleware, authorize(['manageUsers']), updateLoan);
 router.delete('/loans/:id', authMiddleware, authorize(['deleteData']), deleteLoan);
 router.get('/members/:id/loans', authMiddleware, authorize(['viewLoans']), getMemberLoanHistory);
-
 // User Management
-router.get('/users', authMiddleware, authorize(['manageUsers']), getAllUsers);
-router.put('/users/:id', authMiddleware, authorize(['manageUsers']), updateUser);
-router.delete('/users/:id', authMiddleware, authorize(['manageUsers']), deleteUser);
+router.get('/users', authMiddleware, authorize(['manageUsers']), userController.getUsers);
+router.post('/users', authMiddleware, authorize(['manageUsers']), userController.createUser);
+router.put('/users/:id', authMiddleware, authorize(['manageUsers']), userController.updateUser);
+router.delete('/users/:id', authMiddleware, authorize(['manageUsers']), userController.deleteUser);
 
 // Member Management (for Admin views like Approvals, Member List)
 router.get('/members', authMiddleware, authorize(['admin', 'akunting', 'manager']), membersController.getAllMembers);
