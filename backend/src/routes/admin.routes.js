@@ -198,11 +198,6 @@ router.get('/sales/order/:orderId', authMiddleware, authorize(['approveLoanAccou
 router.get('/pending-resignations', authMiddleware, authorize(['admin']), getPendingResignations);
 router.post('/process-resignation', authMiddleware, authorize(['admin']), processResignation);
 
-// --- Sub-routers ---
-router.use('/announcements', announcementRoutes);
-router.use('/employers', employerRoutes);
-router.use('/partners', partnerRoutes);
-
 // Logistics Card View
 // Menggunakan permission 'approveLoanAccounting' karena fitur ini adalah bagian dari akunting
 // dan permission ini sudah dimiliki oleh role 'admin' dan 'akunting'.
@@ -323,5 +318,10 @@ router.get('/master-products', authMiddleware, authorize(['viewSettings']), getM
 router.post('/master-products', authMiddleware, authorize(['viewSettings']), createMasterProduct);
 router.put('/master-products/:id', authMiddleware, authorize(['viewSettings']), updateMasterProduct);
 router.delete('/master-products/:id', authMiddleware, authorize(['deleteData']), deleteMasterProduct);
+
+// --- Sub-routers (should be at the end) ---
+router.use('/announcements', announcementRoutes);
+router.use('/employers', employerRoutes);
+router.use('/partners', partnerRoutes);
 
 module.exports = router;
