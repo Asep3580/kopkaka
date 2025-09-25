@@ -5517,7 +5517,10 @@ const renderCashFlowChart = (data) => {
                 'manage-accounts': () => { loadAccounts(); loadAccountTypes(); },
                 'manage-suppliers': () => { loadSuppliers(); loadMasterProducts(); masterProductOptionsCache = null; }, // Load both and clear cache
                 'manage-cooperative-profile': loadCooperativeProfile, 'manage-saving-account-mapping': loadSavingAccountMapping, 
-                'manage-loan-account-mapping': loadLoanAccountMapping, 'manage-shu-rules': loadShuRules, 'manage-announcements': loadAnnouncements, 'manage-partners': setupPartnerManagement, 'manage-products': () => { document.querySelector('.product-tab-btn[data-target="products-sembako-tab"]').click(); } }[targetId];
+                'manage-loan-account-mapping': loadLoanAccountMapping, 'manage-shu-rules': loadShuRules, 'manage-announcements': loadAnnouncements, 
+                'manage-partners': setupPartnerManagement, 
+                'manage-products': () => { document.querySelector('.product-tab-btn[data-target="products-sembako-tab"]').click(); } 
+            }[targetId];
             if (loadFunction) loadFunction();
         }
 
