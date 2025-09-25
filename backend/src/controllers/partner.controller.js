@@ -62,7 +62,8 @@ const updatePartner = async (req, res) => {
         if (req.file) {
             logo_url = req.file.path.replace(/\\/g, '/');
             if (oldLogoPath) {
-                fs.unlink(path.join(__dirname, '..', '..', oldLogoPath), err => {
+                // FIX: Construct the absolute path from the project root directory.
+                fs.unlink(path.join(process.cwd(), oldLogoPath), err => {
                     if (err) console.error("Gagal hapus logo lama:", err);
                 });
             }
@@ -98,7 +99,8 @@ const deletePartner = async (req, res) => {
         await client.query('COMMIT');
 
         if (logoPath) {
-            fs.unlink(path.join(__dirname, '..', '..', logoPath), err => {
+            // FIX: Construct the absolute path from the project root directory.
+            fs.unlink(path.join(process.cwd(), logoPath), err => {
                 if (err) console.error("Gagal hapus file logo:", err);
             });
         }
