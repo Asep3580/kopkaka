@@ -15,9 +15,8 @@ const transporter = nodemailer.createTransport({
     // Untuk pengembangan, pertimbangkan menggunakan layanan seperti Ethereal atau Mailtrap
     // yang tidak memerlukan penonaktifan keamanan TLS.
     ...(process.env.NODE_ENV === 'development' && {
-        tls: {
-            rejectUnauthorized: true
-        }
+        // Untuk pengembangan lokal, jika Anda mengalami error sertifikat, gunakan:
+        // tls: { rejectUnauthorized: false }
     })
 });
 
