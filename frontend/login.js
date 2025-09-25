@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('login-form');
     const errorMessage = document.getElementById('error-message');
-    const API_URL = 'http://localhost:3000/api';
+    const API_URL = 'https://kopkaka-backend.onrender.com/api'; // <-- UBAH INI
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
