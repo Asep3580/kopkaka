@@ -32,7 +32,7 @@ const {
     getActiveLoanForPayment,
     submitLoanPayment,
 } = require('../controllers/member.controller');
-const { upload } = require('../middleware/upload.middleware');
+const upload = require('../middleware/upload.middleware');
 
 // All routes in this file are protected and start with /api/member
 
