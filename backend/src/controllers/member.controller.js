@@ -1,6 +1,7 @@
 const pool = require('../../db');
 const bcrypt = require('bcryptjs');
 const { createNotification } = require('../utils/notification.util');
+const path = require('path');
 const fs = require('fs');
 
 /**
