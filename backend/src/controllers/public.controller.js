@@ -14,6 +14,17 @@ const getPublicTestimonials = async (req, res) => {
     }
 };
 
+const getPublicPartners = async (req, res) => {
+    try {
+        // Mengambil mitra yang aktif saja untuk ditampilkan di halaman utama
+        const result = await pool.query('SELECT name, logo_url, website_url FROM partners WHERE is_active = TRUE ORDER BY created_at DESC');
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching public partners:', err.message);
+        res.status(500).json({ error: 'Gagal mengambil data mitra.' });
+    }
+};
+
 const getPublicProducts = async (req, res) => {
     const { shop } = req.query;
 
@@ -174,6 +185,7 @@ const getPublicSaleDetailsByOrderId = async (req, res) => {
 
 module.exports = {
     getPublicTestimonials,
+    getPublicPartners,
     getPublicProducts,
     getPublicEmployers,
     getPublicPositions,
