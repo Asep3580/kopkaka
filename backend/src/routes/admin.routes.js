@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const excelUpload = multer({ storage: multer.memoryStorage() }); // Define multer for Excel in-memory processing
 const upload = require('../middleware/upload.middleware');
 const protect = require('../middleware/auth.middleware');
