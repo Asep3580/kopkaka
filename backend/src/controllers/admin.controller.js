@@ -872,54 +872,52 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { name, description, price, stock, shop_type } = req.body;
+    const client = await pool.connect();
 
     if (!name || price == null || stock == null || !shop_type) {
         return res.status(400).json({ error: 'Nama, harga, stok, dan tipe toko wajib diisi.' });
     }
 
     try {
+        await client.query('BEGIN');
+
+        const oldProductRes = await client.query('SELECT image_url FROM products WHERE id = $1', [id]);
+        const oldImageUrl = oldProductRes.rows[0]?.image_url;
+        let newImageUrl = oldImageUrl;
+
         if (req.file) {
-            // Jika ada file gambar baru diunggah
-            const newImageUrl = '/' + req.file.path.replace(/\\/g, '/');
-            
-            // Ambil URL gambar lama untuk dihapus
-            const oldProductRes = await pool.query('SELECT image_url FROM products WHERE id = $1', [id]);
-            const oldImageUrl = oldProductRes.rows[0]?.image_url;
-
-            const query = `
-                UPDATE products
-                SET name = $1, description = $2, price = $3, stock = $4, image_url = $5, shop_type = $6
-                WHERE id = $7 RETURNING *;
-            `;
-            const values = [name, description, price, stock, newImageUrl, shop_type, id];
-            const result = await pool.query(query, values);
-
-            if (result.rows.length === 0) return res.status(404).json({ error: 'Produk tidak ditemukan.' });
-
-            // Hapus file gambar lama setelah database berhasil diperbarui
-            // Hanya hapus file jika itu adalah file lokal (bukan URL eksternal)
-            if (oldImageUrl && oldImageUrl.startsWith('/uploads/') && oldImageUrl !== newImageUrl) {
-                const oldImagePath = path.join(__dirname, '..', '..', oldImageUrl.substring(1));
-                fs.unlink(oldImagePath, (err) => {
-                    if (err) console.error("Gagal menghapus gambar lama:", oldImagePath, err);
-                });
-            }
-            res.json(result.rows[0]);
-        } else {
-            // Jika tidak ada file gambar baru, update field lainnya
-            const query = `
-                UPDATE products
-                SET name = $1, description = $2, price = $3, stock = $4, shop_type = $5
-                WHERE id = $6 RETURNING *;
-            `;
-            const values = [name, description, price, stock, shop_type, id];
-            const result = await pool.query(query, values);
-            if (result.rows.length === 0) return res.status(404).json({ error: 'Produk tidak ditemukan.' });
-            res.json(result.rows[0]);
+            newImageUrl = '/' + req.file.path.replace(/\\/g, '/');
         }
+
+        const query = `
+            UPDATE products
+            SET name = $1, description = $2, price = $3, stock = $4, image_url = $5, shop_type = $6
+            WHERE id = $7 RETURNING *;
+        `;
+        const values = [name, description, price, stock, newImageUrl, shop_type, id];
+        const result = await client.query(query, values);
+
+        if (result.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ error: 'Produk tidak ditemukan.' });
+        }
+
+        // Hapus file gambar lama setelah database berhasil diperbarui
+        if (req.file && oldImageUrl && oldImageUrl.startsWith('/uploads/') && oldImageUrl !== newImageUrl) {
+            const oldImagePath = path.join(__dirname, '..', '..', oldImageUrl.substring(1));
+            fs.unlink(oldImagePath, (err) => {
+                if (err) console.error("Gagal menghapus gambar lama:", oldImagePath, err);
+            });
+        }
+
+        await client.query('COMMIT');
+        res.json(result.rows[0]);
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error(`Error updating product [${id}]:`, err.message);
         res.status(500).json({ error: 'Gagal memperbarui produk.' });
+    } finally {
+        client.release();
     }
 };
 
