@@ -3,7 +3,7 @@ const router = express.Router();
 const { getPartners, createPartner, updatePartner, deletePartner, getPartnerById } = require('../controllers/partner.controller');
 const auth = require('../middleware/auth.middleware');
 const authorize = require('../middleware/role.middleware');
-const { upload } = require('../middleware/upload.middleware');
+const upload = require('../middleware/upload.middleware');
 
 // This permission will be used for admin-only routes.
 // The `authorize` middleware allows the 'admin' role to pass any check.
@@ -19,5 +19,6 @@ router.route('/:id')
     .get(auth, authorize(viewPermission), getPartnerById)
     .put(auth, authorize(managePermission), upload.single('partnerLogo'), updatePartner)
     .delete(auth, authorize(managePermission), deletePartner);
+
 
 module.exports = router;
