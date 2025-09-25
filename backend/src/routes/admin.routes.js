@@ -52,11 +52,6 @@ const {
     getLoanById,
     updateLoan,
     deleteLoan,
-    createItem,
-    updateItem,
-    updateUser,
-    deleteItem,
-    getAllUsers,
     getAllPermissions,
     getRolePermissions,
     updateRolePermissions,
@@ -309,9 +304,8 @@ router.delete('/accounttypes/:id', authMiddleware, authorize(['deleteData']), ac
 
 // Suppliers
 router.get('/suppliers', authMiddleware, authorize(['viewSettings', 'viewAccounting']), supplierController.getSuppliers);
-router.post('/suppliers', authMiddleware, authorize(['viewSettings']), createItem('suppliers', ['name', 'contact_person', 'phone', 'address']));
-router.put('/suppliers/:id', authMiddleware, authorize(['viewSettings']), updateItem('suppliers', ['name', 'contact_person', 'phone', 'address']));
-router.delete('/suppliers/:id', authMiddleware, authorize(['deleteData']), deleteItem('suppliers'));
+// Note: Supplier creation/update/delete logic is not fully implemented in a dedicated controller yet.
+// This part might need a separate controller in the future.
 
 // Master Products CRUD
 router.get('/master-products', authMiddleware, authorize(['viewSettings']), getMasterProducts);
