@@ -2510,10 +2510,17 @@
                 <button id="close-cashier-verification-modal" class="text-gray-400 hover:text-gray-600">&times;</button>
             </div>
             <div class="mt-4">
-                <p class="text-sm text-gray-600 mb-4">Pindai atau masukkan data dari barcode QR yang ditunjukkan oleh anggota untuk memverifikasi pesanan.</p>
+                <p class="text-sm text-gray-600 mb-4">Pindai QR code dari aplikasi anggota atau tempel data barcode di bawah ini.</p>
+                
+                <!-- Area untuk QR Scanner -->
+                <div id="qr-reader" class="w-full max-w-sm mx-auto border-2 border-dashed rounded-lg mb-4"></div>
+                <div class="text-center mb-4">
+                    <button id="start-scan-btn" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">Mulai Pindai Kamera</button>
+                </div>
+
+                <div class="relative my-4"><div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300"></div></div><div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500">atau</span></div></div>
                 <div class="flex space-x-2">
-                    <input type="text" id="cashier-barcode-input" placeholder="Data dari barcode..." class="flex-grow block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
-                    <button id="cashier-verify-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Verifikasi</button>
+                    <input type="text" id="cashier-barcode-input" placeholder="Tempel data dari barcode di sini..." class="flex-grow block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
                 </div>
 
                 <!-- Verification Result -->

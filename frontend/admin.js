@@ -1850,6 +1850,13 @@ const renderCashFlowChart = (data) => {
         cashierResultContainer.classList.add('hidden');
         cashierErrorContainer.classList.add('hidden');
         currentVerifiedOrder = null;
+        
+        // Hentikan scanner jika sedang berjalan saat modal ditutup
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().catch(err => console.log("QR scanner stop failed on modal close, likely already stopped."));
+        }
+        document.getElementById('start-scan-btn').textContent = 'Mulai Pindai Kamera';
+        document.getElementById('start-scan-btn').disabled = false;
 
         modal.classList.remove('hidden');
         cashierBarcodeInp.focus();
@@ -1885,7 +1892,10 @@ const renderCashFlowChart = (data) => {
     const setupCashierVerificationModalListeners = () => {
         const modal = document.getElementById('cashier-verification-modal');
         if (!modal) return;
-
+        
+        // Inisialisasi scanner saat pertama kali listener di-setup
+        setupQrCodeScanner();
+        
         document.getElementById('close-cashier-verification-modal').addEventListener('click', () => modal.classList.add('hidden'));
 
         if (cashierVerifyBtn) {
