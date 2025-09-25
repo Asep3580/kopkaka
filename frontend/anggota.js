@@ -2084,6 +2084,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupWithdrawalForm();
         setupLoanPaymentForm();
         setupChangePasswordModal();
+        setupQuickAccessButtons();
         setupApplicationTabs();
         
         const setupTransactionPageListeners = () => {
