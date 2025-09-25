@@ -2073,6 +2073,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     
+    const setupQuickAccessButtons = () => {
+        const addSavingBtn = document.getElementById('add-voluntary-saving-btn');
+        const withdrawSavingBtn = document.getElementById('withdraw-savings-btn');
+
+        const handleQuickAccessClick = (targetTabId, targetFormId) => {
+            // 1. Beralih ke konten "Pengajuan Baru"
+            switchContent('application');
+
+            // 2. Aktifkan tab "Setoran" secara manual
+            document.querySelectorAll('.application-tab-btn').forEach(btn => {
+                const isTargetTab = btn.dataset.target === targetTabId;
+                btn.classList.toggle('border-red-500', isTargetTab);
+                btn.classList.toggle('text-red-600', isTargetTab);
+                btn.classList.toggle('border-transparent', !isTargetTab);
+                btn.classList.toggle('text-gray-500', !isTargetTab);
+            });
+            document.querySelectorAll('.application-tab-content').forEach(content => {
+                content.classList.toggle('hidden', content.id !== targetTabId);
+            });
+
+            // 3. Gulir ke formulir yang relevan
+            const formElement = document.getElementById(targetFormId);
+            formElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        addSavingBtn?.addEventListener('click', () => handleQuickAccessClick('application-saving-tab', 'saving-application-form'));
+        withdrawSavingBtn?.addEventListener('click', () => handleQuickAccessClick('application-saving-tab', 'withdrawal-form'));
+    };
+
     // --- INITIALIZATION ---
     const initializeApp = () => {
         if (!checkAuth()) return;
