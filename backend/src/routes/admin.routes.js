@@ -208,7 +208,9 @@ router.delete('/logistics-by-ref/:ref', authMiddleware, authorize(logisticsPermi
 // router.delete('/logistics_entries/:id', authMiddleware, authorize(logisticsPermission), deleteItem('logistics_entries'));
 
 // Company Profile Management
-router.get('/company-info', authMiddleware, authorize(['viewSettings']), getCompanyInfo);
+// Endpoint ini dibuat lebih permisif agar semua role staf (admin, akunting, manager) bisa memuat info header.
+// Otorisasi spesifik (viewSettings) hanya diperlukan untuk mengubah data.
+router.get('/company-info', authMiddleware, getCompanyInfo);
 router.put('/company-info', authMiddleware, authorize(['viewSettings']), upload.single('logo'), updateCompanyInfo);
 
 // Testimonial Management
