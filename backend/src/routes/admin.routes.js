@@ -15,6 +15,7 @@ const accountTypeController = require('../controllers/accounttype.controller');
 const supplierController = require('../controllers/supplier.controller');
 const membersController = require('../controllers/members.controller');
 const userController = require('../controllers/user.controller');
+const publicController = require('../controllers/public.controller');
 
 // --- Sub-routers for specific admin resources ---
 const announcementRoutes = require('./announcement.routes.js');
@@ -190,7 +191,7 @@ router.get('/sales/:orderId/items', authMiddleware, authorize(['approveLoanAccou
 // Rute baru untuk verifikasi pesanan oleh kasir
 router.get('/sales/order/:orderId', authMiddleware, authorize(['approveLoanAccounting']), getSaleDetailsByOrderId);
 // Rute baru untuk membatalkan pesanan oleh admin/kasir
-router.put('/sales/:orderId/cancel', authMiddleware, authorize(['approveLoanAccounting']), require('../controllers/public.controller.js').cancelSaleOrder);
+router.put('/sales/:orderId/cancel', authMiddleware, authorize(['approveLoanAccounting', 'viewDashboard']), publicController.cancelSaleOrder);
 
 // Rute baru untuk mengambil permintaan pengunduran diri
 router.get('/pending-resignations', authMiddleware, authorize(['admin']), getPendingResignations);

@@ -10,13 +10,13 @@ const publicRoutes = require('./public.routes.js');
 // This keeps server.js clean and centralizes routing logic.
 
 // Public-facing routes (e.g., for registration page data, public shop)
-router.use('/public', publicRoutes);
+router.use('/public', publicRoutes); // FIX: Register public routes
 
 // Authentication routes
 router.use('/auth', authRoutes);
 
 // Member-specific routes (requires member login)
-router.use('/member', memberRoutes);
+router.use('/member', memberRoutes); // FIX: Register member routes
 
 // Admin/staff routes (requires staff login)
 router.use('/admin', adminRoutes);
