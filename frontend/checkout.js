@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Ambil detail pesanan lengkap dari backend menggunakan orderId
-            const response = await fetch(`http://localhost:3000/api/public/sales/${orderId}`);
+            const response = await fetch(`https://kopkaka.onrender.com/api/public/sales/${orderId}`);
             const orderData = await response.json();
             if (!response.ok) throw new Error(orderData.error || 'Gagal memuat detail pesanan.');
 
@@ -90,4 +90,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial load
     loadOrderData();
+
 });
