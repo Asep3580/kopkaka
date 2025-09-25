@@ -1,0 +1,23 @@
+const express = require('express');
+const router = express.Router();
+
+const publicController = require('../controllers/public.controller');
+
+// This router handles all public-facing endpoints that do not require authentication.
+// It is mounted at /api/public in the main router.
+
+// Routes for the public-facing shop (toko.html, etc.)
+router.get('/products', publicController.getPublicProducts);
+
+// Routes for the registration page (registrasi.html)
+router.get('/testimonials', publicController.getPublicTestimonials);
+router.get('/employers', publicController.getPublicEmployers);
+router.get('/positions', publicController.getPublicPositions);
+router.get('/loan-terms', publicController.getPublicLoanTerms);
+router.get('/announcements', publicController.getPublicAnnouncements);
+
+// Routes for shop checkout logic
+router.get('/sales/:orderId', publicController.getPublicSaleDetailsByOrderId);
+router.post('/sales', publicController.createSaleOrder);
+
+module.exports = router;

@@ -214,7 +214,9 @@
                             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                                 <a href="#" data-target="approval-members-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-red-500 text-red-600">Pendaftaran Anggota</a>
                                 <a href="#" data-target="approval-savings-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pengajuan Simpanan</a>
+                                <a href="#" data-target="approval-withdrawals-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Penarikan Simpanan</a>
                                 <a href="#" data-target="approval-loans-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pengajuan Pinjaman</a>
+                                <a href="#" data-target="approval-loan-payments-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pembayaran Angsuran</a>
                                 <a href="#" data-target="approval-resignations-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pengunduran Diri</a>
                                 <a href="#" data-target="resignation-history-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Riwayat Pengunduran Diri</a>
                             </nav>
@@ -267,6 +269,28 @@
                         </div>
                     </div>
 
+                    <!-- Pending Withdrawals Tab -->
+                    <div id="approval-withdrawals-tab" class="approval-tab-content mt-6 hidden">
+                        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Pengajuan Penarikan Simpanan</h3></div>
+                            <div class="border-t border-gray-200 overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Anggota</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Koperasi</th>
+                                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Jumlah</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Pengajuan</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Keterangan</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pending-withdrawals-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Pending Loans Tab -->
                     <div id="approval-loans-tab" class="approval-tab-content mt-6 hidden">
                         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -286,6 +310,29 @@
                                         </tr>
                                     </thead>
                                     <tbody id="pending-loans-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Loan Payments Tab -->
+                    <div id="approval-loan-payments-tab" class="approval-tab-content mt-6 hidden">
+                        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Persetujuan Pembayaran Angsuran</h3></div>
+                            <div class="border-t border-gray-200 overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Anggota</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Pinjaman</th>
+                                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Angsuran Ke-</th>
+                                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Jumlah Bayar</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tgl Pengajuan</th>
+                                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Bukti</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pending-loan-payments-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -362,6 +409,7 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No.</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Koperasi</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">KTP</th>
@@ -523,6 +571,32 @@
                                 <tbody id="testimonials-table-body" class="bg-white divide-y divide-gray-200">
                                     <!-- Data will be populated by JS -->
                                 </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manage Partners Section -->
+                <div id="manage-partners-content" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Mitra</h2>
+                        <button class="back-to-settings-btn text-sm text-red-600 hover:underline">&larr; Kembali ke Pengaturan</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex justify-end mb-4">
+                            <button id="add-partner-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Mitra Baru</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Logo</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Mitra</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partners-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                             </table>
                         </div>
                     </div>
@@ -758,6 +832,14 @@
                             <h3 class="font-semibold text-lg text-gray-800">Kelola Testimoni</h3>
                             <p class="text-sm text-gray-500 mt-1 flex-grow">Atur testimoni yang ditampilkan di halaman utama.</p>
                         </div>
+                        <!-- Card Kelola Mitra -->
+                        <a href="#" data-target="manage-partners" class="settings-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer flex flex-col no-underline">
+                            <div class="w-12 h-12 rounded-full bg-lime-100 flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6 text-lime-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                            </div>
+                            <h3 class="font-semibold text-lg text-gray-800">Kelola Mitra</h3>
+                            <p class="text-sm text-gray-500 mt-1 flex-grow">Atur logo mitra yang berjalan di halaman utama.</p>
+                        </a>
                         <!-- Card Kelola Pengumuman -->
                         <div data-target="manage-announcements" class="settings-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
                             <div class="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center mb-4">
@@ -1606,22 +1688,50 @@
                 <!-- Manage Suppliers Section -->
                 <div id="manage-suppliers-content" class="content-section">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-semibold text-gray-800">Kelola Supplier</h2>
-                        <button id="show-add-supplier-form-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Supplier</button>
+                        <h2 class="text-2xl font-semibold text-gray-800">Supplier & Produk</h2>
+                        <button class="back-to-settings-btn text-sm text-red-600 hover:underline">&larr; Kembali ke Pengaturan</button>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Supplier</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kontak Person</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Telepon</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="suppliers-table-body" class="bg-white divide-y divide-gray-200"></tbody>
-                            </table>
+                    <!-- Tab Navigation -->
+                    <div class="border-b border-gray-200">
+                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                            <a href="#" data-target="suppliers-tab" class="supplier-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-red-500 text-red-600">Kelola Supplier</a>
+                            <a href="#" data-target="master-products-tab" class="supplier-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Kelola Item Produk</a>
+                        </nav>
+                    </div>
+
+                    <!-- Suppliers Tab Content -->
+                    <div id="suppliers-tab" class="supplier-tab-content mt-6">
+                        <div class="flex justify-end mb-4"><button id="show-add-supplier-form-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Supplier</button></div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No.</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Supplier</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kontak Person</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Telepon</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="suppliers-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Master Products Tab Content -->
+                    <div id="master-products-tab" class="supplier-tab-content mt-6 hidden">
+                        <div class="flex justify-end mb-4"><button id="add-master-product-btn" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Tambah Item Produk</button></div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No.</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Item (Barcode)</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Item</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unit Default</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th></tr>
+                                    </thead>
+                                    <tbody id="master-products-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2135,7 +2245,11 @@
     <!-- Template for new logistics line -->
     <template id="logistics-line-template">
         <tr class="logistics-line-row">
-            <td class="p-2"><input type="text" class="logistics-product-name w-full rounded-md border-gray-300 shadow-sm text-sm" required></td>
+            <td class="p-2">
+                <select class="logistics-product-select w-full rounded-md border-gray-300 shadow-sm text-sm" required>
+                    <option value="">Memuat produk...</option>
+                </select>
+            </td>
             <td class="p-2"><input type="number" step="any" class="logistics-quantity w-full rounded-md border-gray-300 shadow-sm text-sm" required></td>
             <td class="p-2"><input type="text" placeholder="Pcs, Kg" class="logistics-unit w-full rounded-md border-gray-300 shadow-sm text-sm" required></td>
             <td class="p-2"><input type="number" step="any" class="logistics-purchase-price w-full rounded-md border-gray-300 shadow-sm text-sm" required></td>
@@ -2153,6 +2267,21 @@
                 <div><label for="contact-person-input" class="block text-sm font-medium text-gray-700">Kontak Person</label><input type="text" id="contact-person-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
                 <div><label for="phone-input" class="block text-sm font-medium text-gray-700">Telepon</label><input type="text" id="phone-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
                 <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-supplier-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Master Product Modal -->
+    <div id="master-product-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b"><h3 id="master-product-modal-title" class="text-lg font-semibold text-gray-900"></h3><button id="close-master-product-modal" class="text-gray-400 hover:text-gray-600">&times;</button></div>
+            <form id="master-product-form" class="mt-4 space-y-4">
+                <input type="hidden" id="master-product-id-input">
+                <div><label for="item-number-input" class="block text-sm font-medium text-gray-700">Nomor Item (untuk Barcode)</label><input type="text" id="item-number-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="master-product-name-input" class="block text-sm font-medium text-gray-700">Nama Item Produk</label><input type="text" id="master-product-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="master-product-description-input" class="block text-sm font-medium text-gray-700">Deskripsi</label><textarea id="master-product-description-input" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></textarea></div>
+                <div><label for="default-unit-input" class="block text-sm font-medium text-gray-700">Unit Default (Contoh: Pcs, Kg, Liter)</label><input type="text" id="default-unit-input" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-master-product-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
             </form>
         </div>
     </div>
@@ -2297,6 +2426,52 @@
                     </div>
                 </div>
                 <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-announcement-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Partner Modal -->
+    <div id="partner-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 id="partner-modal-title" class="text-lg font-semibold text-gray-900"></h3>
+                <button id="close-partner-modal" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <form id="partner-form" class="mt-4 space-y-4">
+                <input type="hidden" id="partner-id-input">
+                <div><label for="partner-name-input" class="block text-sm font-medium text-gray-700">Nama Mitra</label><input type="text" id="partner-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="partner-website-input" class="block text-sm font-medium text-gray-700">Website URL (Opsional)</label><input type="url" id="partner-website-input" placeholder="https://..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div>
+                    <label for="partner-logo-input" class="block text-sm font-medium text-gray-700">Logo Mitra</label>
+                    <div class="mt-1 flex items-center space-x-4">
+                        <img id="partner-logo-preview" src="https://placehold.co/100x100?text=Logo" alt="Pratinjau Logo" class="h-16 w-16 object-contain rounded bg-gray-100 p-1 border">
+                        <input type="file" id="partner-logo-input" name="partnerLogo" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-partner-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Partner Modal -->
+    <div id="partner-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 id="partner-modal-title" class="text-lg font-semibold text-gray-900"></h3>
+                <button id="close-partner-modal" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <form id="partner-form" class="mt-4 space-y-4">
+                <input type="hidden" id="partner-id-input">
+                <div><label for="partner-name-input" class="block text-sm font-medium text-gray-700">Nama Mitra</label><input type="text" id="partner-name-input" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div><label for="partner-website-input" class="block text-sm font-medium text-gray-700">Website URL (Opsional)</label><input type="url" id="partner-website-input" placeholder="https://..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"></div>
+                <div>
+                    <label for="partner-logo-input" class="block text-sm font-medium text-gray-700">Logo Mitra</label>
+                    <div class="mt-1 flex items-center space-x-4">
+                        <img id="partner-logo-preview" src="https://placehold.co/100x100?text=Logo" alt="Pratinjau Logo" class="h-16 w-16 object-contain rounded bg-gray-100 p-1 border">
+                        <input type="file" id="partner-logo-input" name="partnerLogo" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-4"><button type="button" id="cancel-partner-modal" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Batal</button><button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Simpan</button></div>
             </form>
         </div>
     </div>

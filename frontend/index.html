@@ -11,6 +11,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tautan ke file CSS eksternal -->
     <link rel="stylesheet" href="style.css">
+    <style>
+        @keyframes infinite-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+        .animate-infinite-scroll {
+            animation: infinite-scroll 60s linear infinite;
+        }
+    </style>
 </head>
 <body class="bg-cream flex flex-col min-h-screen">
 
@@ -56,27 +65,41 @@
                 </button>
             </div>
         </nav>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-red-900">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#tentang" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Tentang Kami</a>
-                <a href="#manfaat" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Manfaat</a>
-                <div class="border-t border-red-800/50 my-2"></div>
-                <span class="px-3 py-2 text-white/70 text-xs font-semibold uppercase">Unit Usaha</span>
-                <a href="toko-sembako.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Sembako</a>
-                <a href="toko-elektronik.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Elektronik</a>
-                <a href="toko-aplikasi.html" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Toko Aplikasi</a>
-                <div class="border-t border-red-800/50 my-2"></div>
-                <a href="#pinjaman" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Pinjaman</a>
-                <a href="#shu" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">SHU</a>
-                <a href="#testimonials" class="mobile-menu-link text-white block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Testimoni</a>
-            </div>
-            <div class="px-4 py-3 border-t border-red-800">
-                <a href="login.html" class="block text-center w-full text-white hover:bg-red-800 transition-colors px-4 py-2 rounded-lg font-semibold border border-white/50">Masuk</a>
-                <a href="registrasi.html" class="mt-2 block text-center w-full bg-white text-red-900 hover:bg-gray-200 transition-colors px-4 py-2 rounded-lg font-semibold">Gabung Sekarang</a>
-            </div>
-        </div>
     </header>
+
+    <!-- Mobile Sidebar Menu -->
+    <div id="mobile-sidebar" class="fixed inset-y-0 left-0 w-64 bg-red-900 text-white p-4 space-y-6 transform -translate-x-full transition-transform duration-300 ease-in-out z-50 md:hidden">
+        <div class="flex items-center justify-between p-2 border-b border-red-800 pb-4">
+            <h2 class="text-xl font-bold">Menu</h2>
+            <button id="close-sidebar-button" class="text-white focus:outline-none">&times;</button>
+        </div>
+        <nav class="flex flex-col space-y-1">
+            <a href="#tentang" class="mobile-menu-link block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Tentang Kami</a>
+            <a href="#manfaat" class="mobile-menu-link block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Manfaat</a>
+            <!-- Mobile Dropdown Unit Usaha -->
+            <div>
+                <button id="mobile-toko-dropdown-button" class="w-full flex justify-between items-center px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">
+                    <span>Unit Usaha</span>
+                    <svg class="w-4 h-4 ml-1 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="mobile-toko-dropdown-menu" class="hidden mt-1 pl-6 space-y-1">
+                    <a href="toko-sembako.html" class="mobile-menu-link block px-3 py-2 rounded-md text-sm font-medium hover:bg-red-800">Toko Sembako</a>
+                    <a href="toko-elektronik.html" class="mobile-menu-link block px-3 py-2 rounded-md text-sm font-medium hover:bg-red-800">Toko Elektronik</a>
+                    <a href="toko-aplikasi.html" class="mobile-menu-link block px-3 py-2 rounded-md text-sm font-medium hover:bg-red-800">Toko Aplikasi</a>
+                </div>
+            </div>
+            <a href="#pinjaman" class="mobile-menu-link block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Pinjaman</a>
+            <a href="#shu" class="mobile-menu-link block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">SHU</a>
+            <a href="#testimonials" class="mobile-menu-link block px-3 py-2 rounded-md text-base font-medium hover:bg-red-800">Testimoni</a>
+        </nav>
+        <div class="px-2 py-3 border-t border-red-800 space-y-2">
+            <a href="login.html" class="block text-center w-full text-white hover:bg-red-800 transition-colors px-4 py-2 rounded-lg font-semibold border border-white/50">Masuk</a>
+            <a href="registrasi.html" class="block text-center w-full bg-white text-red-900 hover:bg-gray-200 transition-colors px-4 py-2 rounded-lg font-semibold">Gabung Sekarang</a>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile menu -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
 
     <main class="flex-grow">
         <section id="hero" class="relative bg-cover bg-center py-20 md:py-32" style="background-image: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop');">
@@ -94,6 +117,14 @@
 
         <section id="tentang" class="py-16 bg-cream">
             <div class="container mx-auto px-6">
+                <!-- Logo Cloud Section -->
+                <div class="mb-16 text-center">
+                    <h3 class="text-lg font-semibold text-gray-600">Dipercaya oleh Perusahaan Terkemuka</h3>
+                    <div id="logo-cloud-container" class="mt-8 w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear_gradient(to_right,transparent_0,_black_128px,_black_calc(100%-200px),transparent_100%)]">
+                        <ul id="partners-list-1" class="flex items-center justify-center md:justify-start [&_li]:mx-16 [&_img]:h-14 [&_img]:max-w-none animate-infinite-scroll"></ul>
+                        <ul id="partners-list-2" class="flex items-center justify-center md:justify-start [&_li]:mx-16 [&_img]:h-14 [&_img]:max-w-none animate-infinite-scroll" aria-hidden="true"></ul>
+                    </div>
+                </div>
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-bold text-accent">Visi & Misi Kami</h2>
                     <p class="mt-2 text-gray-500">Landasan dan tujuan kami dalam melayani anggota.</p>
@@ -169,6 +200,7 @@
                         </ul>
                     </div>
                 </div>
+
             </div>
         </section>
 
@@ -178,8 +210,14 @@
                     <h2 class="text-3xl font-bold text-accent">Aturan & Simulasi Pinjaman</h2>
                     <p class="mt-2 text-gray-500">Tujuan kami adalah membantu, bukan memberatkan.</p>
                 </div>
-                <div class="flex justify-center">
-                    <div class="w-full lg:w-3/5 bg-white p-8 rounded-lg shadow-md">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <!-- Gambar Ilustrasi -->
+                    <div class="scroll-animate opacity-0 transform translate-y-5 transition-all duration-700 ease-out rounded-lg shadow-md overflow-hidden">
+                        <img src="https://assets-a1.kompasiana.com/items/album/2016/05/16/keuangan-5739e6acf07e61cc0a631ea1.jpg" alt="Ilustrasi perencanaan keuangan" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- Kalkulator Simulasi -->
+                    <div class="w-full bg-white p-8 rounded-lg shadow-md scroll-animate opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 200ms;">
                         <h3 class="text-xl font-semibold mb-2 text-accent">Simulasi Pinjaman Interaktif</h3>
                         <p class="text-sm text-gray-500 mb-6">Geser slider atau isi kolom untuk melihat estimasi plafon dan cicilan. Plafon pinjaman dihitung sebesar <strong>1.5x dari total simpanan</strong> Anda.</p>
 
@@ -225,18 +263,18 @@
                 <!-- New section for Amortization Table -->
                 <div id="amortization-section" class="mt-8 bg-white p-8 rounded-lg shadow-md hidden">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-semibold text-accent">Rincian Cicilan Per Bulan</h3>
-                        <button id="download-excel-btn" class="btn-primary text-sm px-3 py-1 rounded-md hidden">Unduh Excel</button>
+                        <h3 class="text-xl font-semibold text-accent">Estimasi Rincian Cicilan</h3>
+                        <button id="download-amortization-excel-btn" class="bg-green-600 text-white text-sm px-3 py-2 rounded-md hover:bg-green-700">Unduh Excel</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bulan Ke-</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cicilan Pokok</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bunga</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cicilan</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa Pinjaman</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Bulan</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Cicilan Pokok</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Bunga</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cicilan</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa Pinjaman</th>
                                 </tr>
                             </thead>
                             <tbody id="amortization-table-body" class="bg-white divide-y divide-gray-200">
@@ -281,6 +319,13 @@
                         <p class="mt-4 text-sm italic text-gray-500">
                             Pembagian ini mencerminkan asas keadilan, di mana anggota yang aktif bertransaksi dan memiliki modal lebih besar akan mendapatkan porsi SHU yang lebih besar pula.
                         </p>
+                        <p class="mt-4 text-xs text-gray-500">
+                            Dasar aturan pembagian SHU ini mengacu pada <a href="https://www.kemhan.go.id/itjen/wp-content/uploads/2022/09/UU-Nomor-17-Tahun-2012_ttg-Koperasi.pdf" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:underline">Menurut Undang-Undang Nomor 17 Tahun 2012</a>.
+                        </p>
+                        <!-- Gambar Tambahan SHU -->
+                        <div class="mt-8 scroll-animate opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: 200ms;">
+                            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070&auto=format&fit=crop" alt="Ilustrasi pembagian hasil usaha" class="rounded-lg shadow-lg w-full h-auto max-h-[250px] object-cover">
+                        </div>
                     </div>
                     <!-- Simulasi SHU -->
                     <div class="w-full bg-gray-50 p-8 rounded-lg shadow-md">
@@ -368,7 +413,6 @@
                     <h3 class="text-xl font-semibold">Hubungi Kami</h3>
                     <p class="mt-2 opacity-80">Sekretariat Koperasi: Hotel Zodiak Kebon Kawung - Jl Kebon Kawung No. 54</p>
                     <p class="opacity-80">Email: admin@kopkaka.com</p>
-                    <p class="mt-2 opacity-80">Narahubung: Bapak Dulkifli Lubis (0813-9516-2709) / Bapak Rizal M Fikri (0896-9546-1286)</p>
                 </div>
             </div>
         </section>
@@ -400,186 +444,7 @@
     </footer>
 
     <!-- Tautan ke file JavaScript eksternal -->
-    <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const API_URL = 'http://localhost:3000/api';
-            // --- Scroll Animation ---
-            const scrollObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && !entry.target.classList.contains('opacity-100')) {
-                        entry.target.classList.add('opacity-100', '!translate-y-0');
-                        entry.target.classList.remove('opacity-0', 'translate-y-5');
-                        observer.unobserve(entry.target); // Stop observing after animation
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
-
-            document.querySelectorAll('.scroll-animate').forEach(el => scrollObserver.observe(el));
-
-            // --- Mobile Menu ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
-
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                });
-
-                // Close menu when a link is clicked
-                mobileMenuLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        mobileMenu.classList.add('hidden');
-                    });
-                });
-            }
-
-            // --- Toko Online Dropdown ---
-            const tokoDropdownButton = document.getElementById('toko-dropdown-button');
-            const tokoDropdownMenu = document.getElementById('toko-dropdown-menu');
-
-            if (tokoDropdownButton && tokoDropdownMenu) {
-                tokoDropdownButton.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Mencegah window click event terpicu
-                    tokoDropdownMenu.classList.toggle('hidden');
-                });
-
-                // Tutup dropdown jika diklik di luar
-                window.addEventListener('click', function(e) {
-                    if (!tokoDropdownButton.contains(e.target) && !tokoDropdownMenu.contains(e.target)) {
-                        tokoDropdownMenu.classList.add('hidden');
-                    }
-                });
-            }
-
-            // --- SHU Simulation ---
-            const shuContainer = document.getElementById('shu');
-            if (shuContainer) {
-                const shuInputs = shuContainer.querySelectorAll('.shu-input');
-                const shuTotalKoperasiEl = document.getElementById('shuTotalKoperasi');
-                const shuPersenJasaEl = document.getElementById('shuPersenJasa');
-                const shuPersenModalEl = document.getElementById('shuPersenModal');
-                const shuTotalTransaksiEl = document.getElementById('shuTotalTransaksi');
-                const shuTotalSimpananEl = document.getElementById('shuTotalSimpanan');
-                const shuTransaksiAndaEl = document.getElementById('shuTransaksiAnda');
-                const shuSimpananAndaEl = document.getElementById('shuSimpananAnda');
-
-                const shuJasaTextEl = document.getElementById('shuJasaText');
-                const shuModalTextEl = document.getElementById('shuModalText');
-                const shuTotalTextEl = document.getElementById('shuTotalText');
-
-                const formatCurrency = (value) => {
-                    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
-                };
-                
-                const formatNumber = (value) => {
-                    return value.toLocaleString('id-ID');
-                }
-
-                const parseNumber = (value) => {
-                    return Number(String(value).replace(/[^0-9]/g, ''));
-                };
-
-                const calculateSHU = () => {
-                    const totalSHU = parseNumber(shuTotalKoperasiEl.value);
-                    const persenJasa = parseFloat(shuPersenJasaEl.value) / 100;
-                    const persenModal = parseFloat(shuPersenModalEl.value) / 100;
-                    const totalTransaksi = parseNumber(shuTotalTransaksiEl.value);
-                    const totalSimpanan = parseNumber(shuTotalSimpananEl.value);
-                    const transaksiAnda = parseNumber(shuTransaksiAndaEl.value);
-                    const simpananAnda = parseNumber(shuSimpananAndaEl.value);
-
-                    if (isNaN(totalSHU) || isNaN(persenJasa) || isNaN(persenModal) || isNaN(totalTransaksi) || isNaN(totalSimpanan) || isNaN(transaksiAnda) || isNaN(simpananAnda)) {
-                        return;
-                    }
-
-                    const alokasiSHUJasa = totalSHU * persenJasa;
-                    const alokasiSHUModal = totalSHU * persenModal;
-
-                    const shuJasa = (totalTransaksi > 0) ? (transaksiAnda / totalTransaksi) * alokasiSHUJasa : 0;
-                    const shuModal = (totalSimpanan > 0) ? (simpananAnda / totalSimpanan) * alokasiSHUModal : 0;
-                    const totalSHUAnda = shuJasa + shuModal;
-
-                    shuJasaTextEl.textContent = formatCurrency(shuJasa);
-                    shuModalTextEl.textContent = formatCurrency(shuModal);
-                    shuTotalTextEl.textContent = formatCurrency(totalSHUAnda);
-                };
-
-                shuInputs.forEach(input => {
-                    if (input.getAttribute('inputmode') === 'numeric') {
-                        input.addEventListener('blur', (e) => {
-                            const value = parseNumber(e.target.value);
-                            e.target.value = isNaN(value) ? '' : formatNumber(value);
-                        });
-                    }
-                    input.addEventListener('input', calculateSHU);
-                });
-
-                shuInputs.forEach(input => {
-                     if (input.getAttribute('inputmode') === 'numeric') {
-                        const value = parseNumber(input.value);
-                        input.value = isNaN(value) ? '' : formatNumber(value);
-                    }
-                });
-                calculateSHU();
-            }
-
-            // --- Load Public Testimonials ---
-            const loadPublicTestimonials = async () => {
-                const container = document.getElementById('testimonials-container');
-                if (!container) return;
-
-                container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Memuat testimoni...</p>';
-
-                try {
-                    const response = await fetch(`${API_URL}/public/testimonials`); // This endpoint is defined in public.routes.js
-                    if (!response.ok) throw new Error('Gagal memuat data testimoni.');
-                    
-                    const testimonials = await response.json();
-                    container.innerHTML = ''; // Clear loading state
-
-                    if (testimonials.length === 0) {
-                        container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Belum ada testimoni.</p>';
-                        return;
-                    }
-
-                    testimonials.forEach((item, index) => {
-                        let photoUrl = 'https://i.pravatar.cc/150?u=' + encodeURIComponent(item.name); // Fallback avatar
-                        if (item.photo_url) {
-                            photoUrl = item.photo_url.startsWith('http') 
-                                ? item.photo_url 
-                                : `http://localhost:3000${item.photo_url}`;
-                        }
-
-                        const delay = index * 200;
-
-                        const testimonialCard = `
-                            <div class="scroll-animate bg-gray-50 p-8 rounded-lg shadow-md opacity-0 transform translate-y-5 transition-all duration-700 ease-out" style="transition-delay: ${delay}ms;">
-                                <p class="text-gray-600 italic">"${item.text}"</p>
-                                <div class="flex items-center mt-6">
-                                    <img class="h-12 w-12 rounded-full object-cover" src="${photoUrl}" alt="Foto ${item.name}">
-                                    <div class="ml-4">
-                                        <p class="font-semibold text-gray-800">${item.name}</p>
-                                        <p class="text-sm text-gray-500">${item.division || 'Anggota'}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        container.insertAdjacentHTML('beforeend', testimonialCard);
-                    });
-
-                    document.querySelectorAll('#testimonials-container .scroll-animate').forEach(el => scrollObserver.observe(el));
-                } catch (error) {
-                    console.error('Error loading testimonials:', error);
-                    container.innerHTML = `<p class="text-center text-red-500 col-span-full">${error.message}</p>`;
-                }
-            };
-            loadPublicTestimonials();
-        });
-    </script>
+    <script src="script.js" defer></script>
 
     <!-- Floating WhatsApp Icon -->
     <a href="https://wa.me/6285121003580" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-transform transform hover:scale-110 z-50">

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = 'http://localhost:3000/api'; // Sesuaikan jika URL API berbeda
+    const API_URL = 'https://kopkaka-backend.onrender.com/api'; // Ganti dengan URL backend Render Anda
 
     const productGrid = document.getElementById('product-grid');
     const pageTitle = document.querySelector('h1').textContent.toLowerCase();
@@ -78,14 +78,32 @@ document.addEventListener('DOMContentLoaded', () => {
         productToAdd = product;
         if (coopModal) {
             coopModal.classList.remove('hidden');
+            // Gunakan timeout singkat untuk memungkinkan properti display berubah sebelum memulai transisi
+            setTimeout(() => {
+                const modalContent = coopModal.querySelector('[role="dialog"]');
+                if (modalContent) {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }
+            }, 10);
             coopNumberInput.focus();
         }
     };
 
     const hideCoopModal = () => {
-        productToAdd = null;
-        if (coopNumberError) coopNumberError.classList.add('hidden');
-        if (coopModal) coopModal.classList.add('hidden');
+        if (coopModal) {
+            const modalContent = coopModal.querySelector('[role="dialog"]');
+            if (modalContent) {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+            }
+            // Tunggu transisi selesai sebelum menyembunyikan elemen
+            setTimeout(() => {
+                productToAdd = null;
+                if (coopNumberError) coopNumberError.classList.add('hidden');
+                coopModal.classList.add('hidden');
+            }, 200); // Sesuaikan dengan durasi transisi di HTML
+        }
     };
 
     const createProductCard = (product) => {
@@ -107,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data-product-name="${product.name}"
                     data-product-price="${product.price}"
                     data-product-stock="${product.stock}"
+                    data-product-shop-type="${product.shop_type}"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.922.778h9.246a1 1 0 00.97-.743l1.455-5.433A1 1 0 0016.22 0H4.342a1 1 0 00-.97.743L3.07 2.175A.997.997 0 002.148 3H1a1 1 0 100 2h.382l1.438 5.752A3 3 0 007.14 13h5.72a3 3 0 002.92-2.248L17.62 5H7.14a1 1 0 00-.922-.778L5.915 3H4.78a1 1 0 00-.97.743L3.38 4.917l-.305-1.222H1a1 1 0 00-1-1H.5a1 1 0 000 2h.538l.305 1.222a2.99 2.99 0 002.764 2.356h9.246a3 3 0 002.92-2.248L18.38 3H19a1 1 0 100-2h-2.78a3 3 0 00-2.92-2.248L12.86 0H4.342A3 3 0 001.42 2.248L.382 6.752A1 1 0 001.304 8H1a1 1 0 100-2h.382l.305-1.222A1 1 0 002.609 4H3V1zM7 15a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z" />
@@ -118,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : '';
 
         return `
-            <div class="bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-300 ${isOutOfStock ? 'opacity-60' : 'hover:shadow-xl hover:-translate-y-1'}">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-300 ${isOutOfStock ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-xl hover:-translate-y-1'}">
                 <div class="relative">
                     <img src="${imageUrl}" alt="${product.name}" class="w-full h-48 object-cover">
                     ${stockBadgeHtml}
@@ -144,8 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
         productGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">Memuat produk...</p>';
 
         try {
-            // Asumsi ada endpoint publik `/api/products`
-            const response = await fetch(`${API_URL}/products?shop=${type}`);
+            // Endpoint publik yang benar adalah /api/public/products
+            const response = await fetch(`${API_URL}/public/products?shop=${type}`);
             if (!response.ok) {
                 throw new Error('Gagal memuat produk dari server.');
             }
@@ -176,16 +195,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cari elemen tombol terdekat yang diklik
         const cartButton = e.target.closest('.add-to-cart-btn');
         if (cartButton) {
-            const cooperativeNumber = localStorage.getItem('cooperative_number');
             // Ambil data produk dari tombol yang diklik
-            const { productId, productName, productPrice, productStock } = cartButton.dataset;
+            const { productId, productName, productPrice, productStock, productShopType } = cartButton.dataset;
             const product = {
                 id: productId,
                 name: productName,
                 price: parseFloat(productPrice),
-                stock: parseInt(productStock, 10)
+                stock: parseInt(productStock, 10),
+                shopType: productShopType
             };
 
+            const cooperativeNumber = localStorage.getItem('cooperative_number');
             if (cooperativeNumber) {
                 // Jika nomor sudah ada, langsung tambahkan ke keranjang
                 addToCart(product);
@@ -215,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 // Panggil endpoint validasi di backend
                 const response = await fetch(`${API_URL}/auth/validate-coop-number`, {
-                    method: 'POST',
+                    method: 'POST', // Pastikan rute ini menunjuk ke auth.controller.js yang baru
                     headers: {
                         'Content-Type': 'application/json',
                     },

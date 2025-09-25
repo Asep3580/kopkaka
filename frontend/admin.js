@@ -79,10 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error('Unauthorized'); // Stop further execution
         }
 
+        // Handle 204 No Content response for successful DELETE requests
+        if (response.status === 204) {
+            return; // Return nothing, indicating success without a body
+        }
+
         // Automatically parse JSON and handle other errors generically.
         const responseData = await response.json().catch(() => {
-            // If response is not JSON (e.g., empty body on 204), use status text as the error.
-            throw new Error(response.statusText || 'Terjadi kesalahan pada server.');
+            throw new Error(`Gagal memproses respons dari server. Status: ${response.status}`);
         });
 
         if (!response.ok) {
@@ -537,7 +541,7 @@ const renderCashFlowChart = (data) => {
     const loadMembers = async (page = 1) => {
         const tableBody = document.getElementById('members-table-body');
         if (!tableBody) return;
-        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Memuat data anggota...</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-gray-500">Memuat data anggota...</td></tr>`;
 
         try {
             const filters = { ...currentMemberFilters, page, limit: 10 };
@@ -550,14 +554,17 @@ const renderCashFlowChart = (data) => {
 
             tableBody.innerHTML = '';
             if (memberOnlyList.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-gray-500">Tidak ada anggota yang cocok dengan filter.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-gray-500">Tidak ada anggota yang cocok dengan filter.</td></tr>`;
                 renderPagination('members-pagination-controls', { totalItems: 0 }, loadMembers);
                 return;
             }
 
-            memberOnlyList.forEach(member => {
+            const offset = (pagination.currentPage - 1) * pagination.limit;
+
+            memberOnlyList.forEach((member, index) => {
                 const row = tableBody.insertRow();
                 row.innerHTML = `
+                    <td class="px-6 py-4 text-sm text-gray-500">${offset + index + 1}</td>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">${member.name}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${member.cooperative_number || '-'}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${member.ktp_number || '-'}</td>
@@ -576,7 +583,7 @@ const renderCashFlowChart = (data) => {
             renderPagination('members-pagination-controls', pagination, loadMembers);
         } catch (error) {
             console.error('Error loading members:', error);
-            tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
         }
     };
     const membersTableBody = document.getElementById('members-table-body');
@@ -1364,15 +1371,113 @@ const renderCashFlowChart = (data) => {
         }
     };
 
+    const loadPendingDeposits = async () => {
+        const tableBody = document.getElementById('pending-savings-table-body');
+        if (!tableBody) return;
+        const colspan = 6;
+        tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-gray-500">Memuat pengajuan setoran...</td></tr>`;
+
+        try {
+            const responseData = await apiFetch(`${ADMIN_API_URL}/savings?status=Pending`);
+            const allItems = responseData.data || responseData;
+            // Filter for items that are NOT withdrawals
+            const items = allItems.filter(item => item.savingTypeName !== 'Penarikan Simpanan Sukarela');
+
+            tableBody.innerHTML = '';
+            if (items.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-gray-500">Tidak ada pengajuan setoran baru.</td></tr>`;
+                return;
+            }
+            items.forEach(item => {
+                const row = tableBody.insertRow();
+                let actionButtons = `<span class="text-xs text-gray-400">Tidak ada aksi</span>`;
+
+                if (['admin', 'akunting'].includes(userRole)) {
+                    actionButtons = `<button class="approve-btn text-green-600" data-id="${item.id}" data-type="savings" data-new-status="Approved">Setujui</button>
+                                     <button class="reject-btn text-red-600" data-id="${item.id}" data-type="savings" data-new-status="Rejected">Tolak</button>`;
+                }
+                
+                let proofHtml = '-';
+                if (item.proof_path) {
+                    const webPath = item.proof_path.replace(/\\/g, '/');
+                    const fullUrl = `${API_URL.replace('/api', '')}${webPath.startsWith('/') ? '' : '/'}${webPath}`;
+                    proofHtml = `
+                        <a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>
+                            <span class="ml-1">Lihat</span>
+                        </a>`;
+                }
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm text-gray-900">${item.memberName || 'N/A'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${item.cooperativeNumber || '-'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(item.amount)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${formatDate(item.date)}</td>
+                    <td class="px-6 py-4 text-sm text-center">${proofHtml}</td>
+                    <td class="px-6 py-4 text-sm font-medium space-x-2">${actionButtons}</td>
+                `;
+            });
+        } catch (error) {
+            console.error(`Error loading pending deposits:`, error);
+            tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+        }
+    };
+
+    const loadPendingWithdrawals = async () => {
+        const tableBody = document.getElementById('pending-withdrawals-table-body');
+        if (!tableBody) return;
+        const colspan = 6;
+        tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-gray-500">Memuat pengajuan penarikan...</td></tr>`;
+
+        try {
+            const responseData = await apiFetch(`${ADMIN_API_URL}/savings?status=Pending`);
+            const allItems = responseData.data || responseData;
+            // Filter for items that ARE withdrawals
+            const items = allItems.filter(item => item.savingTypeName === 'Penarikan Simpanan Sukarela');
+
+            tableBody.innerHTML = '';
+            if (items.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-gray-500">Tidak ada pengajuan penarikan baru.</td></tr>`;
+                return;
+            }
+            items.forEach(item => {
+                const row = tableBody.insertRow();
+                let actionButtons = `<span class="text-xs text-gray-400">Tidak ada aksi</span>`;
+
+                if (['admin', 'akunting'].includes(userRole)) {
+                    actionButtons = `<button class="approve-btn text-green-600" data-id="${item.id}" data-type="savings" data-new-status="Approved">Setujui</button>
+                                     <button class="reject-btn text-red-600" data-id="${item.id}" data-type="savings" data-new-status="Rejected">Tolak</button>`;
+                }
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm text-gray-900">${item.memberName || 'N/A'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${item.cooperativeNumber || '-'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(item.amount)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${formatDate(item.date)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${item.description || '-'}</td>
+                    <td class="px-6 py-4 text-sm font-medium space-x-2">${actionButtons}</td>
+                `;
+            });
+        } catch (error) {
+            console.error(`Error loading pending withdrawals:`, error);
+            tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+        }
+    };
+
     const loadPendingApprovals = async (type) => {
         const endpoint = type === 'savings' ? 'savings' : 'loans';
         const tableBody = document.getElementById(`pending-${endpoint}-table-body`);
-        if (!tableBody) return;
 
         const isLoan = type === 'loans';
         const url = isLoan ? `${ADMIN_API_URL}/pending-loans` : `${ADMIN_API_URL}/savings?status=Pending`;
-        const colspan = isLoan ? 8 : 6;
+        const colspan = isLoan ? 9 : 6;
 
+        if (!isLoan) {
+            // Savings are now handled by a more specific function.
+            return loadPendingDeposits();
+        }
+
+        if (!tableBody) return;
         try {
             const responseData = await apiFetch(url);
             const items = responseData.data || responseData;
@@ -1400,33 +1505,12 @@ const renderCashFlowChart = (data) => {
                         <td class="px-6 py-4 text-sm text-gray-500">${item.loanTypeName}</td>
                         <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(item.amount)}</td>
                         <td class="px-6 py-4 text-sm text-gray-500 text-center">${item.tenorMonths} bln</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                            <div>${item.bank_name || '-'}</div>
+                            <div class="font-mono text-xs">${item.bank_account_number || '-'}</div>
+                        </td>
                         <td class="px-6 py-4 text-sm text-gray-500">${formatDate(item.date)}</td>
                         <td class="px-6 py-4 text-sm text-gray-500">${item.status}</td>
-                        <td class="px-6 py-4 text-sm font-medium space-x-2">${actionButtons}</td>
-                    `;
-                } else { // Logic for Savings
-                    if (['admin', 'akunting'].includes(userRole)) {
-                        actionButtons = `<button class="approve-btn text-green-600" data-id="${item.id}" data-type="savings" data-new-status="Approved">Setujui</button>
-                                         <button class="reject-btn text-red-600" data-id="${item.id}" data-type="savings" data-new-status="Rejected">Tolak</button>`;
-                    }
-                    
-                    let proofHtml = '-';
-                    if (item.proof_path) {
-                        const webPath = item.proof_path.replace(/\\/g, '/');
-                        const fullUrl = `${API_URL.replace('/api', '')}${webPath.startsWith('/') ? '' : '/'}${webPath}`;
-                        proofHtml = `
-                            <a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>
-                                <span class="ml-1">Lihat</span>
-                            </a>`;
-                    }
-
-                    row.innerHTML = `
-                        <td class="px-6 py-4 text-sm text-gray-900">${item.memberName || 'N/A'}</td>
-                        <td class="px-6 py-4 text-sm text-gray-500">${item.cooperativeNumber || '-'}</td>
-                        <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(item.amount)}</td>
-                        <td class="px-6 py-4 text-sm text-gray-500">${formatDate(item.date)}</td>
-                        <td class="px-6 py-4 text-sm text-center">${proofHtml}</td>
                         <td class="px-6 py-4 text-sm font-medium space-x-2">${actionButtons}</td>
                     `;
                 }
@@ -1434,6 +1518,46 @@ const renderCashFlowChart = (data) => {
         } catch (error) {
             console.error(`Error loading pending ${type}:`, error);
             tableBody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+        }
+    };
+
+    const loadPendingLoanPayments = async () => {
+        const tableBody = document.getElementById('pending-loan-payments-table-body');
+        if (!tableBody) return;
+        tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">Memuat pembayaran tertunda...</td></tr>`;
+    
+        try {
+            const payments = await apiFetch(`${ADMIN_API_URL}/pending-loan-payments`);
+            tableBody.innerHTML = '';
+            if (payments.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-500">Tidak ada pembayaran yang menunggu persetujuan.</td></tr>`;
+                return;
+            }
+    
+            payments.forEach(payment => {
+                const row = tableBody.insertRow();
+                const proofHtml = payment.proof_path
+                    ? `<a href="${API_URL.replace('/api', '')}/${payment.proof_path.replace(/\\/g, '/')}" target="_blank" class="text-blue-600 hover:underline">Lihat</a>`
+                    : '-';
+                
+                const actionButtons = `
+                    <button class="approve-btn text-green-600" data-id="${payment.id}" data-type="loan-payments" data-new-status="Approved">Setujui</button>
+                    <button class="reject-btn text-red-600" data-id="${payment.id}" data-type="loan-payments" data-new-status="Rejected">Tolak</button>
+                `;
+    
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm text-gray-900">${payment.member_name}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${payment.loan_id}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 text-center">${payment.installment_number}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(payment.amount_paid)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${formatDate(payment.payment_date)}</td>
+                    <td class="px-6 py-4 text-sm text-center">${proofHtml}</td>
+                    <td class="px-6 py-4 text-sm font-medium space-x-2">${actionButtons}</td>
+                `;
+            });
+        } catch (error) {
+            console.error('Error loading pending loan payments:', error);
+            tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
         }
     };
 
@@ -1451,7 +1575,12 @@ const renderCashFlowChart = (data) => {
                 body: JSON.stringify({ status: newStatus }),
             });
             alert('Status berhasil diperbarui.');
-            loadPendingApprovals(type); // Muat ulang daftar
+            if (type === 'loans') {
+                loadPendingApprovals(type); // Muat ulang daftar pinjaman
+            } else if (type === 'savings') {
+                loadPendingDeposits();
+                loadPendingWithdrawals();
+            }
         } catch (error) {
             alert(`Terjadi kesalahan: ${error.message}`);
         }
@@ -2047,7 +2176,7 @@ const renderCashFlowChart = (data) => {
                 const items = await apiFetch(finalEndpoint);
                 itemsCache = items; // Simpan item ke cache
                 tableBody.innerHTML = '';
-                items.forEach(item => tableBody.insertAdjacentHTML('beforeend', renderRow(item, userRole)));
+                items.forEach((item, index) => tableBody.insertAdjacentHTML('beforeend', renderRow(item, userRole, index)));
             } catch (error) {
                 console.error(`Error loading ${title}:`, error);
                 tableBody.innerHTML = `<tr><td colspan="${fields.length + 1}" class="text-center py-4 text-red-500">${error.message || 'Gagal memuat data.'}</td></tr>`;
@@ -2449,8 +2578,9 @@ const renderCashFlowChart = (data) => {
         endpoint: 'suppliers',
         title: 'Supplier',
         fields: ['name', 'contact_person', 'phone'],
-        renderRow: (item, role) => `
+        renderRow: (item, role, index) => `
             <tr>
+                <td class="px-6 py-4 text-sm text-gray-500">${index + 1}</td>
                 <td class="px-6 py-4 text-sm text-gray-900">${item.name}</td>
                 <td class="px-6 py-4 text-sm text-gray-500">${item.contact_person || '-'}</td>
                 <td class="px-6 py-4 text-sm text-gray-500">${item.phone || '-'}</td>
@@ -2460,6 +2590,29 @@ const renderCashFlowChart = (data) => {
                 </td>
             </tr>`
     });
+
+    // 7.1. Kelola Item Produk (Master)
+    const loadMasterProducts = setupSimpleCrud({
+        modal: document.getElementById('master-product-modal'),
+        form: document.getElementById('master-product-form'),
+        tableBody: document.getElementById('master-products-table-body'),
+        addBtn: document.getElementById('add-master-product-btn'),
+        endpoint: 'master-products',
+        title: 'Item Produk',
+        fields: ['item_number', 'name', 'description', 'default_unit'],
+        renderRow: (item, role, index) => `
+            <tr>
+                <td class="px-6 py-4 text-sm text-gray-500">${index + 1}</td>
+                <td class="px-6 py-4 text-sm font-mono text-gray-900">${item.item_number || '-'}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">${item.name}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">${item.default_unit || '-'}</td>
+                <td class="px-6 py-4 text-sm font-medium space-x-2">
+                    <button class="edit-item-produk-btn text-indigo-600 hover:text-indigo-900" data-id="${item.id}">Ubah</button>
+                    ${role === 'admin' ? `<button class="delete-item-produk-btn text-red-600 hover:text-red-900" data-id="${item.id}">Hapus</button>` : ''}
+                </td>
+            </tr>`
+    });
+
 
     // 8. Kelola Pengumuman
     const loadAnnouncements = setupSimpleCrud({
@@ -2490,6 +2643,111 @@ const renderCashFlowChart = (data) => {
             </tr>`;
         },
     });
+
+    // --- FUNGSI UNTUK KELOLA MITRA ---
+    const setupPartnerManagement = () => {
+        const modal = document.getElementById('partner-modal');
+        const form = document.getElementById('partner-form');
+        const tableBody = document.getElementById('partners-table-body');
+        const addBtn = document.getElementById('add-partner-btn');
+        let partnersCache = []; // Cache untuk menyimpan data mitra
+    
+        if (!modal || !form || !tableBody || !addBtn) return;
+    
+        const loadPartners = async () => {
+            tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">Memuat mitra...</td></tr>`;
+            try {
+                const partners = await apiFetch(`${ADMIN_API_URL}/partners`);
+                partnersCache = partners; // Simpan data ke cache
+    
+                tableBody.innerHTML = '';
+                if (partners.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">Belum ada mitra.</td></tr>`;
+                    return;
+                }
+    
+                partners.forEach(item => {
+                    const logoUrl = item.logo_url.startsWith('http') ? item.logo_url : `${API_URL.replace('/api', '')}/${item.logo_url}`;
+                    const statusClass = item.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+                    const statusText = item.is_active ? 'Aktif' : 'Nonaktif';
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td class="px-6 py-4"><img src="${logoUrl}" alt="${item.name}" class="h-10 w-auto object-contain"></td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900">${item.name}</td>
+                        <td class="px-6 py-4 text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${statusText}</span></td>
+                        <td class="px-6 py-4 text-sm font-medium space-x-2">
+                            <button class="edit-partner-btn text-indigo-600 hover:text-indigo-900" data-id="${item.id}">Ubah</button>
+                            <button class="delete-partner-btn text-red-600 hover:text-red-900" data-id="${item.id}">Hapus</button>
+                        </td>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading partners:', error);
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-500">${error.message}</td></tr>`;
+            }
+        };
+    
+        const showPartnerModal = (partner = null) => {
+            form.reset();
+            document.getElementById('partner-id-input').value = '';
+            const logoPreview = document.getElementById('partner-logo-preview');
+            const logoInput = document.getElementById('partner-logo-input');
+    
+            if (partner) {
+                document.getElementById('partner-modal-title').textContent = 'Ubah Mitra';
+                document.getElementById('partner-id-input').value = partner.id;
+                document.getElementById('partner-name-input').value = partner.name;
+                document.getElementById('partner-website-input').value = partner.website_url || '';
+                logoPreview.src = partner.logo_url.startsWith('http') ? partner.logo_url : `${API_URL.replace('/api', '')}/${partner.logo_url}`;
+                logoInput.required = false; // Logo tidak wajib saat mengubah
+            } else {
+                document.getElementById('partner-modal-title').textContent = 'Tambah Mitra Baru';
+                logoPreview.src = 'https://placehold.co/100x100?text=Logo';
+                logoInput.required = true; // Logo wajib saat menambah
+            }
+            modal.classList.remove('hidden');
+        };
+    
+        addBtn.addEventListener('click', () => showPartnerModal());
+        document.getElementById('close-partner-modal').addEventListener('click', () => modal.classList.add('hidden'));
+        document.getElementById('cancel-partner-modal').addEventListener('click', () => modal.classList.add('hidden'));
+    
+        document.getElementById('partner-logo-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => { document.getElementById('partner-logo-preview').src = event.target.result; };
+                reader.readAsDataURL(file);
+            }
+        });
+    
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('partner-id-input').value;
+            const formData = new FormData();
+            formData.append('name', document.getElementById('partner-name-input').value);
+            formData.append('website_url', document.getElementById('partner-website-input').value);
+
+            const logoInput = document.getElementById('partner-logo-input');
+            if (logoInput.files[0]) {
+                formData.append('partnerLogo', logoInput.files[0]);
+            }
+    
+            const url = id ? `${ADMIN_API_URL}/partners/${id}` : `${ADMIN_API_URL}/partners`;
+            const method = id ? 'PUT' : 'POST';
+    
+            try { await apiFetch(url, { method, body: formData }); modal.classList.add('hidden'); loadPartners(); } catch (error) { alert(`Terjadi kesalahan: ${error.message}`); }
+        });
+    
+        tableBody.addEventListener('click', async (e) => {
+            const button = e.target;
+            const id = button.dataset.id;
+            if (button.matches('.edit-partner-btn')) { const partner = partnersCache.find(p => p.id.toString() === id); if (partner) showPartnerModal(partner); }
+            if (button.matches('.delete-partner-btn')) { if (confirm('Anda yakin ingin menghapus mitra ini?')) { try { await apiFetch(`${ADMIN_API_URL}/partners/${id}`, { method: 'DELETE' }); loadPartners(); } catch (error) { alert(`Terjadi kesalahan: ${error.message}`); } } }
+        });
+    
+        loadPartners();
+    };
 
     // --- FUNGSI UNTUK UPDATE TAMPILAN HEADER (LOGO) ---
     const updateHeaderDisplay = (info) => {
@@ -4590,7 +4848,7 @@ const renderCashFlowChart = (data) => {
             const linesBody = document.getElementById('logistics-lines-body');
             linesBody.innerHTML = '';
             for (const product of products) {
-                addLogisticsLine();
+                await addLogisticsLine();
                 const lastRow = linesBody.lastElementChild;
                 lastRow.querySelector('.logistics-product-name').value = product.productName;
                 lastRow.querySelector('.logistics-quantity').value = product.quantity;
@@ -4740,12 +4998,39 @@ const renderCashFlowChart = (data) => {
         }
     };
 
-    const addLogisticsLine = () => {
+    let masterProductOptionsCache = null;
+    const getMasterProductOptions = async () => {
+        if (masterProductOptionsCache) {
+            return masterProductOptionsCache;
+        }
+        try {
+            const products = await apiFetch(`${ADMIN_API_URL}/master-products`);
+            masterProductOptionsCache = '<option value="">-- Pilih Item Produk --</option>' + products.map(p => 
+                `<option value="${p.id}" data-unit="${p.default_unit || ''}">${p.name} (${p.item_number || 'No-Item#'})</option>`
+            ).join('');
+            return masterProductOptionsCache;
+        } catch (error) {
+            console.error('Gagal memuat master produk untuk dropdown:', error);
+            return '<option value="">Gagal memuat produk</option>';
+        }
+    };
+
+    const addLogisticsLine = async () => {
         const template = document.getElementById('logistics-line-template');
         const linesBody = document.getElementById('logistics-lines-body');
         if (!template || !linesBody) return;
         const clone = template.content.cloneNode(true);
+        const selectEl = clone.querySelector('.logistics-product-select');
+        selectEl.innerHTML = await getMasterProductOptions();
         linesBody.appendChild(clone);
+
+        // Auto-fill unit when a product is selected
+        selectEl.addEventListener('change', (e) => {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const unit = selectedOption.dataset.unit || '';
+            const row = e.target.closest('.logistics-line-row');
+            row.querySelector('.logistics-unit').value = unit;
+        });
     };
 
     const setupLogisticsModal = () => {
@@ -4781,13 +5066,13 @@ const renderCashFlowChart = (data) => {
             const isEditing = document.getElementById('logistics-id-input').value === 'editing';
             const originalRef = form.dataset.originalRef;
             const products = Array.from(linesBody.querySelectorAll('.logistics-line-row')).map(row => ({
-                product_name: row.querySelector('.logistics-product-name').value,
+                master_product_id: row.querySelector('.logistics-product-select').value,
                 quantity: row.querySelector('.logistics-quantity').value,
                 unit: row.querySelector('.logistics-unit').value,
                 purchase_price: row.querySelector('.logistics-purchase-price').value,
             }));
 
-            if (products.some(p => !p.product_name || !p.quantity || !p.unit || !p.purchase_price)) {
+            if (products.some(p => !p.master_product_id || !p.quantity || !p.unit || !p.purchase_price)) {
                 alert('Harap isi semua kolom untuk setiap baris produk.');
                 return;
             }
@@ -5164,7 +5449,7 @@ const renderCashFlowChart = (data) => {
     });
 
     // --- FUNGSI UNTUK NAVIGASI KONTEN UTAMA ---
-    const switchContent = (targetId, params = {}) => {
+    const switchContent = (targetId, params = {}, clickedLink = null) => {
         contentSections.forEach(section => {
             section.classList.remove('active');
         });
@@ -5174,8 +5459,15 @@ const renderCashFlowChart = (data) => {
         if (targetSection) {
             targetSection.classList.add('active');
         }
-        const pageTitle = document.querySelector(`.sidebar-link[data-target="${targetId}"] span`)?.textContent || 'Beranda';
-        document.getElementById('page-title').textContent = pageTitle;
+        
+        // --- FIX: Ambil judul halaman dari elemen yang diklik ---
+        let pageTitleText = 'Beranda';
+        if (clickedLink) {
+            // Kartu biasanya punya <h3>, link sidebar punya <span>
+            const titleElement = clickedLink.querySelector('h3, span');
+            if (titleElement) pageTitleText = titleElement.textContent.trim();
+        }
+        document.getElementById('page-title').textContent = pageTitleText;
 
         if (targetId === 'admin-profile') loadAdminProfileData();
         // Panggil fungsi load data yang sesuai
@@ -5221,9 +5513,10 @@ const renderCashFlowChart = (data) => {
             const loadFunction = { 
                 'manage-employers': loadEmployers, 'manage-positions': loadPositions, 'manage-saving-types': loadSavingTypes, 
                 'manage-loan-types': loadLoanTypes, 'manage-loan-terms': loadLoanTerms, 
-                'manage-accounts': () => { loadAccounts(); loadAccountTypes(); }, // Load both when this page is shown
-                'manage-suppliers': loadSuppliers, 'manage-cooperative-profile': loadCooperativeProfile, 'manage-saving-account-mapping': loadSavingAccountMapping, 
-                'manage-loan-account-mapping': loadLoanAccountMapping, 'manage-products': () => {}, 'manage-shu-rules': loadShuRules, 'manage-announcements': loadAnnouncements }[targetId];
+                'manage-accounts': () => { loadAccounts(); loadAccountTypes(); },
+                'manage-suppliers': () => { loadSuppliers(); loadMasterProducts(); masterProductOptionsCache = null; }, // Load both and clear cache
+                'manage-cooperative-profile': loadCooperativeProfile, 'manage-saving-account-mapping': loadSavingAccountMapping, 
+                'manage-loan-account-mapping': loadLoanAccountMapping, 'manage-shu-rules': loadShuRules, 'manage-announcements': loadAnnouncements, 'manage-partners': setupPartnerManagement, 'manage-products': () => { document.querySelector('.product-tab-btn[data-target="products-sembako-tab"]').click(); } }[targetId];
             if (loadFunction) loadFunction();
         }
 
@@ -5311,7 +5604,7 @@ const renderCashFlowChart = (data) => {
             e.preventDefault();
             const targetId = link.dataset.target;
             if (targetId) {
-                switchContent(targetId);
+                switchContent(targetId, {}, link); // Pass the clicked link element
                 // Tutup sidebar di mode mobile setelah navigasi
                 if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
                     toggleMenu();
@@ -5337,14 +5630,34 @@ const renderCashFlowChart = (data) => {
             if (targetId === 'approval-members-tab') {
                 renderPendingMembers();
             } else if (targetId === 'approval-savings-tab') {
-                loadPendingApprovals('savings');
+                loadPendingDeposits();
             } else if (targetId === 'approval-loans-tab') {
                 loadPendingApprovals('loans');
+            } else if (targetId === 'approval-withdrawals-tab') {
+                loadPendingWithdrawals();
             } else if (targetId === 'approval-resignations-tab') {
                 loadPendingResignations();
+            } else if (targetId === 'approval-loan-payments-tab') {
+                loadPendingLoanPayments();
             } else if (targetId === 'resignation-history-tab') {
                 loadResignationHistory();
             }
+        });
+    });
+
+    // --- FUNGSI UNTUK TAB DI HALAMAN KELOLA SUPPLIER ---
+    const supplierTabBtns = document.querySelectorAll('.supplier-tab-btn');
+    const supplierTabContents = document.querySelectorAll('.supplier-tab-content');
+
+    supplierTabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = btn.dataset.target;
+            supplierTabBtns.forEach(b => b.classList.remove('border-red-500', 'text-red-600'));
+            supplierTabBtns.forEach(b => b.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300'));
+            btn.classList.add('border-red-500', 'text-red-600');
+            btn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            supplierTabContents.forEach(content => content.classList.toggle('hidden', content.id !== targetId));
         });
     });
 
@@ -5420,8 +5733,13 @@ const renderCashFlowChart = (data) => {
     });
 
     // Tambahkan event listener untuk tombol persetujuan simpanan dan pinjaman
-    document.getElementById('pending-savings-table-body')?.addEventListener('click', handleGenericApproval);
+    const pendingSavingsTableBody = document.getElementById('pending-savings-table-body');
+    if (pendingSavingsTableBody) pendingSavingsTableBody.addEventListener('click', handleGenericApproval);
+    const withdrawalsTableBody = document.getElementById('pending-withdrawals-table-body');
+    if (withdrawalsTableBody) withdrawalsTableBody.addEventListener('click', handleGenericApproval);
+
     document.getElementById('pending-loans-table-body')?.addEventListener('click', handleGenericApproval);
+    document.getElementById('pending-loan-payments-table-body')?.addEventListener('click', handleGenericApproval);
 
     // Tambahkan penutup untuk modal user-role
     document.getElementById('close-edit-user-modal')?.addEventListener('click', () => document.getElementById('edit-user-modal').classList.add('hidden'));

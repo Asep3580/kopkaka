@@ -138,29 +138,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const cart = getCart();
             const coopNumber = localStorage.getItem('cooperative_number');
-            const userName = localStorage.getItem('cooperative_user_name');
 
-            if (cart.length === 0) { alert('Keranjang Anda kosong.'); return; }
+            if (cart.length === 0) {
+                alert('Keranjang Anda kosong.');
+                return;
+            }
 
-            if (!coopNumber || !userName) {
+            if (!coopNumber) {
                 alert('Sesi Anda telah berakhir. Silakan kembali ke toko untuk memasukkan Nomor Koperasi Anda lagi.');
                 window.location.href = 'toko-sembako.html'; // Redirect to a store page
                 return;
             }
-            
+
             const originalButtonText = checkoutBtn.textContent;
             checkoutBtn.disabled = true;
             checkoutBtn.textContent = 'Memproses...';
 
             try {
-                // Data yang akan dikirim ke backend untuk membuat pesanan
+                // 1. Dapatkan memberId dari nomor koperasi
+                const validationResponse = await fetch('http://localhost:3000/api/auth/validate-coop-number', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cooperativeNumber: coopNumber })
+                });
+                const validationData = await validationResponse.json();
+                if (!validationResponse.ok) throw new Error(validationData.error || 'Gagal memvalidasi anggota.');
+                const memberId = validationData.user.id;
+
+                // 2. Siapkan payload untuk membuat pesanan
+                const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const shopType = cart.length > 0 ? cart[0].shopType : null;
+                if (!shopType) throw new Error('Tipe toko tidak terdefinisi di keranjang.');
+
                 const orderPayload = {
-                    cooperativeNumber: coopNumber,
-                    items: cart
+                    memberId,
+                    items: cart.map(item => ({ id: item.id, quantity: item.quantity, price: item.price })),
+                    shopType,
+                    totalAmount
                 };
 
-                // Panggil API untuk membuat pesanan di backend
-                const response = await fetch('http://localhost:3000/api/sales/checkout', {
+                // 3. Panggil API untuk membuat pesanan
+                const response = await fetch('http://localhost:3000/api/public/sales', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderPayload)
@@ -169,8 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || 'Gagal memproses checkout.');
 
-                // Simpan data pesanan yang dikonfirmasi dari backend ke sessionStorage untuk ditampilkan di halaman barcode
-                sessionStorage.setItem('checkoutOrder', JSON.stringify(result.order));
+                // 4. Simpan HANYA orderId dan redirect ke halaman checkout
+                sessionStorage.setItem('checkoutOrderId', result.orderId);
                 saveCart([]); // Kosongkan keranjang setelah berhasil
                 window.location.href = 'checkout.html';
 

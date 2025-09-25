@@ -829,12 +829,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
             const loan_term_id = document.getElementById('loan-term-id').value;
             const amount = document.getElementById('loan-amount').value;
+            const bank_name = document.getElementById('bank-name').value;
+            const bank_account_number = document.getElementById('bank-account-number').value;
             const maxLoanAmountText = document.getElementById('max-loan-info').textContent;
             // Safely parse currency string like "Rp 7.500.000" to a number
             const maxLoanAmount = parseFloat(maxLoanAmountText.replace(/[^0-9,]+/g, "").replace(",", "."));
     
-            if (!loan_term_id || !amount || parseFloat(amount) <= 0) {
-                alert('Harap pilih produk pinjaman dan isi jumlah pinjaman dengan benar.');
+            if (!loan_term_id || !amount || parseFloat(amount) <= 0 || !bank_name.trim() || !bank_account_number.trim()) {
+                alert('Harap lengkapi semua field: Produk Pinjaman, Jumlah, Nama Bank, dan Nomor Rekening.');
                 return;
             }
     
@@ -855,7 +857,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 await apiFetch(`${MEMBER_API_URL}/loans`, {
                     method: 'POST',
-                    body: JSON.stringify({ loan_term_id, amount }),
+                    body: JSON.stringify({ loan_term_id, amount, bank_name, bank_account_number }),
                 });
     
                 alert('Pengajuan pinjaman berhasil dikirim dan sedang menunggu persetujuan.');
@@ -873,6 +875,150 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Ajukan Pinjaman';
+            }
+        });
+    };
+
+    const loadLoanPaymentSection = async () => {
+        const appContainer = document.getElementById('loan-application-container');
+        const paymentContainer = document.getElementById('loan-payment-container');
+        const loanSummaryEl = document.getElementById('active-loan-summary');
+    
+        if (!appContainer || !paymentContainer || !loanSummaryEl) return;
+    
+        // Show loading state
+        appContainer.classList.add('hidden');
+        paymentContainer.classList.add('hidden');
+        loanSummaryEl.innerHTML = '<p class="text-gray-500">Memeriksa pinjaman aktif...</p>';
+    
+        try {
+            // Endpoint ini perlu dibuat di backend
+            const activeLoan = await apiFetch(`${MEMBER_API_URL}/active-loan-for-payment`);
+    
+            if (activeLoan && activeLoan.loanId) {
+                // Member memiliki pinjaman aktif, tampilkan form pembayaran
+                paymentContainer.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+    
+                // Isi ringkasan pinjaman
+                loanSummaryEl.innerHTML = `
+                    <p class="text-sm text-blue-700">Sisa Pokok Pinjaman Anda</p>
+                    <p class="text-2xl font-bold text-blue-800">${formatCurrency(activeLoan.remainingPrincipal)}</p>
+                    <p class="text-sm text-blue-700 mt-2">Angsuran Berikutnya (ke-${activeLoan.nextInstallment.number})</p>
+                    <p class="text-xl font-semibold text-blue-800">${formatCurrency(activeLoan.nextInstallment.amount)}</p>
+                `;
+    
+                // Isi field form
+                document.getElementById('payment-loan-id').value = activeLoan.loanId;
+                document.getElementById('payment-installment-number').value = activeLoan.nextInstallment.number;
+                document.getElementById('payment-amount').value = formatCurrency(activeLoan.nextInstallment.amount);
+                document.getElementById('payment-date').valueAsDate = new Date();
+    
+            } else {
+                // Tidak ada pinjaman aktif, tampilkan form pengajuan
+                appContainer.classList.remove('hidden');
+                paymentContainer.classList.add('hidden');
+            }
+    
+        } catch (error) {
+            // Jika terjadi error (misal: 404 Not Found), asumsikan tidak ada pinjaman aktif
+            console.warn('Tidak dapat mengambil pinjaman aktif, menampilkan form pengajuan.', error.message);
+            appContainer.classList.remove('hidden');
+            paymentContainer.classList.add('hidden');
+        }
+    };
+
+    const setupLoanPaymentForm = () => {
+        const form = document.getElementById('loan-payment-form');
+        if (!form) return;
+    
+        if (form.dataset.listenerAttached) return;
+        form.dataset.listenerAttached = 'true';
+    
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const formData = new FormData(form);
+            
+            formData.append('loanId', document.getElementById('payment-loan-id').value);
+            formData.append('installmentNumber', document.getElementById('payment-installment-number').value);
+            
+            if (!document.getElementById('payment-proof').files[0]) {
+                alert('Harap lampirkan bukti pembayaran.');
+                return;
+            }
+    
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Mengirim...';
+    
+            try {
+                await apiFetch(`${MEMBER_API_URL}/loan-payment`, { method: 'POST', body: formData });
+                alert('Bukti pembayaran berhasil dikirim dan sedang menunggu verifikasi oleh admin.');
+                loadLoanPaymentSection(); // Muat ulang bagian ini
+    
+            } catch (error) {
+                alert(`Terjadi kesalahan: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Kirim Bukti Pembayaran';
+            }
+        });
+    };
+
+    const loadAvailableVoluntarySavings = async () => {
+        const displayEl = document.getElementById('available-voluntary-savings');
+        if (!displayEl) return;
+        displayEl.textContent = 'Memuat...';
+        try {
+            // Endpoint ini perlu dibuat di backend untuk menghitung saldo simpanan sukarela
+            const { availableBalance } = await apiFetch(`${MEMBER_API_URL}/savings/voluntary-balance`);
+            displayEl.textContent = formatCurrency(availableBalance);
+        } catch (error) {
+            console.error('Error loading voluntary savings balance:', error);
+            displayEl.textContent = 'Error';
+        }
+    };
+
+    const setupWithdrawalForm = () => {
+        const form = document.getElementById('withdrawal-form');
+        if (!form) return;
+
+        if (form.dataset.listenerAttached) return;
+        form.dataset.listenerAttached = 'true';
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const amount = document.getElementById('withdrawal-amount').value;
+            const description = document.getElementById('withdrawal-description').value;
+
+            if (!amount || parseFloat(amount) <= 0 || !description.trim()) {
+                alert('Harap isi jumlah dan keterangan penarikan.');
+                return;
+            }
+
+            if (!confirm(`Anda yakin ingin mengajukan penarikan sebesar ${formatCurrency(amount)}?`)) {
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Mengajukan...';
+
+            try {
+                // Endpoint ini akan kita buat di backend
+                await apiFetch(`${MEMBER_API_URL}/savings/withdrawal`, {
+                    method: 'POST',
+                    body: JSON.stringify({ amount, description }),
+                });
+                alert('Pengajuan penarikan berhasil dikirim dan menunggu persetujuan admin.');
+                form.reset();
+                loadPendingApplications(); // Muat ulang tabel pengajuan
+                loadAvailableVoluntarySavings(); // Muat ulang saldo
+            } catch (error) {
+                alert(`Terjadi kesalahan: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Ajukan Penarikan';
             }
         });
     };
@@ -1455,6 +1601,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'application':
                 loadApplicationData();
+                loadLoanPaymentSection(); // Tentukan form mana yang akan ditampilkan
+                loadAvailableVoluntarySavings(); // Muat saldo untuk penarikan
+                loadPendingApplications();
                 break;
             case 'transactions':
                 loadTransactionsData();
@@ -1896,6 +2045,33 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error('Error generating QR Code:', error); titleEl.textContent = 'Error'; orderIdEl.textContent = error.message; }
     };
 
+    const setupApplicationTabs = () => {
+        const tabBtns = document.querySelectorAll('.application-tab-btn');
+        const tabContents = document.querySelectorAll('.application-tab-content');
+
+        if (!tabBtns.length) return;
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = btn.dataset.target;
+
+                // Update button styles
+                tabBtns.forEach(b => {
+                    b.classList.remove('border-red-500', 'text-red-600');
+                    b.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                });
+                btn.classList.add('border-red-500', 'text-red-600');
+                btn.classList.remove('border-transparent', 'text-gray-500');
+
+                // Update content visibility
+                tabContents.forEach(content => {
+                    content.classList.toggle('hidden', content.id !== targetId);
+                });
+            });
+        });
+    };
+    
     // --- INITIALIZATION ---
     const initializeApp = () => {
         if (!checkAuth()) return;
@@ -1904,7 +2080,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setupDropdowns();
         setupLogout();
         setupLoanPageListeners(); 
+        setupWithdrawalForm();
+        setupLoanPaymentForm();
         setupChangePasswordModal();
+        setupApplicationTabs();
         
         const setupTransactionPageListeners = () => {
             const tableBody = document.getElementById('transactions-table-body');

@@ -93,6 +93,43 @@
                         </div>
                     </div>
 
+                    <!-- Checkbox for Domicile Address -->
+                    <div class="pt-4 border-t border-gray-200">
+                        <div class="flex items-center">
+                            <input id="domicile-same-as-ktp" type="checkbox" checked class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                            <label for="domicile-same-as-ktp" class="ml-2 block text-sm text-gray-900">Alamat domisili sama dengan alamat KTP</label>
+                        </div>
+                    </div>
+
+                    <!-- Alamat Domisili (hidden by default) -->
+                    <div id="domicile-address-section" class="hidden pt-4 border-t border-gray-200">
+                        <p class="text-base font-medium text-gray-800 mb-2">Alamat Domisili Saat Ini</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="reg-domisili-provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
+                                <select id="reg-domisili-provinsi" class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                                    <option value="">Memuat provinsi...</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="reg-domisili-kota" class="block text-sm font-medium text-gray-700">Kabupaten/Kota</label>
+                                    <select id="reg-domisili-kota" disabled class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm bg-gray-50">
+                                        <option value="">Pilih provinsi terlebih dahulu</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="reg-domisili-kecamatan" class="block text-sm font-medium text-gray-700">Kecamatan</label>
+                                    <select id="reg-domisili-kecamatan" disabled class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm bg-gray-50">
+                                        <option value="">Pilih kabupaten/kota terlebih dahulu</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div><label for="reg-domisili-kelurahan" class="block text-sm font-medium text-gray-700">Kelurahan/Desa</label><select id="reg-domisili-kelurahan" disabled class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm bg-gray-50"><option value="">Pilih kecamatan terlebih dahulu</option></select></div>
+                            <div><label for="reg-domisili-alamat-detail" class="block text-sm font-medium text-gray-700">Alamat Detail (Nama Jalan, No. Rumah, RT/RW)</label><textarea id="reg-domisili-alamat-detail" rows="3" placeholder="Contoh: Jl. Bahagia No. 21, RT 002/RW 003" class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"></textarea></div>
+                        </div>
+                    </div>
+
                     <!-- Data Ahli Waris -->
                     <div class="pt-4 border-t border-gray-200">
                         <p class="text-base font-medium text-gray-800 mb-2">Data Ahli Waris</p>

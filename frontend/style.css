@@ -64,4 +64,12 @@
     .content-section.active {
         display: block;
     }
+    /* Class untuk membuka sidebar */
+    .sidebar-open {
+        @apply translate-x-0;
+    }
+    /* Class untuk menutup sidebar */
+    .sidebar-closed {
+        @apply -translate-x-full;
+    }
 }

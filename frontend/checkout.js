@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderCoopNumberEl = document.getElementById('order-coop-number');
     const orderItemsTableEl = document.getElementById('order-items-table');
     const orderTotalEl = document.getElementById('order-total');
-    const barcodeEl = document.getElementById('barcode');
+    const qrcodeContainer = document.getElementById('qrcode-container');
     const printBtn = document.getElementById('print-btn');
     const finishBtn = document.getElementById('finish-btn');
 
@@ -17,52 +17,61 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
     };
 
-    const loadOrderData = () => {
-        const orderDataJSON = sessionStorage.getItem('checkoutOrder');
-        if (!orderDataJSON) {
+    const loadOrderData = async () => {
+        const orderId = sessionStorage.getItem('checkoutOrderId');
+        if (!orderId) {
             checkoutFailEl.classList.remove('hidden');
             checkoutSuccessEl.classList.add('hidden');
             return;
         }
 
-        checkoutFailEl.classList.add('hidden');
-        checkoutSuccessEl.classList.remove('hidden');
-
-        const orderData = JSON.parse(orderDataJSON);
-
-        // Populate order details
-        orderIdEl.textContent = orderData.orderId;
-        orderDateEl.textContent = new Date(orderData.timestamp).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
-        orderMemberNameEl.textContent = orderData.user.name;
-        orderCoopNumberEl.textContent = orderData.user.coopNumber;
-
-        // Populate items table
-        orderItemsTableEl.innerHTML = '';
-        orderData.items.forEach(item => {
-            const row = document.createElement('tr');
-            const itemSubtotal = item.price * item.quantity;
-            row.innerHTML = `
-                <td class="py-2 text-left">${item.name}</td>
-                <td class="py-2 text-center">${item.quantity}</td>
-                <td class="py-2 text-right">${formatCurrency(itemSubtotal)}</td>
-            `;
-            orderItemsTableEl.appendChild(row);
-        });
-
-        // Populate total
-        orderTotalEl.textContent = formatCurrency(orderData.total);
-
-        // Generate Barcode (QR Code)
         try {
-            JsBarcode(barcodeEl, JSON.stringify(orderData), {
-                format: "QRCODE",
-                width: 3,
-                height: 3,
-                displayValue: false
+            // Ambil detail pesanan lengkap dari backend menggunakan orderId
+            const response = await fetch(`http://localhost:3000/api/public/sales/${orderId}`);
+            const orderData = await response.json();
+            if (!response.ok) throw new Error(orderData.error || 'Gagal memuat detail pesanan.');
+
+            checkoutFailEl.classList.add('hidden');
+            checkoutSuccessEl.classList.remove('hidden');
+
+            // Isi detail pesanan
+            orderIdEl.textContent = orderData.orderId;
+            orderDateEl.textContent = new Date(orderData.timestamp).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+            orderMemberNameEl.textContent = orderData.user.name;
+            orderCoopNumberEl.textContent = orderData.user.coopNumber;
+
+            // Isi rincian barang
+            orderItemsTableEl.innerHTML = '';
+            orderData.items.forEach(item => {
+                const row = document.createElement('tr');
+                const itemSubtotal = item.price * item.quantity;
+                row.innerHTML = `
+                    <td class="py-2 text-left">${item.name}</td>
+                    <td class="py-2 text-center">${item.quantity}</td>
+                    <td class="py-2 text-right">${formatCurrency(itemSubtotal)}</td>
+                `;
+                orderItemsTableEl.appendChild(row);
             });
-        } catch (e) {
-            console.error("Error generating barcode:", e);
-            barcodeEl.parentElement.innerHTML = '<p class="text-red-500">Gagal membuat barcode.</p>';
+
+            // Isi total
+            orderTotalEl.textContent = formatCurrency(orderData.total);
+
+            // Buat QR Code dari seluruh objek data pesanan
+            qrcodeContainer.innerHTML = ''; // Hapus QR code sebelumnya
+            new QRCode(qrcodeContainer, {
+                text: JSON.stringify(orderData),
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+        } catch (error) {
+            console.error('Error loading order data:', error);
+            checkoutFailEl.querySelector('p').textContent = error.message;
+            checkoutFailEl.classList.remove('hidden');
+            checkoutSuccessEl.classList.add('hidden');
         }
     };
 
@@ -75,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (finishBtn) {
         finishBtn.addEventListener('click', () => {
-            sessionStorage.removeItem('checkoutOrder');
+            sessionStorage.removeItem('checkoutOrderId');
         });
     }
 

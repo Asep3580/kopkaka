@@ -11,6 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const perusahaanSelect = document.getElementById('reg-perusahaan');
     const jabatanSelect = document.getElementById('reg-jabatan');
 
+    // --- Elemen Alamat Domisili ---
+    const domicileSameAsKtpCheckbox = document.getElementById('domicile-same-as-ktp');
+    const domicileAddressSection = document.getElementById('domicile-address-section');
+    const domisiliProvinsiSelect = document.getElementById('reg-domisili-provinsi');
+    const domisiliKotaSelect = document.getElementById('reg-domisili-kota');
+    const domisiliKecamatanSelect = document.getElementById('reg-domisili-kecamatan');
+    const domisiliKelurahanSelect = document.getElementById('reg-domisili-kelurahan');
+    const domisiliAlamatDetailTextarea = document.getElementById('reg-domisili-alamat-detail');
+
     // --- Elemen Password ---
     const passwordInput = document.getElementById('reg-password');
     const passwordConfirmInput = document.getElementById('reg-password-confirm');
@@ -115,6 +124,65 @@ document.addEventListener('DOMContentLoaded', () => {
             kelurahanSelect.disabled = true;
         }
     });
+
+    // --- Event Listener untuk Checkbox Alamat Domisili ---
+    domicileSameAsKtpCheckbox.addEventListener('change', () => {
+        const isChecked = domicileSameAsKtpCheckbox.checked;
+        domicileAddressSection.classList.toggle('hidden', isChecked);
+
+        // Setel atribut 'required' berdasarkan status checkbox
+        const domicileInputs = [
+            domisiliProvinsiSelect,
+            domisiliKotaSelect,
+            domisiliKecamatanSelect,
+            domisiliKelurahanSelect,
+            domisiliAlamatDetailTextarea
+        ];
+
+        domicileInputs.forEach(input => {
+            input.required = !isChecked;
+        });
+
+        // Jika checkbox dicentang (alamat sama), reset dan nonaktifkan field domisili
+        if (isChecked) {
+            domicileInputs.forEach(input => {
+                if (input.tagName === 'SELECT') {
+                    input.innerHTML = '<option value="">Pilih...</option>';
+                    input.disabled = true;
+                } else {
+                    input.value = '';
+                }
+            });
+            domisiliProvinsiSelect.disabled = false; // Provinsi harus selalu bisa dipilih
+        } else {
+            // Jika tidak dicentang, muat provinsi untuk alamat domisili
+            fetchAndPopulate(`${WILAYAH_API_URL}/provinces.json`, domisiliProvinsiSelect, 'Provinsi');
+        }
+    });
+
+    // --- Event Listeners untuk Dropdown Alamat Domisili ---
+    domisiliProvinsiSelect.addEventListener('change', () => {
+        const provinsiId = domisiliProvinsiSelect.value;
+        domisiliKecamatanSelect.innerHTML = '<option value="">Pilih kabupaten/kota terlebih dahulu</option>';
+        domisiliKecamatanSelect.disabled = true;
+        domisiliKelurahanSelect.innerHTML = '<option value="">Pilih kecamatan terlebih dahulu</option>';
+        domisiliKelurahanSelect.disabled = true;
+        if (provinsiId) {
+            fetchAndPopulate(`${WILAYAH_API_URL}/regencies/${provinsiId}.json`, domisiliKotaSelect, 'Kabupaten/Kota');
+        } else {
+            domisiliKotaSelect.innerHTML = '<option value="">Pilih provinsi terlebih dahulu</option>';
+            domisiliKotaSelect.disabled = true;
+        }
+    });
+
+    domisiliKotaSelect.addEventListener('change', () => {
+        const kotaId = domisiliKotaSelect.value;
+        domisiliKelurahanSelect.innerHTML = '<option value="">Pilih kecamatan terlebih dahulu</option>';
+        domisiliKelurahanSelect.disabled = true;
+        if (kotaId) { fetchAndPopulate(`${WILAYAH_API_URL}/districts/${kotaId}.json`, domisiliKecamatanSelect, 'Kecamatan'); } else { domisiliKecamatanSelect.innerHTML = '<option value="">Pilih kabupaten/kota terlebih dahulu</option>'; domisiliKecamatanSelect.disabled = true; }
+    });
+
+    domisiliKecamatanSelect.addEventListener('change', () => { const kecamatanId = domisiliKecamatanSelect.value; if (kecamatanId) { fetchAndPopulate(`${WILAYAH_API_URL}/villages/${kecamatanId}.json`, domisiliKelurahanSelect, 'Kelurahan/Desa'); } else { domisiliKelurahanSelect.innerHTML = '<option value="">Pilih kecamatan terlebih dahulu</option>'; domisiliKelurahanSelect.disabled = true; } });
 
     // --- Muat data Perusahaan dan Jabatan dari API ---
     populateDropdownFromAPI('public/employers', perusahaanSelect, 'id', 'name', 'Perusahaan');
@@ -237,6 +305,15 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('address_district', getSelectedText(kecamatanSelect));
         formData.append('address_village', getSelectedText(kelurahanSelect));
         formData.append('address_detail', alamatDetailTextarea.value);
+
+        // Append data alamat domisili jika checkbox tidak dicentang
+        if (!domicileSameAsKtpCheckbox.checked) {
+            formData.append('domicile_address_province', getSelectedText(domisiliProvinsiSelect));
+            formData.append('domicile_address_city', getSelectedText(domisiliKotaSelect));
+            formData.append('domicile_address_district', getSelectedText(domisiliKecamatanSelect));
+            formData.append('domicile_address_village', getSelectedText(domisiliKelurahanSelect));
+            formData.append('domicile_address_detail', domisiliAlamatDetailTextarea.value);
+        }
 
         // Append data ahli waris
         formData.append('heir_name', document.getElementById('reg-ahli-waris-nama').value);
