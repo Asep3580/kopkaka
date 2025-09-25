@@ -63,8 +63,12 @@ const updatePartner = async (req, res) => {
             logo_url = req.file.path.replace(/\\/g, '/');
             if (oldLogoPath) {
                 // FIX: Construct the absolute path from the project root directory.
-                fs.unlink(path.join(process.cwd(), oldLogoPath), err => {
-                    if (err) console.error("Gagal hapus logo lama:", err);
+                const fullOldPath = path.join(process.cwd(), oldLogoPath);
+                fs.unlink(fullOldPath, err => {
+                    // If the file doesn't exist, it's not a critical error, so we only log other errors.
+                    if (err && err.code !== 'ENOENT') {
+                        console.error("Gagal hapus logo lama:", err);
+                    }
                 });
             }
         } else {
@@ -100,8 +104,11 @@ const deletePartner = async (req, res) => {
 
         if (logoPath) {
             // FIX: Construct the absolute path from the project root directory.
-            fs.unlink(path.join(process.cwd(), logoPath), err => {
-                if (err) console.error("Gagal hapus file logo:", err);
+            const fullPath = path.join(process.cwd(), logoPath);
+            fs.unlink(fullPath, err => {
+                if (err && err.code !== 'ENOENT') {
+                    console.error("Gagal hapus file logo:", err);
+                }
             });
         }
         res.status(204).send();
