@@ -1587,6 +1587,66 @@ const renderCashFlowChart = (data) => {
         }
     };
 
+    const loadApprovalCounts = async () => {
+        try {
+            // Endpoint ini perlu dibuat di backend untuk mengembalikan semua hitungan
+            const counts = await apiFetch(`${ADMIN_API_URL}/approvals/counts`);
+
+            const updateCount = (elementId, count) => {
+                const el = document.getElementById(elementId);
+                if (el) {
+                    el.textContent = count > 0 ? `(${count})` : '';
+                }
+            };
+
+            updateCount('pending-members-card-count', counts.members || 0);
+            updateCount('pending-savings-card-count', counts.savings || 0);
+            updateCount('pending-withdrawals-card-count', counts.withdrawals || 0);
+            updateCount('pending-loans-card-count', counts.loans || 0);
+            updateCount('pending-loan-payments-card-count', counts.loanPayments || 0);
+            updateCount('pending-resignations-card-count', counts.resignations || 0);
+
+        } catch (error) {
+            console.error('Failed to load approval counts:', error);
+        }
+    };
+
+    const setupApprovalCards = () => {
+        const mainView = document.getElementById('approvals-main-view');
+        const cardLinks = document.querySelectorAll('.approval-card-link');
+        const tabContents = document.querySelectorAll('.approval-tab-content');
+        const backButtons = document.querySelectorAll('.back-to-approvals-btn');
+
+        const showMainView = () => {
+            mainView.classList.remove('hidden');
+            loadApprovalCounts(); // Muat ulang hitungan saat kembali ke menu utama
+            tabContents.forEach(content => content.classList.add('hidden'));
+        };
+
+        cardLinks.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = card.dataset.target;
+                const targetContent = document.getElementById(targetId);
+
+                mainView.classList.add('hidden');
+                if (targetContent) {
+                    targetContent.classList.remove('hidden');
+                    // Panggil fungsi load data yang sesuai dengan tab yang diklik
+                    const loadFunction = { 'approval-members-tab': renderPendingMembers, 'approval-savings-tab': loadPendingDeposits, 'approval-loans-tab': () => loadPendingApprovals('loans'), 'approval-withdrawals-tab': loadPendingWithdrawals, 'approval-resignations-tab': loadPendingResignations, 'approval-loan-payments-tab': loadPendingLoanPayments, 'resignation-history-tab': loadResignationHistory, }[targetId];
+                    if (loadFunction) loadFunction();
+                }
+            });
+        });
+
+        backButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                showMainView();
+            });
+        });
+    };
+
     // --- FUNGSI UNTUK PESANAN MASUK (TOKO) ---
     const loadPendingOrders = async () => {
         const tableBody = document.getElementById('pending-orders-table-body');
@@ -5509,8 +5569,7 @@ const renderCashFlowChart = (data) => {
         if (targetId === 'loans') loadLoans();
         if (targetId === 'approvals') {
             // Data untuk tab lain dimuat saat tab diklik.
-            // Hanya muat data untuk tab default (Pendaftaran Anggota).
-            renderPendingMembers();
+            document.getElementById('approvals-main-view')?.classList.remove('hidden');
         } else if (targetId === 'bulk-savings-input') {
             setupBulkSavingsPage();
         }
@@ -5623,38 +5682,6 @@ const renderCashFlowChart = (data) => {
                 if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
                     toggleMenu();
                 }
-            }
-        });
-    });
-
-    // --- FUNGSI UNTUK TAB DI HALAMAN PERSETUJUAN ---
-    approvalTabBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = btn.dataset.target;
-
-            approvalTabBtns.forEach(b => b.classList.remove('border-red-500', 'text-red-600'));
-            approvalTabBtns.forEach(b => b.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300'));
-            btn.classList.add('border-red-500', 'text-red-600');
-            btn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-
-            approvalTabContents.forEach(content => content.classList.toggle('hidden', content.id !== targetId));
-
-            // Panggil fungsi load data yang sesuai dengan tab yang diklik
-            if (targetId === 'approval-members-tab') {
-                renderPendingMembers();
-            } else if (targetId === 'approval-savings-tab') {
-                loadPendingDeposits();
-            } else if (targetId === 'approval-loans-tab') {
-                loadPendingApprovals('loans');
-            } else if (targetId === 'approval-withdrawals-tab') {
-                loadPendingWithdrawals();
-            } else if (targetId === 'approval-resignations-tab') {
-                loadPendingResignations();
-            } else if (targetId === 'approval-loan-payments-tab') {
-                loadPendingLoanPayments();
-            } else if (targetId === 'resignation-history-tab') {
-                loadResignationHistory();
             }
         });
     });
@@ -6142,6 +6169,7 @@ const renderCashFlowChart = (data) => {
         setupCoaExport();
         setupCoaImport();
         document.getElementById('close-journal-details-modal')?.addEventListener('click', () => document.getElementById('journal-details-modal').classList.add('hidden'));
+        setupApprovalCards();
     
         // Pindahkan event listener yang lebih spesifik ke sini untuk kerapian
         document.getElementById('close-order-details-modal-btn')?.addEventListener('click', () => document.getElementById('order-details-modal').classList.add('hidden'));

@@ -202,33 +202,46 @@
 
                 <!-- Approvals Section -->
                 <div id="approvals-content" class="content-section">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Persetujuan</h2>
-                    <div class="sm:hidden">
-                        <label for="tabs" class="sr-only">Pilih tab</label>
-                        <select id="tabs" name="tabs" class="block w-full focus:ring-red-500 focus:border-red-500 border-gray-300 rounded-md">
-                            <option>Pendaftaran Anggota</option>
-                            <option>Pengajuan Simpanan</option>
-                            <option>Pengajuan Pinjaman</option>
-                        </select>
-                    </div>
-                    <div class="hidden sm:block">
-                        <div class="border-b border-gray-200 overflow-x-auto">
-                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                                <a href="#" data-target="approval-members-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-red-500 text-red-600">Pendaftaran Anggota</a>
-                                <a href="#" data-target="approval-savings-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pengajuan Simpanan</a>
-                                <a href="#" data-target="approval-withdrawals-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Penarikan Simpanan</a>
-                                <a href="#" data-target="approval-loans-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pengajuan Pinjaman</a>
-                                <a href="#" data-target="approval-loan-payments-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pembayaran Angsuran</a>
-                                <a href="#" data-target="approval-resignations-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Pengunduran Diri</a>
-                                <a href="#" data-target="resignation-history-tab" class="approval-tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Riwayat Pengunduran Diri</a>
-                            </nav>
+                    <div id="approvals-main-view">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Persetujuan</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Card Pendaftaran Anggota -->
+                            <div data-target="approval-members-tab" class="approval-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg></div>
+                                <h3 class="font-semibold text-lg text-gray-800">Pendaftaran Anggota <span id="pending-members-card-count" class="ml-2 text-base font-bold text-red-600"></span></h3><p class="text-sm text-gray-500 mt-1 flex-grow">Verifikasi dan setujui anggota baru.</p>
+                            </div>
+                            <!-- Card Pengajuan Simpanan -->
+                            <div data-target="approval-savings-tab" class="approval-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4"><svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
+                                <h3 class="font-semibold text-lg text-gray-800">Setoran Simpanan <span id="pending-savings-card-count" class="ml-2 text-base font-bold text-red-600"></span></h3><p class="text-sm text-gray-500 mt-1 flex-grow">Verifikasi bukti transfer setoran sukarela.</p>
+                            </div>
+                            <!-- Card Penarikan Simpanan -->
+                            <div data-target="approval-withdrawals-tab" class="approval-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                                <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center mb-4"><svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg></div>
+                                <h3 class="font-semibold text-lg text-gray-800">Penarikan Simpanan <span id="pending-withdrawals-card-count" class="ml-2 text-base font-bold text-red-600"></span></h3><p class="text-sm text-gray-500 mt-1 flex-grow">Proses permintaan penarikan simpanan sukarela.</p>
+                            </div>
+                            <!-- Card Pengajuan Pinjaman -->
+                            <div data-target="approval-loans-tab" class="approval-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4"><svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v-1m0-1V4m0 2.01M12 14v4m0 0v1m0-1.01M12 16.01V14m0 6a9 9 0 110-18 9 9 0 010 18z"></path></svg></div>
+                                <h3 class="font-semibold text-lg text-gray-800">Pengajuan Pinjaman <span id="pending-loans-card-count" class="ml-2 text-base font-bold text-red-600"></span></h3><p class="text-sm text-gray-500 mt-1 flex-grow">Tinjau dan setujui pengajuan pinjaman baru.</p>
+                            </div>
+                            <!-- Card Pembayaran Angsuran -->
+                            <div data-target="approval-loan-payments-tab" class="approval-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                                <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-4"><svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 4h.01M18 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                                <h3 class="font-semibold text-lg text-gray-800">Pembayaran Angsuran <span id="pending-loan-payments-card-count" class="ml-2 text-base font-bold text-red-600"></span></h3><p class="text-sm text-gray-500 mt-1 flex-grow">Verifikasi bukti pembayaran angsuran dari anggota.</p>
+                            </div>
+                            <!-- Card Pengunduran Diri -->
+                            <div data-target="approval-resignations-tab" class="approval-card-link bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4"><svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6z"></path></svg></div>
+                                <h3 class="font-semibold text-lg text-gray-800">Pengunduran Diri <span id="pending-resignations-card-count" class="ml-2 text-base font-bold text-red-600"></span></h3><p class="text-sm text-gray-500 mt-1 flex-grow">Proses permintaan pengunduran diri anggota.</p>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Pending Members Tab -->
-                    <div id="approval-members-tab" class="approval-tab-content mt-6">
+                    <div id="approval-members-tab" class="approval-tab-content mt-6 hidden">
                         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Pendaftaran Anggota Baru</h3></div>
+                            <div class="px-4 py-5 sm:px-6 flex justify-between items-center"><h3 class="text-lg leading-6 font-medium text-gray-900">Pendaftaran Anggota Baru</h3><button class="back-to-approvals-btn text-sm text-red-600 hover:underline">&larr; Kembali</button></div>
                             <div class="border-t border-gray-200 overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
@@ -252,7 +265,7 @@
                     <!-- Pending Savings Tab -->
                     <div id="approval-savings-tab" class="approval-tab-content mt-6 hidden">
                         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Pengajuan Simpanan Sukarela</h3></div>
+                            <div class="px-4 py-5 sm:px-6 flex justify-between items-center"><h3 class="text-lg leading-6 font-medium text-gray-900">Pengajuan Simpanan Sukarela</h3><button class="back-to-approvals-btn text-sm text-red-600 hover:underline">&larr; Kembali</button></div>
                             <div class="border-t border-gray-200 overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
@@ -274,7 +287,7 @@
                     <!-- Pending Withdrawals Tab -->
                     <div id="approval-withdrawals-tab" class="approval-tab-content mt-6 hidden">
                         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Pengajuan Penarikan Simpanan</h3></div>
+                            <div class="px-4 py-5 sm:px-6 flex justify-between items-center"><h3 class="text-lg leading-6 font-medium text-gray-900">Pengajuan Penarikan Simpanan</h3><button class="back-to-approvals-btn text-sm text-red-600 hover:underline">&larr; Kembali</button></div>
                             <div class="border-t border-gray-200 overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
@@ -296,7 +309,7 @@
                     <!-- Pending Loans Tab -->
                     <div id="approval-loans-tab" class="approval-tab-content mt-6 hidden">
                         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Pengajuan Pinjaman</h3></div>
+                            <div class="px-4 py-5 sm:px-6 flex justify-between items-center"><h3 class="text-lg leading-6 font-medium text-gray-900">Pengajuan Pinjaman</h3><button class="back-to-approvals-btn text-sm text-red-600 hover:underline">&larr; Kembali</button></div>
                             <div class="border-t border-gray-200 overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
@@ -320,7 +333,7 @@
                     <!-- Pending Loan Payments Tab -->
                     <div id="approval-loan-payments-tab" class="approval-tab-content mt-6 hidden">
                         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Persetujuan Pembayaran Angsuran</h3></div>
+                            <div class="px-4 py-5 sm:px-6 flex justify-between items-center"><h3 class="text-lg leading-6 font-medium text-gray-900">Persetujuan Pembayaran Angsuran</h3><button class="back-to-approvals-btn text-sm text-red-600 hover:underline">&larr; Kembali</button></div>
                             <div class="border-t border-gray-200 overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
@@ -343,7 +356,7 @@
                     <!-- Pending Resignations Tab -->
                     <div id="approval-resignations-tab" class="approval-tab-content mt-6 hidden">
                         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Permintaan Pengunduran Diri</h3></div>
+                            <div class="px-4 py-5 sm:px-6 flex justify-between items-center"><h3 class="text-lg leading-6 font-medium text-gray-900">Permintaan Pengunduran Diri</h3><button class="back-to-approvals-btn text-sm text-red-600 hover:underline">&larr; Kembali</button></div>
                             <div class="border-t border-gray-200 overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
@@ -367,7 +380,7 @@
                     <!-- Resignation History Tab -->
                     <div id="resignation-history-tab" class="approval-tab-content mt-6 hidden">
                         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                            <div class="px-4 py-5 sm:px-6"><h3 class="text-lg leading-6 font-medium text-gray-900">Riwayat Anggota Nonaktif</h3></div>
+                            <div class="px-4 py-5 sm:px-6 flex justify-between items-center"><h3 class="text-lg leading-6 font-medium text-gray-900">Riwayat Anggota Nonaktif</h3><button class="back-to-approvals-btn text-sm text-red-600 hover:underline">&larr; Kembali</button></div>
                             <div class="border-t border-gray-200 overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
