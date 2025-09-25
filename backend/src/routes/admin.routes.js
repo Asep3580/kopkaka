@@ -18,6 +18,7 @@ const membersController = require('../controllers/members.controller');
 // --- Sub-routers for specific admin resources ---
 const announcementRoutes = require('./announcement.routes.js');
 const employerRoutes = require('./employer.routes.js');
+const partnerRoutes = require('./partner.routes.js');
 
 const { 
     getSavings,
@@ -200,6 +201,7 @@ router.post('/process-resignation', authMiddleware, authorize(['admin']), proces
 // --- Sub-routers ---
 router.use('/announcements', announcementRoutes);
 router.use('/employers', employerRoutes);
+router.use('/partners', partnerRoutes);
 
 // Logistics Card View
 // Menggunakan permission 'approveLoanAccounting' karena fitur ini adalah bagian dari akunting
