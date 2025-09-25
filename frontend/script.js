@@ -1,5 +1,6 @@
+import { API_URL } from './config.js';
+
 document.addEventListener('DOMContentLoaded', function() {
-    const API_URL = 'https://kopkaka.onrender.com/api';
     // --- Scroll Animation ---
     const scrollObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -301,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (item.photo_url) {
                     photoUrl = item.photo_url.startsWith('http') 
                         ? item.photo_url 
-                        : `http://localhost:3000${item.photo_url}`;
+                        : `${API_URL.replace('/api', '')}${item.photo_url}`;
                 }
 
                 const delay = index * 200;
@@ -366,5 +367,4 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     loadPublicTestimonials();
     loadPartners();
-
 });

@@ -1,3 +1,5 @@
+import { API_URL } from './config.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const resetContainer = document.getElementById('reset-container');
     const messageContainer = document.getElementById('message-container');
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Validasi token ke backend
     try {
-        const response = await fetch(`https://kopkaka.onrender.com/api/auth/reset/${token}`);
+        const response = await fetch(`${API_URL}/auth/reset/${token}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -61,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         submitButton.textContent = 'Menyimpan...';
 
         try {
-            const response = await fetch(`http://localhost:3000/api/auth/reset/${token}`, {
+            const response = await fetch(`${API_URL}/auth/reset/${token}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ password }),
@@ -86,5 +88,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitButton.textContent = 'Simpan Password Baru';
         }
     });
-
 });

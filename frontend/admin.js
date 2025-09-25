@@ -1,6 +1,7 @@
+import { API_URL } from './config.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- KONFIGURASI & ELEMEN GLOBAL ---
-    const API_URL = 'https://kopkaka.onrender.com/api'; // URL utama API
     const ADMIN_API_URL = `${API_URL}/admin`; // URL untuk endpoint admin
     const sidebar = document.getElementById('sidebar');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -6081,6 +6082,4 @@ const renderCashFlowChart = (data) => {
     };
 
     initializeApp();
-
 });
-

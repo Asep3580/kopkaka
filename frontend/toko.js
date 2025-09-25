@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = 'https://kopkaka.onrender.com/api'; // Ganti dengan URL backend Render Anda
+import { API_URL } from './config.js';
 
+document.addEventListener('DOMContentLoaded', () => {
     const productGrid = document.getElementById('product-grid');
     const pageTitle = document.querySelector('h1').textContent.toLowerCase();
     const cartItemCountElements = document.querySelectorAll('.cart-item-count'); // Ganti ke class selector
@@ -275,4 +275,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Perbarui jumlah item di keranjang saat halaman dimuat
     updateCartCount();
 });
-

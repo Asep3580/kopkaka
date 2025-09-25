@@ -1,3 +1,5 @@
+import { API_URL } from './config.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('forgot-password-form');
     const emailInput = document.getElementById('email');
@@ -13,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackMessage.classList.add('hidden');
 
         try {
-            const response = await fetch('https://kopkaka.onrender.com/api/auth/forgot-password', {
+            const response = await fetch(`${API_URL}/auth/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,5 +42,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 2000);
         }
     });
-
 });

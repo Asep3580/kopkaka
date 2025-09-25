@@ -1,3 +1,5 @@
+import { API_URL } from './config.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const checkoutSuccessEl = document.getElementById('checkout-success');
     const checkoutFailEl = document.getElementById('checkout-fail');
@@ -27,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Ambil detail pesanan lengkap dari backend menggunakan orderId
-            const response = await fetch(`https://kopkaka.onrender.com/api/public/sales/${orderId}`);
+            const response = await fetch(`${API_URL}/public/sales/${orderId}`);
             const orderData = await response.json();
             if (!response.ok) throw new Error(orderData.error || 'Gagal memuat detail pesanan.');
 
@@ -90,5 +92,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial load
     loadOrderData();
-
 });

@@ -1,7 +1,8 @@
+import { API_URL } from './config.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('login-form');
     const errorMessage = document.getElementById('error-message');
-    const API_URL = 'https://kopkaka.onrender.com/api'; 
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -47,5 +48,4 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Login error:', error);
         }
     });
-
 });
