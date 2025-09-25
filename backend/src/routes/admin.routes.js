@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer'); // Import multer
 const excelUpload = multer({ storage: multer.memoryStorage() }); // Define multer for Excel in-memory processing
 const upload = require('../middleware/upload.middleware');
 const protect = require('../middleware/auth.middleware');
@@ -11,153 +10,59 @@ const savingTypeController = require('../controllers/savingtype.controller');
 const loanTypeController = require('../controllers/loantype.controller');
 const loanTermController = require('../controllers/loanterms.controller');
 const accountController = require('../controllers/account.controller'); // Diperbarui untuk menyertakan fungsi ekspor
-const accountTypeController = require('../controllers/accounttype.controller');
-const supplierController = require('../controllers/supplier.controller');
 const membersController = require('../controllers/members.controller');
 const userController = require('../controllers/user.controller');
 const publicController = require('../controllers/public.controller');
+const adminController = require('../controllers/admin.controller');
+const savingController = require('../controllers/saving.controller');
+const loanController = require('../controllers/loan.controller');
+const journalController = require('../controllers/journal.controller.js');
 
 // --- Sub-routers for specific admin resources ---
 const announcementRoutes = require('./announcement.routes.js');
 const employerRoutes = require('./employer.routes.js');
 const partnerRoutes = require('./partner.routes.js');
 const supplierRoutes = require('./supplier.routes.js'); // 1. Impor router supplier
-
-const { 
-    getSavings,
-    getSavingsByMember,
-    createSaving,
-    updateSavingStatus,
-    updateSaving,
-    deleteSaving,
-    uploadBulkSavings,
-    exportSavingsTemplate
-} = require('../controllers/saving.controller');
-const {
-    getLoans
-} = require('../controllers/loan.controller');
-const {
-    getJournals,
-    createJournal,
-    getJournalById,
-    updateJournal,
-    deleteJournal
-} = require('../controllers/journal.controller.js');
-const { 
-    getDashboardStats, 
-    getCashFlowSummary,
-    getMemberGrowth,
-    getPendingLoans,
-    updateLoanStatus,
-    recordLoanPayment,
-    getLoanDetailsForAdmin,
-    getLoanById,
-    updateLoan,
-    deleteLoan,
-    getAllPermissions,
-    getRolePermissions,
-    updateRolePermissions,
-    createCashSale,
-    getProducts,
-    getProductById,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    getLogisticsEntries,
-    getAvailableLogisticsProducts,
-    createLogisticsEntry,
-    getLogisticsByReference,
-    updateLogisticsByReference,
-    deleteLogisticsByReference,
-    getCompanyInfo,
-    updateCompanyInfo,
-    getTestimonials,
-    getTestimonialById,
-    createTestimonial,
-    updateTestimonial,
-    deleteTestimonial,
-    mapSavingAccount,
-    mapLoanAccount,
-    getReceivableLogistics,
-    receiveLogisticsItems,
-    getPayables,
-    getPayableDetails,
-    recordPayablePayment,
-    getStockCardHistory,
-    getSavingTypes,
-    getAllProductsForDropdown,
-    createSale,
-    getIncomeStatement,
-    getIncomeStatementSummary,
-    getShuRules,
-    saveShuRules,
-    calculateShuPreview,
-    postShuDistribution,
-    getBalanceSheet,
-    getBalanceSheetSummary,
-    getCashFlowStatement,
-    getGeneralLedger,
-    getMemberLoanHistory,
-    getPendingSales,
-    getSaleDetailsByOrderId,
-    getSaleItemsByOrderId,
-    getPendingResignations,
-    processResignation,
-    getMonthlyClosingStatus,
-    getMonthlyClosings,
-    getPositions,
-    getLoanTypes,
-    getSuppliers,
-    getLoanTerms,
-    reopenMonthlyClosing,
-    processMonthlyClosing,
-    getAccounts,
-    createManualSaving,
-    getMasterProducts,
-    createMasterProduct,
-    updateMasterProduct,
-    deleteMasterProduct,
-    getPendingLoanPayments,
-    updateLoanPaymentStatus,
-} = require('../controllers/admin.controller');
+const accountTypeController = require('../controllers/accounttype.controller');
+const supplierController = require('../controllers/supplier.controller');
 
 // Dashboard
-router.get('/stats', protect, authorize(['viewDashboard']), getDashboardStats);
-router.get('/cashflow-summary', protect, authorize(['viewDashboard']), getCashFlowSummary);
-router.get('/member-growth', protect, authorize(['viewDashboard']), getMemberGrowth);
-router.get('/balance-sheet-summary', protect, authorize(['viewDashboard']), getBalanceSheetSummary);
-router.get('/income-statement-summary', protect, authorize(['viewDashboard']), getIncomeStatementSummary);
+router.get('/stats', protect, authorize(['viewDashboard']), adminController.getDashboardStats);
+router.get('/cashflow-summary', protect, authorize(['viewDashboard']), adminController.getCashFlowSummary);
+router.get('/member-growth', protect, authorize(['viewDashboard']), adminController.getMemberGrowth);
+router.get('/balance-sheet-summary', protect, authorize(['viewDashboard']), adminController.getBalanceSheetSummary);
+router.get('/income-statement-summary', protect, authorize(['viewDashboard']), adminController.getIncomeStatementSummary);
 
 // Approvals
-router.get('/pending-loans', protect, authorize(['viewApprovals']), getPendingLoans);
-router.get('/pending-loan-payments', protect, authorize(['approveLoanAccounting']), getPendingLoanPayments);
+router.get('/pending-loans', protect, authorize(['viewApprovals']), adminController.getPendingLoans);
+router.get('/pending-loan-payments', protect, authorize(['approveLoanAccounting']), adminController.getPendingLoanPayments);
 // This route can be accessed by accounting (for first approval) or manager (for final approval)
-router.put('/loans/:id/status', protect, authorize(['approveLoanAccounting', 'approveLoanManager']), updateLoanStatus);
+router.put('/loans/:id/status', protect, authorize(['approveLoanAccounting', 'approveLoanManager']), adminController.updateLoanStatus);
 
 // Savings Management
-router.get('/savings', protect, authorize(['viewSavings']), getSavings);
-router.get('/savings/member/:memberId', protect, authorize(['viewSavings']), getSavingsByMember);
-router.post('/savings', protect, authorize(['approveSaving']), createSaving);
-router.put('/savings/:id/status', protect, authorize(['approveSaving']), updateSavingStatus);
-router.put('/savings/:id', protect, authorize(['deleteData']), updateSaving);
-router.delete('/savings/:id', protect, authorize(['deleteData']), deleteSaving);
+router.get('/savings', protect, authorize(['viewSavings']), savingController.getSavings);
+router.get('/savings/member/:memberId', protect, authorize(['viewSavings']), savingController.getSavingsByMember);
+router.post('/savings', protect, authorize(['approveSaving']), savingController.createSaving);
+router.put('/savings/:id/status', protect, authorize(['approveSaving']), savingController.updateSavingStatus);
+router.put('/savings/:id', protect, authorize(['deleteData']), savingController.updateSaving);
+router.delete('/savings/:id', protect, authorize(['deleteData']), savingController.deleteSaving);
 
 // Bulk Savings Management
-router.get('/savings/export-template', protect, authorize(['approveSaving']), exportSavingsTemplate);
-router.post('/savings/bulk-upload', protect, authorize(['approveSaving']), upload.single('savingsFile'), uploadBulkSavings);
+router.get('/savings/export-template', protect, authorize(['approveSaving']), savingController.exportSavingsTemplate);
+router.post('/savings/bulk-upload', protect, authorize(['approveSaving']), excelUpload.single('savingsFile'), savingController.uploadBulkSavings);
 // Manual Saving Input
-router.post('/savings/manual', protect, authorize(['approveSaving']), createManualSaving);
+router.post('/savings/manual', protect, authorize(['approveSaving']), adminController.createManualSaving);
 
 
 // Loan Management (for admin)
-router.get('/loans', protect, authorize(['viewLoans']), getLoans);
-router.get('/loans/:id/details', protect, authorize(['viewLoans']), getLoanDetailsForAdmin);
-router.post('/loans/payment', protect, authorize(['approveLoanAccounting']), recordLoanPayment);
-router.get('/loans/:id', protect, authorize(['manageUsers']), getLoanById);
-router.put('/loan-payments/:id/status', protect, authorize(['approveLoanAccounting']), updateLoanPaymentStatus);
-router.put('/loans/:id', protect, authorize(['manageUsers']), updateLoan);
-router.delete('/loans/:id', protect, authorize(['deleteData']), deleteLoan);
-router.get('/members/:id/loans', protect, authorize(['viewLoans']), getMemberLoanHistory);
+router.get('/loans', protect, authorize(['viewLoans']), loanController.getLoans);
+router.get('/loans/:id/details', protect, authorize(['viewLoans']), adminController.getLoanDetailsForAdmin);
+router.post('/loans/payment', protect, authorize(['approveLoanAccounting']), adminController.recordLoanPayment);
+router.get('/loans/:id', protect, authorize(['manageUsers']), adminController.getLoanById);
+router.put('/loan-payments/:id/status', protect, authorize(['approveLoanAccounting']), adminController.updateLoanPaymentStatus);
+router.put('/loans/:id', protect, authorize(['manageUsers']), adminController.updateLoan);
+router.delete('/loans/:id', protect, authorize(['deleteData']), adminController.deleteLoan);
+router.get('/members/:id/loans', protect, authorize(['viewLoans']), adminController.getMemberLoanHistory);
 // User Management
 router.get('/users', protect, authorize(['manageUsers']), userController.getUsers);
 router.post('/users', protect, authorize(['manageUsers']), userController.createUser);
@@ -170,101 +75,101 @@ router.get('/members/:id', protect, authorize(['viewMembers', 'viewApprovals']),
 router.put('/members/:id/status', protect, authorize(['admin']), membersController.updateMemberStatus);
 
 // Role & Permission Management
-router.get('/permissions', protect, authorize(['viewSettings']), getAllPermissions);
-router.get('/roles/:roleName/permissions', protect, authorize(['viewSettings']), getRolePermissions);
-router.put('/roles/:roleName/permissions', protect, authorize(['viewSettings']), updateRolePermissions);
+router.get('/permissions', protect, authorize(['viewSettings']), adminController.getAllPermissions);
+router.get('/roles/:roleName/permissions', protect, authorize(['viewSettings']), adminController.getRolePermissions);
+router.put('/roles/:roleName/permissions', protect, authorize(['viewSettings']), adminController.updateRolePermissions);
 
 // Product Management
 const productManagementPermission = ['viewDashboard']; // Gunakan permission yang sudah ada untuk simpel
-router.get('/products', protect, authorize(productManagementPermission), getProducts);
-router.get('/products/:id', protect, authorize(productManagementPermission), getProductById);
-router.post('/sales', protect, authorize(productManagementPermission), createSale);
-router.post('/products', protect, authorize(productManagementPermission), upload.single('productImage'), createProduct);
-router.put('/products/:id', protect, authorize(productManagementPermission), upload.single('productImage'), updateProduct);
-router.delete('/products/:id', protect, authorize(productManagementPermission), deleteProduct);
-router.post('/cash-sale', protect, authorize(['viewUsahaKoperasi']), createCashSale);
-router.get('/logistics-products/:shopType', protect, authorize(productManagementPermission), getAvailableLogisticsProducts);
+router.get('/products', protect, authorize(productManagementPermission), adminController.getProducts);
+router.get('/products/:id', protect, authorize(productManagementPermission), adminController.getProductById);
+router.post('/sales', protect, authorize(productManagementPermission), adminController.createSale);
+router.post('/products', protect, authorize(productManagementPermission), upload.single('productImage'), adminController.createProduct);
+router.put('/products/:id', protect, authorize(productManagementPermission), upload.single('productImage'), adminController.updateProduct);
+router.delete('/products/:id', protect, authorize(productManagementPermission), adminController.deleteProduct);
+router.post('/cash-sale', protect, authorize(['viewUsahaKoperasi']), adminController.createCashSale);
+router.get('/logistics-products/:shopType', protect, authorize(productManagementPermission), adminController.getAvailableLogisticsProducts);
 // Rute baru untuk mengambil pesanan yang menunggu pengambilan
-router.get('/sales/pending', protect, authorize(['approveLoanAccounting']), getPendingSales);
+router.get('/sales/pending', protect, authorize(['approveLoanAccounting']), adminController.getPendingSales);
 // Rute baru untuk mengambil detail item dari sebuah pesanan
-router.get('/sales/:orderId/items', protect, authorize(['approveLoanAccounting']), getSaleItemsByOrderId);
+router.get('/sales/:orderId/items', protect, authorize(['approveLoanAccounting']), adminController.getSaleItemsByOrderId);
 // Rute baru untuk verifikasi pesanan oleh kasir
-router.get('/sales/order/:orderId', protect, authorize(['approveLoanAccounting']), getSaleDetailsByOrderId);
+router.get('/sales/order/:orderId', protect, authorize(['approveLoanAccounting']), adminController.getSaleDetailsByOrderId);
 // Rute baru untuk membatalkan pesanan oleh admin/kasir
 router.put('/sales/:orderId/cancel', protect, authorize(['approveLoanAccounting', 'viewDashboard']), publicController.cancelSaleOrder);
 
 // Rute baru untuk mengambil permintaan pengunduran diri
-router.get('/pending-resignations', protect, authorize(['admin']), getPendingResignations);
-router.post('/process-resignation', protect, authorize(['admin']), processResignation);
+router.get('/pending-resignations', protect, authorize(['admin']), adminController.getPendingResignations);
+router.post('/process-resignation', protect, authorize(['admin']), adminController.processResignation);
 
 // Logistics Card View
 // Menggunakan permission 'approveLoanAccounting' karena fitur ini adalah bagian dari akunting
 // dan permission ini sudah dimiliki oleh role 'admin' dan 'akunting'.
-router.get('/logistics-view', protect, authorize(['approveLoanAccounting']), getLogisticsEntries);
+router.get('/logistics-view', protect, authorize(['approveLoanAccounting']), adminController.getLogisticsEntries);
 
 // Logistics Card CRUD
 const logisticsPermission = ['approveLoanAccounting']; // Reuse permission
-router.post('/logistics_entries', protect, authorize(logisticsPermission), createLogisticsEntry);
-router.get('/logistics-by-ref/:ref', protect, authorize(logisticsPermission), getLogisticsByReference);
-router.put('/logistics-by-ref/:ref', protect, authorize(logisticsPermission), updateLogisticsByReference);
-router.delete('/logistics-by-ref/:ref', protect, authorize(logisticsPermission), deleteLogisticsByReference);
+router.post('/logistics_entries', protect, authorize(logisticsPermission), adminController.createLogisticsEntry);
+router.get('/logistics-by-ref/:ref', protect, authorize(logisticsPermission), adminController.getLogisticsByReference);
+router.put('/logistics-by-ref/:ref', protect, authorize(logisticsPermission), adminController.updateLogisticsByReference);
+router.delete('/logistics-by-ref/:ref', protect, authorize(logisticsPermission), adminController.deleteLogisticsByReference);
 // Hapus rute lama untuk delete per item, karena sekarang kita kelola per referensi
 // router.delete('/logistics_entries/:id', authMiddleware, authorize(logisticsPermission), deleteItem('logistics_entries'));
 
 // Company Profile Management
 // Endpoint ini dibuat lebih permisif agar semua role staf (admin, akunting, manager) bisa memuat info header.
 // Otorisasi spesifik (viewSettings) hanya diperlukan untuk mengubah data.
-router.get('/company-info', protect, getCompanyInfo);
-router.put('/company-info', protect, authorize(['viewSettings']), upload.single('logo'), updateCompanyInfo);
+router.get('/company-info', protect, adminController.getCompanyInfo);
+router.put('/company-info', protect, authorize(['viewSettings']), upload.single('logo'), adminController.updateCompanyInfo);
 
 // Testimonial Management
 const testimonialPermission = ['viewSettings'];
-router.get('/testimonials', protect, authorize(testimonialPermission), getTestimonials);
-router.get('/testimonials/:id', protect, authorize(testimonialPermission), getTestimonialById);
-router.post('/testimonials', protect, authorize(testimonialPermission), upload.single('testimonialPhoto'), createTestimonial);
-router.put('/testimonials/:id', protect, authorize(testimonialPermission), upload.single('testimonialPhoto'), updateTestimonial);
+router.get('/testimonials', protect, authorize(testimonialPermission), adminController.getTestimonials);
+router.get('/testimonials/:id', protect, authorize(testimonialPermission), adminController.getTestimonialById);
+router.post('/testimonials', protect, authorize(testimonialPermission), upload.single('testimonialPhoto'), adminController.createTestimonial);
+router.put('/testimonials/:id', protect, authorize(testimonialPermission), upload.single('testimonialPhoto'), adminController.updateTestimonial);
 router.delete('/testimonials/:id', protect, authorize(testimonialPermission), deleteTestimonial);
 
 // Account Mapping
-router.put('/map-saving-account/:id', protect, authorize(['viewSettings']), mapSavingAccount);
-router.put('/map-loan-account/:id', protect, authorize(['viewSettings']), mapLoanAccount);
+router.put('/map-saving-account/:id', protect, authorize(['viewSettings']), adminController.mapSavingAccount);
+router.put('/map-loan-account/:id', protect, authorize(['viewSettings']), adminController.mapLoanAccount);
 
 // Goods Receipt & Accounts Payable
 const accountingPermission = ['viewAccounting'];
-router.get('/logistics/receivable', protect, authorize(accountingPermission), getReceivableLogistics);
-router.post('/logistics/receive', protect, authorize(accountingPermission), receiveLogisticsItems);
-router.get('/payables', protect, authorize(accountingPermission), getPayables);
-router.get('/payables/:id', protect, authorize(accountingPermission), getPayableDetails);
-router.post('/payables/payment', protect, authorize(accountingPermission), recordPayablePayment);
-router.get('/stock-card', protect, authorize(accountingPermission), getStockCardHistory);
-router.get('/all-products', protect, authorize(accountingPermission), getAllProductsForDropdown);
+router.get('/logistics/receivable', protect, authorize(accountingPermission), adminController.getReceivableLogistics);
+router.post('/logistics/receive', protect, authorize(accountingPermission), adminController.receiveLogisticsItems);
+router.get('/payables', protect, authorize(accountingPermission), adminController.getPayables);
+router.get('/payables/:id', protect, authorize(accountingPermission), adminController.getPayableDetails);
+router.post('/payables/payment', protect, authorize(accountingPermission), adminController.recordPayablePayment);
+router.get('/stock-card', protect, authorize(accountingPermission), adminController.getStockCardHistory);
+router.get('/all-products', protect, authorize(accountingPermission), adminController.getAllProductsForDropdown);
 
 // Reports
-router.get('/reports/income-statement', protect, authorize(['viewReports']), getIncomeStatement);
-router.get('/reports/balance-sheet', protect, authorize(['viewReports']), getBalanceSheet);
-router.get('/reports/general-ledger', protect, authorize(['viewReports']), getGeneralLedger);
-router.get('/reports/cash-flow', protect, authorize(['viewReports']), getCashFlowStatement);
-router.get('/reports/monthly-closing-status', protect, authorize(['viewReports']), getMonthlyClosingStatus);
+router.get('/reports/income-statement', protect, authorize(['viewReports']), adminController.getIncomeStatement);
+router.get('/reports/balance-sheet', protect, authorize(['viewReports']), adminController.getBalanceSheet);
+router.get('/reports/general-ledger', protect, authorize(['viewReports']), adminController.getGeneralLedger);
+router.get('/reports/cash-flow', protect, authorize(['viewReports']), adminController.getCashFlowStatement);
+router.get('/reports/monthly-closing-status', protect, authorize(['viewReports']), adminController.getMonthlyClosingStatus);
 
 // SHU Rules Management
-router.get('/shu-rules/:year', protect, authorize(['viewSettings']), getShuRules);
-router.post('/shu-rules', protect, authorize(['viewSettings']), saveShuRules);
+router.get('/shu-rules/:year', protect, authorize(['viewSettings']), adminController.getShuRules);
+router.post('/shu-rules', protect, authorize(['viewSettings']), adminController.saveShuRules);
 
 // SHU Posting
-router.post('/shu/calculate-preview', protect, authorize(['postSHU']), calculateShuPreview);
-router.post('/shu/post-distribution', protect, authorize(['postSHU']), postShuDistribution);
+router.post('/shu/calculate-preview', protect, authorize(['postSHU']), adminController.calculateShuPreview);
+router.post('/shu/post-distribution', protect, authorize(['postSHU']), adminController.postShuDistribution);
 
 // Monthly Closing Process
-router.get('/accounting/closings', protect, authorize(['processClosing']), getMonthlyClosings);
-router.post('/accounting/close-month', protect, authorize(['processClosing']), processMonthlyClosing);
-router.post('/accounting/reopen-month', protect, authorize(['processClosing']), reopenMonthlyClosing);
+router.get('/accounting/closings', protect, authorize(['processClosing']), adminController.getMonthlyClosings);
+router.post('/accounting/close-month', protect, authorize(['processClosing']), adminController.processMonthlyClosing);
+router.post('/accounting/reopen-month', protect, authorize(['processClosing']), adminController.reopenMonthlyClosing);
 
 // General Journal Management
-router.get('/journals', protect, authorize(accountingPermission), getJournals);
-router.post('/journals', protect, authorize(accountingPermission), createJournal);
-router.get('/journals/:id', protect, authorize(accountingPermission), getJournalById);
-router.put('/journals/:id', protect, authorize(accountingPermission), updateJournal);
-router.delete('/journals/:id', protect, authorize(accountingPermission), deleteJournal);
+router.get('/journals', protect, authorize(accountingPermission), journalController.getJournals);
+router.post('/journals', protect, authorize(accountingPermission), journalController.createJournal);
+router.get('/journals/:id', protect, authorize(accountingPermission), journalController.getJournalById);
+router.put('/journals/:id', protect, authorize(accountingPermission), journalController.updateJournal);
+router.delete('/journals/:id', protect, authorize(accountingPermission), journalController.deleteJournal);
 
 // --- Settings Routes ---
 
@@ -301,23 +206,23 @@ router.put('/accounts/:id', protect, authorize(['viewSettings']), accountControl
 router.delete('/accounts/:id', protect, authorize(['deleteData']), accountController.deleteAccount);
 // Rute baru untuk jurnal, hanya mengembalikan akun yang bukan akun induk.
 router.get('/journal-accounts', protect, authorize(['viewAccounting']), accountController.getJournalableAccounts);
-
 // Account Types (for COA)
 router.get('/accounttypes', protect, authorize(['viewSettings']), accountTypeController.getAccountTypes);
 router.post('/accounttypes', protect, authorize(['viewSettings']), accountTypeController.createAccountType);
 router.put('/accounttypes/:id', protect, authorize(['viewSettings']), accountTypeController.updateAccountType);
 router.delete('/accounttypes/:id', protect, authorize(['deleteData']), accountTypeController.deleteAccountType);
 
+
 // Suppliers
-router.get('/suppliers', protect, authorize(['viewSettings', 'viewAccounting']), supplierController.getSuppliers);
+router.get('/suppliers', protect, authorize(['viewSettings', 'viewAccounting']), adminController.getSuppliers);
 // Note: Supplier creation/update/delete logic is not fully implemented in a dedicated controller yet.
 // This part might need a separate controller in the future.
 
 // Master Products CRUD
-router.get('/master-products', protect, authorize(['viewSettings']), getMasterProducts);
-router.post('/master-products', protect, authorize(['viewSettings']), createMasterProduct);
-router.put('/master-products/:id', protect, authorize(['viewSettings']), updateMasterProduct);
-router.delete('/master-products/:id', protect, authorize(['deleteData']), deleteMasterProduct);
+router.get('/master-products', protect, authorize(['viewSettings']), adminController.getMasterProducts);
+router.post('/master-products', protect, authorize(['viewSettings']), adminController.createMasterProduct);
+router.put('/master-products/:id', protect, authorize(['viewSettings']), adminController.updateMasterProduct);
+router.delete('/master-products/:id', protect, authorize(['deleteData']), adminController.deleteMasterProduct);
 
 
 module.exports = router;
