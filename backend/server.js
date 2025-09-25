@@ -31,7 +31,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Mengaktifkan pre-flight requests untuk semua rute
 
 app.use(express.json()); // Parses incoming JSON requests
 
