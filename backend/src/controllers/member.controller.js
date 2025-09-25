@@ -907,9 +907,10 @@ const updateProfilePhoto = async (req, res) => {
 
         // 3. Delete the old photo file from the server after the database is successfully updated
         if (oldPhotoPath) {
-            // FIX: Construct the absolute path from the project root directory.
-            // process.cwd() gives the root directory where the Node.js process was started.
-            const fullOldPath = path.join(process.cwd(), oldPhotoPath);
+            // FIX: Construct the absolute path from the project's root, not the current working directory.
+            // __dirname is the 'controllers' folder. We go up two levels to get to the 'backend' root,
+            // then join with the relative path from the database (e.g., 'uploads/documents/...').
+            const fullOldPath = path.join(__dirname, '..', '..', oldPhotoPath);
             fs.unlink(fullOldPath, (err) => {
                 if (err) {
                     console.error(`Gagal menghapus file foto lama: ${fullOldPath}`, err);
