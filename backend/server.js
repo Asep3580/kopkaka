@@ -5,24 +5,45 @@ const path = require('path');
 
 // --- Main API Router ---
 const apiRouter = require('./src/routes/index.js');
-const partnerRoutes = require('./src/routes/partner.routes.js'); // Tambahkan ini
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- Middleware ---
-app.use(cors()); // Allows requests from different origins
+
+// Konfigurasi CORS yang lebih aman untuk produksi
+const allowedOrigins = [
+    process.env.FRONTEND_URL, // URL Vercel Anda dari Environment Variable
+    'http://127.0.0.1:5500',   // Untuk pengembangan lokal (Live Server)
+    'http://localhost:5500'    // Variasi lain untuk pengembangan lokal
+];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Izinkan request tanpa origin (seperti dari Postman) atau dari origin yang ada di whitelist
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Mengaktifkan pre-flight requests untuk semua rute
+
 app.use(express.json()); // Parses incoming JSON requests
 
 // Serves uploaded files (e.g., KTP photos, logos) statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- API Routes ---
-app.get('/', (req, res) => res.send('KOPKAKA API is running!'));
+app.get('/', (req, res) => res.send('KOPKAKA API is running successfully!'));
 
-// Mount the main API router
+// Mount the main API router. Semua rute API harus dikelola di dalam file ini.
 app.use('/api', apiRouter);
-app.use('/api', partnerRoutes); // Tambahkan ini
+
 // --- Server Startup ---
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
