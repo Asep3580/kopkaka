@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const pool = require('./db'); // Pastikan path ini benar menuju file db.js Anda
+const { Pool } = require('pg'); // Gunakan Pool langsung untuk fleksibilitas
 require('dotenv').config();
 
 // Ambil argumen dari baris perintah, lewati 2 argumen pertama (node dan path skrip)
@@ -7,14 +7,14 @@ const args = process.argv.slice(2);
 
 let adminData;
 
-// Cek apakah argumen yang diperlukan (email, password, nama, nomor koperasi) diberikan
-if (args.length === 4) {
+// Cek apakah argumen yang diperlukan (email, password, nama) diberikan
+if (args.length >= 3) {
     console.log('Menggunakan data dari argumen baris perintah...');
     adminData = {
         email: args[0],
         password: args[1],
         name: args[2],
-        cooperative_number: args[3],
+        cooperative_number: args[3] || `ADM-${Date.now().toString().slice(-6)}`, // Gunakan argumen ke-4 atau buat nomor acak
         role: 'admin',
         status: 'Active'
     };
@@ -30,10 +30,26 @@ if (args.length === 4) {
     };
 }
 
+// --- Konfigurasi Database ---
+// Prioritaskan DATABASE_URL dari environment Render, jika tidak ada, gunakan dari .env
+const connectionConfig = process.env.DATABASE_URL ? {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false // Diperlukan untuk koneksi ke Render
+    }
+} : {
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+};
+
+const pool = new Pool(connectionConfig);
+
 const createOrUpdateAdmin = async () => {
     let client;
     console.log('Mencoba koneksi ke database...');
-
     try {
         client = await pool.connect();
         console.log('Koneksi database berhasil. Mencoba membuat atau memperbarui pengguna admin...');
@@ -91,6 +107,9 @@ const createOrUpdateAdmin = async () => {
         if (error.code === '28P01') {
             console.error('\nFATAL: Gagal koneksi ke database. Password otentikasi gagal.');
             console.error('Pastikan DB_USER dan DB_PASSWORD di file .env sudah benar.\n');
+        } else if (error.code === 'ECONNREFUSED') {
+            console.error('\nFATAL: Gagal koneksi ke database. Koneksi ditolak.');
+            console.error('Pastikan host database dan port sudah benar. Di Render, pastikan variabel DATABASE_URL sudah di-set.\n');
         } else {
             console.error('Gagal membuat atau memperbarui pengguna admin:', error);
         }
