@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // 1. Dapatkan memberId dari nomor koperasi
-                const validationResponse = await fetch('http://localhost:3000/api/auth/validate-coop-number', {
+                const validationResponse = await fetch('https://kopkaka.onrender.com/api/auth/validate-coop-number', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cooperativeNumber: coopNumber })
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
 
                 // 3. Panggil API untuk membuat pesanan
-                const response = await fetch('http://localhost:3000/api/public/sales', {
+                const response = await fetch('https://kopkaka.onrender.com/api/public/sales', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderPayload)
@@ -202,4 +202,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render keranjang saat halaman dimuat
     renderCart();
+
 });
