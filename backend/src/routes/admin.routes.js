@@ -319,9 +319,10 @@ router.post('/master-products', authMiddleware, authorize(['viewSettings']), cre
 router.put('/master-products/:id', authMiddleware, authorize(['viewSettings']), updateMasterProduct);
 router.delete('/master-products/:id', authMiddleware, authorize(['deleteData']), deleteMasterProduct);
 
-// --- Sub-routers (should be at the end) ---
+
+module.exports = router;
+
+// --- Sub-routers (MUST be at the end) ---
 router.use('/announcements', announcementRoutes);
 router.use('/employers', employerRoutes);
 router.use('/partners', partnerRoutes);
-
-module.exports = router;
