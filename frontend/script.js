@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const API_URL = 'http://localhost:3000/api';
+    const API_URL = 'https://kopkaka.onrender.com/api';
     // --- Scroll Animation ---
     const scrollObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -366,4 +366,5 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     loadPublicTestimonials();
     loadPartners();
+
 });
