@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const userRole = localStorage.getItem('user_role');
     let userPermissions = new Set();
 
+    let html5QrCode = null; // Definisikan di scope global
+
     let cashFlowChartInstance = null;
     let memberGrowthChartInstance = null;
     let incomeStatementChartInstance = null;
@@ -5497,12 +5499,9 @@ const renderCashFlowChart = (data) => {
     // Event delegation untuk tombol "Lihat Detail" pesanan
     document.getElementById('pending-orders-table-body')?.addEventListener('click', (e) => {
         if (e.target.matches('.view-order-details-btn')) {
-            e.preventDefault();
             showOrderDetailsModal(e.target.dataset.orderId);
-        }
-        if (e.target.matches('.verify-order-btn')) {
-            e.preventDefault();
-            verifyOrderFromTable(e.target.dataset.orderId);
+        } else if (e.target.matches('.verify-order-btn')) {
+            showCashierVerificationModal(e.target.dataset.orderId);
         }
     });
 
