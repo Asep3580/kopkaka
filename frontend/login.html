@@ -19,8 +19,8 @@
                     <img src="logo/logo.png" alt="Logo KOPKAKA" class="h-24 w-auto">
                 </a>
             </div>
-            <h1 class="text-2xl font-bold text-gray-800">Selamat Datang Kembali</h1>
-            <p class="text-gray-500">Masuk ke akun Anda untuk melanjutkan.</p>
+            <h1 class="text-xl font-bold text-gray-800">Selamat Datang Kembali</h1>
+            <p class="text-sm text-gray-500">Masuk ke akun Anda untuk melanjutkan.</p>
         </div>
 
         <form id="login-form" class="space-y-6">
@@ -38,7 +38,13 @@
 
             <div id="error-message" class="text-red-600 text-sm text-center hidden"></div>
 
-            <div class="flex items-center justify-end">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                        Ingat Saya
+                    </label>
+                </div>
                 <div class="text-sm">
                     <a href="lupa-password.html" class="font-medium text-red-600 hover:text-red-500">Lupa Password?</a>
                 </div>
