@@ -14,13 +14,13 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         let uploadPath = 'uploads/';
         // Bedakan tujuan berdasarkan nama field
-        if (file.fieldname === 'logo') {
+        if (file.fieldname === 'logo' || file.fieldname === 'partnerLogo') {
             uploadPath = path.join(uploadPath, 'logo');
         } else if (file.fieldname === 'productImage') {
             uploadPath = path.join(uploadPath, 'products');
         } else if (file.fieldname === 'testimonialPhoto') {
             uploadPath = path.join(uploadPath, 'testimonials');
-        } else {
+        } else { // Default untuk unggahan lain seperti KTP, selfie, dll.
             // Default untuk unggahan lain seperti KTP, dll.
             uploadPath = path.join(uploadPath, 'documents');
         }
