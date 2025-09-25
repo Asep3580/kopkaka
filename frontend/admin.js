@@ -3992,7 +3992,12 @@ const renderCashFlowChart = (data) => {
 
                 // Populate dropdowns when manual tab is shown
                 if (targetId === 'bulk-savings-manual-tab') {
-                    populateDropdown(document.getElementById('manual-saving-member'), 'users?status=Active&role=member', 'id', (item) => `${item.name} (${item.cooperative_number || 'N/A'})`, 'Anggota');
+                    populateDropdown(
+                        document.getElementById('manual-saving-member'), 
+                        'members?status=Active&role=member', 
+                        'id', 
+                        (item) => `${item.name} (${item.cooperative_number || 'N/A'})`,
+                        'Anggota');
                     populateDropdown(document.getElementById('manual-saving-type'), 'savingtypes', 'id', 'name', 'Tipe Simpanan');
                     document.getElementById('manual-saving-date').valueAsDate = new Date();
                 }
