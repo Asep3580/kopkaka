@@ -30,7 +30,9 @@ const {
     getMemberSalesHistory,
     getSaleDetailsByOrderIdForMember,
     getVoluntarySavingsBalance,
-    createWithdrawalApplication
+    createWithdrawalApplication,
+    getActiveLoanForPayment,
+    submitLoanPayment
 } = require('../controllers/member.controller');
 
 // All routes in this file are for logged-in members, so we apply authMiddleware globally.
@@ -70,7 +72,11 @@ router.get('/savings/voluntary-balance', authorize(['viewDashboard']), getVolunt
 // Applications
 router.get('/applications', authorize(['viewDashboard']), getMemberApplications);
 router.post('/loans', authorize(['viewDashboard']), createLoanApplication);
-router.post('/savings', authorize(['viewDashboard']), upload.single('proof_photo'), createSavingApplication);
+router.post('/savings', authorize(['viewDashboard']), upload.single('proof'), createSavingApplication);
+
+// Loan Payments
+router.get('/active-loan-for-payment', authorize(['viewDashboard']), getActiveLoanForPayment);
+router.post('/loan-payment', authorize(['viewDashboard']), upload.single('proof'), submitLoanPayment);
 
 // Resignation Routes
 router.post('/request-resignation', authorize(['viewDashboard']), createResignationRequest);
