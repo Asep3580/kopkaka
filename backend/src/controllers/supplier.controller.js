@@ -34,4 +34,30 @@ const getSupplierById = async (req, res) => {
     }
 };
 
-module.exports = { getSuppliers, getSupplierById };
+/**
+ * @desc    Create a new supplier
+ * @route   POST /api/suppliers
+ * @access  Private (Admin, Akunting)
+ */
+const createSupplier = async (req, res) => {
+    const { name, contact_person, phone, address } = req.body;
+
+    if (!name) {
+        return res.status(400).json({ error: 'Nama supplier wajib diisi.' });
+    }
+
+    try {
+        const query = `
+            INSERT INTO suppliers (name, contact_person, phone, address)
+            VALUES ($1, $2, $3, $4)
+            RETURNING *
+        `;
+        const result = await pool.query(query, [name, contact_person, phone, address]);
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error creating supplier:', error.message);
+        res.status(500).json({ error: 'Gagal membuat supplier baru.' });
+    }
+};
+
+module.exports = { getSuppliers, getSupplierById, createSupplier };
