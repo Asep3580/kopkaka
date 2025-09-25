@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Validasi token ke backend
     try {
-        const response = await fetch(`http://localhost:3000/api/auth/reset/${token}`);
+        const response = await fetch(`https://kopkaka.onrender.com/api/auth/reset/${token}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -86,4 +86,5 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitButton.textContent = 'Simpan Password Baru';
         }
     });
+
 });
