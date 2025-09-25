@@ -129,7 +129,7 @@ router.get('/testimonials', protect, authorize(testimonialPermission), adminCont
 router.get('/testimonials/:id', protect, authorize(testimonialPermission), adminController.getTestimonialById);
 router.post('/testimonials', protect, authorize(testimonialPermission), upload.single('testimonialPhoto'), adminController.createTestimonial);
 router.put('/testimonials/:id', protect, authorize(testimonialPermission), upload.single('testimonialPhoto'), adminController.updateTestimonial);
-router.delete('/testimonials/:id', protect, authorize(testimonialPermission), deleteTestimonial);
+router.delete('/testimonials/:id', protect, authorize(testimonialPermission), adminController.deleteTestimonial);
 
 // Account Mapping
 router.put('/map-saving-account/:id', protect, authorize(['viewSettings']), adminController.mapSavingAccount);
