@@ -2668,7 +2668,10 @@ const renderCashFlowChart = (data) => {
                 }
     
                 partners.forEach(item => {
-                    const logoUrl = item.logo_url.startsWith('http') ? item.logo_url : `${API_URL.replace('/api', '')}/${item.logo_url}`;
+                    // FIX: Construct the correct public URL for the logo.
+                    // The base URL for static assets is the API URL without the '/api' part.
+                    const baseUrl = API_URL.replace('/api', '');
+                    const logoUrl = item.logo_url.startsWith('http') ? item.logo_url : `${baseUrl}/${item.logo_url.replace(/\\/g, '/')}`;
                     const statusClass = item.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
                     const statusText = item.is_active ? 'Aktif' : 'Nonaktif';
                     const row = tableBody.insertRow();
@@ -2699,7 +2702,9 @@ const renderCashFlowChart = (data) => {
                 document.getElementById('partner-id-input').value = partner.id;
                 document.getElementById('partner-name-input').value = partner.name;
                 document.getElementById('partner-website-input').value = partner.website_url || '';
-                logoPreview.src = partner.logo_url.startsWith('http') ? partner.logo_url : `${API_URL.replace('/api', '')}/${partner.logo_url}`;
+                // FIX: Construct the correct public URL for the logo preview.
+                const baseUrl = API_URL.replace('/api', '');
+                logoPreview.src = partner.logo_url.startsWith('http') ? partner.logo_url : `${baseUrl}/${partner.logo_url.replace(/\\/g, '/')}`;
                 logoInput.required = false; // Logo tidak wajib saat mengubah
             } else {
                 document.getElementById('partner-modal-title').textContent = 'Tambah Mitra Baru';
