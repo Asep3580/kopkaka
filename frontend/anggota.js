@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- GLOBAL CONFIG & ELEMENTS ---
-    const API_URL = 'http://localhost:3000/api';
+    const API_URL = 'https://kopkaka.onrender.com/api';
     const MEMBER_API_URL = `${API_URL}/member`;
     const sidebar = document.getElementById('sidebar');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -2128,4 +2128,5 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     initializeApp();
+
 });
