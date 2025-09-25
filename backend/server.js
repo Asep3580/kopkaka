@@ -9,6 +9,11 @@ const apiRouter = require('./src/routes/index.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Percayai proxy pertama (misalnya, dari Render).
+// Ini diperlukan agar middleware seperti express-rate-limit dapat bekerja dengan benar
+// di belakang reverse proxy.
+app.set('trust proxy', 1);
+
 // --- Middleware ---
 
 // Konfigurasi CORS yang lebih aman untuk produksi
