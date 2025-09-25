@@ -5731,9 +5731,15 @@ const renderCashFlowChart = (data) => {
     document.getElementById('users-table-body')?.addEventListener('click', (e) => {
         if (e.target.matches('.edit-user-btn')) {
             showEditUserModal(e.target.dataset.id);
+        } else if (e.target.id === 'add-user-btn') { // Listener untuk tombol baru
+            showAddUserModal();
         } else if (e.target.matches('.delete-user-btn')) {
             deleteUser(e.target.dataset.id, e.target.dataset.name);
         }
+    });
+
+    document.getElementById('manage-users-tab')?.addEventListener('click', (e) => {
+        if (e.target.id === 'add-user-btn') showAddUserModal();
     });
 
     // Tambahkan event listener untuk tombol persetujuan simpanan dan pinjaman
@@ -5785,6 +5791,7 @@ const renderCashFlowChart = (data) => {
         const modal = document.getElementById('edit-user-modal');
         const form = document.getElementById('edit-user-form');
         if (!modal || !form) return;
+        const passwordContainer = document.getElementById('edit-user-password-container');
 
         form.reset();
         modal.classList.remove('hidden');
@@ -5792,12 +5799,17 @@ const renderCashFlowChart = (data) => {
 
         try {
             const user = await apiFetch(`${ADMIN_API_URL}/members/${userId}`);
+            const emailInput = document.getElementById('edit-user-email-input');
 
             document.getElementById('edit-user-modal-title').textContent = `Ubah Data: ${user.name}`;
             document.getElementById('edit-user-id-input').value = user.id;
             document.getElementById('edit-user-name-input').value = user.name;
-            document.getElementById('edit-user-email-input').value = user.email;
+            emailInput.value = user.email;
+            emailInput.readOnly = true;
+            emailInput.classList.add('bg-gray-100');
             document.getElementById('edit-user-phone-input').value = user.phone || '';
+            passwordContainer.classList.remove('hidden'); // Tampilkan field password saat edit
+            document.getElementById('edit-user-password-input').required = false; // Password tidak wajib diisi saat edit
             document.getElementById('edit-user-status-select').value = user.status;
             document.getElementById('edit-user-role-select').value = user.role;
 
@@ -5816,11 +5828,48 @@ const renderCashFlowChart = (data) => {
         }
     };
 
+    const showAddUserModal = async () => {
+        const modal = document.getElementById('edit-user-modal');
+        const form = document.getElementById('edit-user-form');
+        if (!modal || !form) return;
+        const passwordContainer = document.getElementById('edit-user-password-container');
+        const emailInput = document.getElementById('edit-user-email-input');
+
+        form.reset();
+        modal.classList.remove('hidden');
+
+        document.getElementById('edit-user-modal-title').textContent = 'Tambah User Baru';
+        document.getElementById('edit-user-id-input').value = ''; // Kosongkan ID
+
+        // Kosongkan dan aktifkan field email
+        emailInput.value = '';
+        emailInput.readOnly = false;
+        emailInput.classList.remove('bg-gray-100');
+
+        // Tampilkan dan wajibkan field password
+        passwordContainer.classList.remove('hidden');
+        document.getElementById('edit-user-password-input').required = true;
+
+        // Set default values
+        document.getElementById('edit-user-status-select').value = 'Active';
+        document.getElementById('edit-user-role-select').value = 'akunting';
+
+        // Populate dropdowns
+        try {
+            const companySelect = document.getElementById('edit-user-company-select');
+            const positionSelect = document.getElementById('edit-user-position-select');
+            await populateDropdown(companySelect, 'employers', 'id', 'name', 'Perusahaan');
+            await populateDropdown(positionSelect, 'positions', 'id', 'name', 'Jabatan');
+        } catch (error) {
+            console.error("Gagal memuat dropdown untuk modal user:", error);
+        }
+    };
+
     document.getElementById('edit-user-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const userId = document.getElementById('edit-user-id-input').value;
         const submitBtn = e.target.querySelector('button[type="submit"]');
-
+        const isNewUser = !userId;
         const userData = {
             name: document.getElementById('edit-user-name-input').value,
             phone: document.getElementById('edit-user-phone-input').value,
@@ -5830,12 +5879,21 @@ const renderCashFlowChart = (data) => {
             role: document.getElementById('edit-user-role-select').value,
         };
 
+        if (isNewUser) {
+            userData.email = document.getElementById('edit-user-email-input').value;
+            userData.password = document.getElementById('edit-user-password-input').value;
+        } else {
+            const password = document.getElementById('edit-user-password-input').value;
+            if (password) userData.password = password; // Hanya kirim password jika diisi
+        }
+
         submitBtn.disabled = true;
         submitBtn.textContent = 'Menyimpan...';
 
         try {
-            await apiFetch(`${ADMIN_API_URL}/users/${userId}`, { method: 'PUT', body: JSON.stringify(userData) });
-            alert('Data pengguna berhasil diperbarui.');
+            const url = isNewUser ? `${ADMIN_API_URL}/users` : `${ADMIN_API_URL}/users/${userId}`;
+            await apiFetch(url, { method: isNewUser ? 'POST' : 'PUT', body: JSON.stringify(userData) });
+            alert(`Data pengguna berhasil ${isNewUser ? 'ditambahkan' : 'diperbarui'}.`);
             document.getElementById('edit-user-modal').classList.add('hidden');
             loadUsers();
         } catch (error) {
