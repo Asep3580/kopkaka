@@ -163,8 +163,8 @@ router.put('/users/:id', authMiddleware, authorize(['manageUsers']), userControl
 router.delete('/users/:id', authMiddleware, authorize(['manageUsers']), userController.deleteUser);
 
 // Member Management (for Admin views like Approvals, Member List)
-router.get('/members', authMiddleware, authorize(['admin', 'akunting', 'manager']), membersController.getAllMembers);
-router.get('/members/:id', authMiddleware, authorize(['admin', 'akunting', 'manager']), membersController.getMemberById);
+router.get('/members', authMiddleware, authorize(['viewMembers', 'viewApprovals']), membersController.getAllMembers);
+router.get('/members/:id', authMiddleware, authorize(['viewMembers', 'viewApprovals']), membersController.getMemberById);
 router.put('/members/:id/status', authMiddleware, authorize(['admin']), membersController.updateMemberStatus);
 
 // Role & Permission Management
