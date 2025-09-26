@@ -5519,7 +5519,7 @@ const renderCashFlowChart = (data) => {
         } else if (e.target.matches('.cancel-order-btn')) {
             const orderId = e.target.dataset.orderId;
             if (confirm(`Anda yakin ingin membatalkan pesanan #${orderId}? Stok barang akan dikembalikan.`)) {
-                apiFetch(`${API_URL}/sales/${orderId}/cancel`, { method: 'POST' })
+                apiFetch(`${API_URL}/public/sales/${orderId}/cancel`, { method: 'POST' })
                     .then(() => {
                         alert('Pesanan berhasil dibatalkan.');
                         loadPendingOrders(); // Muat ulang daftar pesanan
