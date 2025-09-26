@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let memberGrowthChartInstance = null;
     let incomeStatementChartInstance = null;
     let balanceSheetChartInstance = null;
+    let notificationInterval = null; // Variabel untuk polling notifikasi
+    let lastKnownNotificationTimestamp = null; // Untuk melacak notifikasi terakhir
+
     let directCashierProducts = [];
     let directCart = [];
     const applyUIPermissions = () => {
@@ -61,6 +64,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatDate = (dateString) => {
         if (!dateString) return '-';
         return new Date(dateString).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    };
+
+    const formatRelativeTime = (dateString) => {
+        if (!dateString) return '';
+        const now = new Date();
+        const past = new Date(dateString);
+        const seconds = Math.floor((now - past) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + " tahun lalu";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + " bulan lalu";
+        interval = seconds / 86400; if (interval > 1) return Math.floor(interval) + " hari lalu"; interval = seconds / 3600; if (interval > 1) return Math.floor(interval) + " jam lalu"; interval = seconds / 60; if (interval > 1) return Math.floor(interval) + " menit lalu";
+        return "Baru saja";
     };
 
     const apiFetch = async (endpoint, options = {}) => {
@@ -164,6 +180,124 @@ document.addEventListener('DOMContentLoaded', () => {
         container.querySelectorAll('.pagination-btn:not([disabled])').forEach(button => {
             button.addEventListener('click', () => loadDataFunction(parseInt(button.dataset.page, 10)));
         });
+    };
+
+    // --- FUNGSI NOTIFIKASI REAL-TIME ---
+    const showToastNotification = (message, link) => {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+    
+        const toastId = 'toast-' + Date.now();
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.className = 'bg-white shadow-lg rounded-lg p-4 flex items-start space-x-3 max-w-sm animate-fade-in-right cursor-pointer';
+        toast.innerHTML = `
+            <div class="flex-shrink-0">
+                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="flex-1">
+                <p class="font-semibold text-gray-800">Notifikasi Baru</p>
+                <p class="text-sm text-gray-600">${message}</p>
+            </div>
+            <button class="text-gray-400 hover:text-gray-600" onclick="event.stopPropagation(); document.getElementById('${toastId}').remove();">&times;</button>
+        `;
+    
+        toast.addEventListener('click', () => {
+            if (link) {
+                const notifItem = document.querySelector(`.notification-item[data-link='${link}']`);
+                if (notifItem) notifItem.click();
+                else switchContent(link);
+            }
+            toast.remove();
+        });
+    
+        container.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 7000);
+    };
+
+    const loadAndRenderNotifications = async (isInitialLoad = false) => {
+        const badge = document.getElementById('notification-badge');
+        const list = document.getElementById('notification-list');
+        if (!badge || !list) return;
+    
+        try {
+            // Menggunakan endpoint yang sama dengan member, karena sudah berbasis user ID
+            const { count } = await apiFetch(`${API_URL}/member/notifications/unread-count`);
+            badge.textContent = count;
+            badge.classList.toggle('hidden', count === 0);
+    
+            const notifications = await apiFetch(`${API_URL}/member/notifications`);
+            list.innerHTML = '';
+    
+            if (notifications.length === 0) {
+                list.innerHTML = '<p class="text-center text-sm text-gray-500 p-4">Tidak ada notifikasi.</p>';
+                return;
+            }
+
+            notifications.forEach(notif => {
+                const notifElement = document.createElement('a');
+                notifElement.href = '#';
+                notifElement.className = `notification-item block p-3 hover:bg-gray-50 ${!notif.is_read ? 'bg-blue-50' : ''}`;
+                notifElement.dataset.id = notif.id;
+                notifElement.dataset.link = notif.link;
+                notifElement.dataset.isRead = notif.is_read;
+                notifElement.innerHTML = `<p class="text-sm text-gray-700">${notif.message}</p><p class="text-xs text-gray-400 mt-1">${formatRelativeTime(notif.created_at)}</p>`;
+                list.appendChild(notifElement);
+            });
+
+            const latestNotification = notifications[0];
+            if (isInitialLoad) {
+                if (latestNotification) lastKnownNotificationTimestamp = latestNotification.created_at;
+            } else {
+                if (latestNotification) {
+                    const latestTimestamp = new Date(latestNotification.created_at).getTime();
+                    const lastKnownTimestamp = lastKnownNotificationTimestamp ? new Date(lastKnownNotificationTimestamp).getTime() : 0;
+
+                    if (!latestNotification.is_read && latestTimestamp > lastKnownTimestamp) {
+                        showToastNotification(latestNotification.message, latestNotification.link);
+                    }
+                    lastKnownNotificationTimestamp = latestNotification.created_at;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+            list.innerHTML = '<p class="text-center text-sm text-red-500 p-4">Gagal memuat.</p>';
+        }
+    };
+
+    const handleNotificationClick = async (e) => {
+        const item = e.target.closest('.notification-item');
+        if (!item) return;
+    
+        e.preventDefault();
+        const { id, link, isRead } = item.dataset;
+    
+        document.getElementById('notification-dropdown').classList.add('hidden');
+    
+        if (isRead === 'false') {
+            try { await apiFetch(`${API_URL}/member/notifications/${id}/read`, { method: 'PUT' }); } catch (error) { console.error('Gagal menandai notifikasi sebagai terbaca:', error); }
+            loadAndRenderNotifications();
+        }
+    
+        if (link) switchContent(link);
+    };
+
+    const setupNotificationSystem = () => {
+        const notifBtn = document.getElementById('notification-bell-btn');
+        const notifDropdown = document.getElementById('notification-dropdown');
+        const notifList = document.getElementById('notification-list');
+
+        if (!notifBtn || !notifDropdown || !notifList) return;
+
+        notifBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notifDropdown.classList.toggle('hidden');
+        });
+        notifList.addEventListener('click', handleNotificationClick);
+
+        // Muat notifikasi pertama kali dan mulai polling
+        loadAndRenderNotifications(true); // true untuk muat awal
+        notificationInterval = setInterval(() => loadAndRenderNotifications(false), 15000); // Periksa setiap 15 detik
     };
 
 const renderCashFlowChart = (data) => {
@@ -1470,17 +1604,11 @@ const renderCashFlowChart = (data) => {
     const loadPendingApprovals = async (type) => {
         const endpoint = type === 'savings' ? 'savings' : 'loans';
         const tableBody = document.getElementById(`pending-${endpoint}-table-body`);
-
         const isLoan = type === 'loans';
         const url = isLoan ? `${ADMIN_API_URL}/pending-loans` : `${ADMIN_API_URL}/savings?status=Pending`;
         const colspan = isLoan ? 9 : 6;
 
-        if (!isLoan) {
-            // Savings are now handled by more specific functions.
-            // This function is called when the main "Approvals" page is loaded,
-            // but the data is actually loaded when the specific card/tab is clicked.
-            return;
-        }
+        if (!isLoan) return; // Hanya proses untuk pinjaman, karena simpanan ditangani fungsi lain
 
         if (!tableBody) return;
         try {
@@ -6196,6 +6324,7 @@ const renderCashFlowChart = (data) => {
         setupCashierVerificationModalListeners();
         setupLogisticsModal();
         setupCoaExport();
+        setupNotificationSystem(); // Panggil fungsi setup notifikasi
         setupCoaImport();
         document.getElementById('close-journal-details-modal')?.addEventListener('click', () => document.getElementById('journal-details-modal').classList.add('hidden'));
         setupApprovalCards();

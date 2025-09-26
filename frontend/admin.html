@@ -94,18 +94,37 @@
                 <button id="menu-button" class="md:hidden text-gray-500 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
-                <h1 id="page-title" class="text-xl font-semibold text-gray-700">Beranda</h1>
-                <div class="relative" id="user-profile-container">
-                    <button id="user-profile-button" class="flex items-center space-x-2 focus:outline-none">
-                        <span id="user-name-header" class="font-medium text-gray-600">Nama Pengguna</span>
-                        <img id="header-profile-icon" src="" alt="Foto Profil" class="w-8 h-8 rounded-full object-cover bg-gray-200">
-                    </button>
-                    <!-- Dropdown menu -->
-                    <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
-                        <a href="#" data-target="admin-profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Saya</a>
-                        <a href="#" id="change-password-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ganti Password</a>
-                        <div class="border-t border-gray-100"></div>
-                        <a href="#" id="header-logout-button" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Keluar</a>
+                <h1 id="page-title" class="text-xl font-semibold text-gray-700">Beranda</h1>                
+                <div class="flex items-center space-x-4">
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notification-bell-btn" class="relative p-2 text-gray-500 rounded-full hover:bg-gray-100 hover:text-gray-600 focus:outline-none">
+                            <span id="notification-badge" class="hidden absolute top-0 right-0 h-2 w-2 mt-1 mr-2 bg-red-500 rounded-full"></span>
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        </button>
+                        <!-- Notification Dropdown -->
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg overflow-hidden z-20">
+                            <div class="py-2 px-4 flex justify-between items-center border-b">
+                                <h3 class="font-semibold text-gray-700">Notifikasi</h3>
+                                <button id="mark-all-read-btn" class="text-xs text-blue-600 hover:underline">Tandai semua dibaca</button>
+                            </div>
+                            <div id="notification-list" class="max-h-96 overflow-y-auto">
+                                <!-- Notification items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- User Profile Dropdown -->
+                    <div class="relative" id="user-profile-container">
+                        <button id="user-profile-button" class="flex items-center space-x-2 focus:outline-none">
+                            <span id="user-name-header" class="font-medium text-gray-600">Nama Pengguna</span>
+                            <img id="header-profile-icon" src="" alt="Foto Profil" class="w-8 h-8 rounded-full object-cover bg-gray-200">
+                        </button>
+                        <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                            <a href="#" data-target="admin-profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Saya</a>
+                            <a href="#" id="change-password-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ganti Password</a>
+                            <div class="border-t border-gray-100"></div>
+                            <a href="#" id="header-logout-button" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Keluar</a>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -2541,6 +2560,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2"></div>
 
     <script type="module" src="admin.js"></script>
 </body>
