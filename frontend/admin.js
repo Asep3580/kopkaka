@@ -550,7 +550,7 @@ const renderCashFlowChart = (data) => {
             const filters = { ...currentMemberFilters, page, limit: 10 };
             const queryParams = new URLSearchParams(filters).toString();
             
-            const { data: members, pagination } = await apiFetch(`${ADMIN_API_URL}/members?${queryParams}`);
+            const { data: members, pagination } = await apiFetch(`${API_URL}/members?${queryParams}`);
 
             // Saring daftar untuk hanya menampilkan pengguna dengan peran 'member'
             const memberOnlyList = members.filter(user => user.role === 'member');
@@ -631,7 +631,7 @@ const renderCashFlowChart = (data) => {
         try {
             const filters = { ...currentSavingsFilters, page, limit: 10 };
             const queryParams = new URLSearchParams(filters).toString();
-            const { data: savings, pagination } = await apiFetch(`${ADMIN_API_URL}/savings?${queryParams}`);
+            const { data: savings, pagination } = await apiFetch(`${API_URL}/savings?${queryParams}`);
 
             tableBody.innerHTML = '';
             if (savings.length === 0) {
@@ -678,7 +678,7 @@ const renderCashFlowChart = (data) => {
                 const savingId = button.dataset.id;
                 if (confirm('Anda yakin ingin menghapus data simpanan ini? Tindakan ini tidak dapat dibatalkan.')) {
                     try {
-                        await apiFetch(`${ADMIN_API_URL}/savings/${savingId}`, { method: 'DELETE' });
+                        await apiFetch(`${API_URL}/savings/${savingId}`, { method: 'DELETE' });
                         alert('Data simpanan berhasil dihapus.');
                         loadSavings(1); // Muat ulang daftar simpanan dari halaman pertama
                     } catch (error) {
@@ -5430,7 +5430,7 @@ const renderCashFlowChart = (data) => {
         contentEl.innerHTML = '<p class="text-center py-8">Memuat detail jurnal...</p>';
 
         try {
-            const { header, entries } = await apiFetch(`${API_URL}/journals/${journalId}`);
+            const { header, entries } = await apiFetch(`${ADMIN_API_URL}/journals/${journalId}`);
 
             contentEl.innerHTML = `
                 <div class="mb-4 space-y-2">
