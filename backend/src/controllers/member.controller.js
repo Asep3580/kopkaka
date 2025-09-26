@@ -1063,7 +1063,7 @@ const getLoansChartData = async (req, res) => {
 const getTransactionsChartData = async (req, res) => {
     try {
         // The 'sales' table has 'sale_date' and 'total_amount'
-        const data = await getMonthlyChartData('sales', 'total_amount', req.user.id);
+        const data = await getMonthlyChartData('sales', 'total_amount', req.user.id, ['Selesai']);
         res.json(data);
     } catch (err) {
         console.error('Error fetching transactions chart data:', err.message);
