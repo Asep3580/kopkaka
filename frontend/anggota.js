@@ -579,43 +579,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- FUNGSI PEMBUATAN KARTU ANGGOTA ---
+    const createVirtualCardHTML = (profile) => {
+        // Menentukan URL foto, dengan fallback jika tidak ada foto selfie
+        let photoUrl = 'https://i.pravatar.cc/150?u=' + encodeURIComponent(profile.email);
+        if (profile.selfie_photo_path) {
+            const webPath = profile.selfie_photo_path.replace(/\\/g, '/');
+            photoUrl = `${API_URL.replace('/api', '')}${webPath.startsWith('/') ? '' : '/'}${webPath}`;
+        }
+
+        // Menggunakan kelas .virtual-card dan .card-logo untuk gaya modern
+        return `
+            <div class="virtual-card text-white rounded-xl shadow-lg p-6 flex flex-col justify-between h-full">
+                <div>
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold">KARTU ANGGOTA</h3>
+                        <img src="logo/logo.png" alt="Logo" class="card-logo opacity-90">
+                    </div>
+                    <div class="mt-6 flex items-center space-x-4">
+                        <img src="${photoUrl}" alt="Foto Profil" class="w-16 h-16 rounded-full object-cover border-2 border-white/50">
+                        <div>
+                            <p class="text-lg font-semibold">${profile.name}</p>
+                            <p class="text-sm opacity-80">${profile.cooperative_number || 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 text-right">
+                    <p class="text-xs opacity-70">Anggota Sejak</p>
+                    <p class="font-semibold">${formatDate(profile.approval_date)}</p>
+                </div>
+            </div>
+        `;
+    };
+
     // --- DASHBOARD: MEMBER-SPECIFIC DATA ---
     const loadMemberCard = async () => {
         const cardContainer = document.getElementById('member-card-container');
         if (!cardContainer) return;
 
         cardContainer.innerHTML = `<div class="bg-white p-6 rounded-lg shadow-md text-center"><p class="text-gray-500">Memuat kartu anggota...</p></div>`;
-
         try {
             const profile = await apiFetch(`${MEMBER_API_URL}/profile`);
-
-            let photoUrl = 'https://i.pravatar.cc/150?u=' + encodeURIComponent(profile.email);
-            if (profile.selfie_photo_path) {
-                const webPath = profile.selfie_photo_path.replace(/\\/g, '/');
-                photoUrl = `${API_URL.replace('/api', '')}${webPath.startsWith('/') ? '' : '/'}${webPath}`;
-            }
-
-            const cardHTML = `
-                <div class="bg-gradient-to-br from-red-800 to-red-900 text-white rounded-xl shadow-lg p-6 flex flex-col justify-between h-full">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <h3 class="text-xl font-bold">KARTU ANGGOTA</h3>
-                            <img src="logo/logo.png" alt="Logo" class="h-8 opacity-80">
-                        </div>
-                        <div class="mt-6 flex items-center space-x-4">
-                            <img src="${photoUrl}" alt="Foto Profil" class="w-16 h-16 rounded-full object-cover border-2 border-white">
-                            <div>
-                                <p class="text-lg font-semibold">${profile.name}</p>
-                                <p class="text-sm opacity-80">${profile.cooperative_number || 'N/A'}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-6 text-right">
-                        <p class="text-xs opacity-70">Anggota Sejak</p>
-                        <p class="font-semibold">${formatDate(profile.approval_date)}</p>
-                    </div>
-                </div>
-            `;
+            const cardHTML = createVirtualCardHTML(profile); // Memanggil fungsi baru
             cardContainer.innerHTML = cardHTML;
 
         } catch (error) {
