@@ -183,7 +183,7 @@ const getPublicSaleDetailsByOrderId = async (req, res) => {
     }
 };
 
-const cancelSaleOrder = async (req, res) => {
+const cancelSaleOrderForMember = async (req, res) => {
     const { orderId } = req.params;
     const { id: userId, role: userRole } = req.user; // Diambil dari token JWT
 
@@ -251,5 +251,5 @@ module.exports = {
     getPublicAnnouncements,
     createSaleOrder,
     getPublicSaleDetailsByOrderId,
-    cancelSaleOrder,
+    cancelSaleOrderForMember,
 };
