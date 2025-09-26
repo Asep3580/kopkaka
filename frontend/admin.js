@@ -1675,16 +1675,22 @@ const renderCashFlowChart = (data) => {
             }
 
             orders.forEach(order => {
+                let actionButtons = `
+                    <button class="view-order-details-btn text-blue-600 hover:underline" data-order-id="${order.order_id}">Detail</button>
+                    <button class="verify-order-btn text-green-600 hover:underline" data-order-id="${order.order_id}">Verifikasi</button>
+                `;
+
+                if (userRole === 'admin') {
+                    actionButtons += `<button class="cancel-order-btn text-red-600 hover:underline ml-2" data-order-id="${order.order_id}">Batalkan</button>`;
+                }
+
                 const row = tableBody.insertRow();
                 row.innerHTML = `
                     <td class="px-6 py-4 text-sm font-medium text-gray-900">${order.order_id}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${order.member_name}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${formatDate(order.sale_date)}</td>
                     <td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(order.total_amount)}</td>
-                    <td class="px-6 py-4 text-center text-sm font-medium">
-                        <button class="view-order-details-btn text-blue-600 hover:underline" data-order-id="${order.order_id}">Detail</button>
-                        <button class="verify-order-btn text-green-600 hover:underline" data-order-id="${order.order_id}">Verifikasi</button>
-                    </td>
+                    <td class="px-6 py-4 text-center text-sm font-medium">${actionButtons}</td>
                 `;
             });
         } catch (error) {
@@ -5510,6 +5516,16 @@ const renderCashFlowChart = (data) => {
             showOrderDetailsModal(e.target.dataset.orderId);
         } else if (e.target.matches('.verify-order-btn')) {
             showCashierVerificationModal(e.target.dataset.orderId);
+        } else if (e.target.matches('.cancel-order-btn')) {
+            const orderId = e.target.dataset.orderId;
+            if (confirm(`Anda yakin ingin membatalkan pesanan #${orderId}? Stok barang akan dikembalikan.`)) {
+                apiFetch(`${API_URL}/sales/${orderId}/cancel`, { method: 'POST' })
+                    .then(() => {
+                        alert('Pesanan berhasil dibatalkan.');
+                        loadPendingOrders(); // Muat ulang daftar pesanan
+                    })
+                    .catch(err => alert(`Gagal membatalkan: ${err.message}`));
+            }
         }
     });
 
