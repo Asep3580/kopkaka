@@ -1002,6 +1002,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Menambahkan elemen untuk menampilkan pesan error
+            const errorDisplay = form.querySelector('.form-error-message');
+            if (!errorDisplay) { // Buat elemen jika belum ada
+                form.insertAdjacentHTML('beforeend', '<p class="form-error-message text-red-600 text-sm mt-2 hidden"></p>');
+            }
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'Mengajukan...';
 
