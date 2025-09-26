@@ -12,6 +12,29 @@
     <link rel="shortcut icon" href="logo/logo.png" type="image/png">
     <link rel="stylesheet" href="anggota.css">
 </head>
+<style>
+    /* Gaya untuk kartu anggota virtual yang modern dan abstrak */
+    .virtual-card {
+        background: linear-gradient(135deg, #6b0000 0%, #a30000 50%, #d43f3f 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    .virtual-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 1.5rem 1.5rem;
+        transform: rotate(30deg);
+    }
+    .virtual-card .card-logo {
+        width: 4rem; /* Memperbesar logo */
+        height: auto;
+    }
+</style>
 <body class="bg-gray-100">
 
     <div class="flex h-screen bg-gray-100">
