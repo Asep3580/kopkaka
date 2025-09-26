@@ -2219,7 +2219,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const loanId = e.target.dataset.id;
                     if (confirm('Anda yakin ingin membatalkan pengajuan pinjaman ini?')) {
                         try {
-                            await apiFetch(`${MEMBER_API_URL}/loans/${loanId}/cancel`, { method: 'DELETE' });
+                            // FIX: Mengubah endpoint agar sesuai dengan standar RESTful untuk menghapus aplikasi.
+                            // Endpoint ini harus cocok dengan yang ada di backend (misal: DELETE /api/member/applications/:id)
+                            await apiFetch(`${MEMBER_API_URL}/applications/${loanId}`, { method: 'DELETE' });
                             alert('Pengajuan pinjaman berhasil dibatalkan.');
                             loadPendingApplications(); // Muat ulang daftar
                         } catch (error) {
