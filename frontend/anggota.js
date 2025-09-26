@@ -629,6 +629,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    /**
+     * Helper function to render announcement content.
+     * Detects YouTube links and replaces them with an embedded video player.
+     * @param {string} content - The text content of the announcement.
+     * @returns {string} - HTML string with the rendered content.
+     */
+    const renderAnnouncementContent = (content) => {
+        const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = content.match(youtubeRegex);
+
+        if (match && match[1]) {
+            const videoId = match[1];
+            const videoEmbed = `
+                <div class="relative w-full pt-[56.25%] my-2 rounded-lg overflow-hidden shadow-md"> <!-- 16:9 Aspect Ratio -->
+                    <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            `;
+            // Replace the URL with the video embed, keeping other text if any
+            return content.replace(youtubeRegex, videoEmbed);
+        }
+        return `<p>${content}</p>`; // Return as plain text if no YouTube link is found
+    };
+
     const loadAnnouncements = async () => {
         const announcementsContainer = document.getElementById('announcements-container');
         if (!announcementsContainer) return;
@@ -647,6 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
             announcements.forEach(announcement => {
                 const announcementElement = document.createElement('div');
                 announcementElement.className = 'bg-red-50 border-l-4 border-red-500 p-4 mb-3 rounded-r-lg';
+                const renderedContent = renderAnnouncementContent(announcement.content);
                 announcementElement.innerHTML = `
                     <div class="flex">
                         <div class="flex-shrink-0">
@@ -654,7 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="ml-3 flex-1">
                             <h3 class="text-sm font-semibold text-red-800">${announcement.title}</h3>
-                            <div class="mt-2 text-sm text-red-700"><p>${announcement.content}</p></div>
+                            <div class="mt-2 text-sm text-red-700">${renderedContent}</div>
                             <p class="mt-2 text-xs text-red-600">${formatDate(announcement.created_at)}</p>
                         </div>
                     </div>
