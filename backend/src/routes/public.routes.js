@@ -25,6 +25,6 @@ router.get('/sales/:orderId', publicController.getPublicSaleDetailsByOrderId);
 router.post('/sales', publicController.createSaleOrder);
 // Route for cancelling an order. Requires authentication.
 // It can be cancelled by the member who made it, or by an admin/accounting staff.
-router.put('/sales/:orderId/cancel', protect, memberController.cancelSaleOrder);
+router.post('/sales/:orderId/cancel', protect, memberController.cancelSaleOrder);
 
 module.exports = router;
