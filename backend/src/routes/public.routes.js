@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const publicController = require('../controllers/public.controller'); // No change here, just for context
+const protect = require('../middleware/auth.middleware');
+const authorize = require('../middleware/role.middleware');
 
 // This router handles all public-facing endpoints that do not require authentication.
 // It is mounted at /api/public in the main router.
@@ -20,5 +22,8 @@ router.get('/partners', publicController.getPublicPartners);
 // Routes for shop checkout logic
 router.get('/sales/:orderId', publicController.getPublicSaleDetailsByOrderId);
 router.post('/sales', publicController.createSaleOrder);
+// Route for cancelling an order. Requires authentication.
+// It can be cancelled by the member who made it, or by an admin/accounting staff.
+router.put('/sales/:orderId/cancel', protect, publicController.cancelSaleOrder);
 
 module.exports = router;

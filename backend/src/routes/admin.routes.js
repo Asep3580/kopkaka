@@ -96,8 +96,6 @@ router.get('/sales/pending', protect, authorize(['approveLoanAccounting']), admi
 router.get('/sales/:orderId/items', protect, authorize(['approveLoanAccounting']), adminController.getSaleItemsByOrderId);
 // Rute baru untuk verifikasi pesanan oleh kasir
 router.get('/sales/order/:orderId', protect, authorize(['approveLoanAccounting']), adminController.getSaleDetailsByOrderId);
-// Rute baru untuk membatalkan pesanan oleh admin/kasir
-router.put('/sales/:orderId/cancel', protect, authorize(['approveLoanAccounting', 'viewDashboard']), publicController.cancelSaleOrder);
 
 // Rute baru untuk mengambil permintaan pengunduran diri
 router.get('/pending-resignations', protect, authorize(['admin']), adminController.getPendingResignations);
