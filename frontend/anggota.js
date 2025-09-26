@@ -1058,6 +1058,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 form.reset();
                 loadPendingApplications(); // Reload the pending applications list
+
+                // Automatically switch to the "Pengajuan Tertunda" tab to show the new status
+                const pendingTabButton = document.querySelector('.application-tab-btn[data-target="application-pending-tab"]');
+                if (pendingTabButton) {
+                    pendingTabButton.click();
+                }
+                // Scroll to the pending applications table
+                const pendingTable = document.getElementById('pending-applications-section');
+                pendingTable?.scrollIntoView({ behavior: 'smooth' });
     
             } catch (error) {
                 alert(`Terjadi kesalahan: ${error.message}`);

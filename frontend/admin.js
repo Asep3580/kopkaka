@@ -1476,8 +1476,10 @@ const renderCashFlowChart = (data) => {
         const colspan = isLoan ? 9 : 6;
 
         if (!isLoan) {
-            // Savings are now handled by a more specific function.
-            return loadPendingDeposits();
+            // Savings are now handled by more specific functions.
+            // This function is called when the main "Approvals" page is loaded,
+            // but the data is actually loaded when the specific card/tab is clicked.
+            return;
         }
 
         if (!tableBody) return;
@@ -1635,7 +1637,13 @@ const renderCashFlowChart = (data) => {
                 if (targetContent) {
                     targetContent.classList.remove('hidden');
                     // Panggil fungsi load data yang sesuai dengan tab yang diklik
-                    const loadFunction = { 'approval-members-tab': renderPendingMembers, 'approval-savings-tab': loadPendingDeposits, 'approval-loans-tab': () => loadPendingApprovals('loans'), 'approval-withdrawals-tab': loadPendingWithdrawals, 'approval-resignations-tab': loadPendingResignations, 'approval-loan-payments-tab': loadPendingLoanPayments, 'resignation-history-tab': loadResignationHistory, }[targetId];
+                    const loadFunction = { 
+                        'approval-members-tab': renderPendingMembers, 
+                        'approval-savings-tab': loadPendingDeposits, // This will now be correctly called
+                        'approval-loans-tab': () => loadPendingApprovals('loans'), 
+                        'approval-withdrawals-tab': loadPendingWithdrawals, 
+                        'approval-resignations-tab': loadPendingResignations, 
+                        'approval-loan-payments-tab': loadPendingLoanPayments, 'resignation-history-tab': loadPendingHistory, }[targetId];
                     if (loadFunction) loadFunction();
                 }
             });
