@@ -2158,7 +2158,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (e.target.matches('.cancel-order-btn')) {
                         const orderId = e.target.dataset.orderId;
                         if (confirm(`Anda yakin ingin membatalkan pesanan #${orderId}? Stok barang akan dikembalikan.`)) {
-                            apiFetch(`${API_URL}/sales/${orderId}/cancel`, { method: 'POST' }) // Endpoint ini sudah ada di backend
+                            apiFetch(`${MEMBER_API_URL}/sales/${orderId}/cancel`, { method: 'POST' }) // FIX: Use MEMBER_API_URL to match the backend route
                                 .then(() => {
                                     alert('Pesanan berhasil dibatalkan.');
                                     loadTransactionsData(); // Muat ulang daftar transaksi
