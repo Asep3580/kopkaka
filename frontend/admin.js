@@ -684,7 +684,7 @@ const renderCashFlowChart = (data) => {
             const filters = { ...currentMemberFilters, page, limit: 10 };
             const queryParams = new URLSearchParams(filters).toString();
             
-            const { data: members, pagination } = await apiFetch(`${API_URL}/members?${queryParams}`);
+            const { data: members, pagination } = await apiFetch(`${ADMIN_API_URL}/members?${queryParams}`);
 
             // Saring daftar untuk hanya menampilkan pengguna dengan peran 'member'
             const memberOnlyList = members.filter(user => user.role === 'member');
