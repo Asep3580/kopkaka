@@ -301,6 +301,56 @@ const createLoanApplication = async (req, res) => {
     }
 };
 
+/**
+ * @desc    Membatalkan pengajuan pinjaman oleh anggota.
+ * @route   DELETE /api/member/loans/:id/cancel
+ * @access  Private
+ */
+const cancelLoanApplication = async (req, res) => {
+    const { id: loanId } = req.params;
+    const { id: memberId } = req.user;
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        // 1. Ambil pinjaman dan pastikan milik anggota yang benar & statusnya 'Pending'
+        const loanRes = await client.query(
+            "SELECT status, amount, member_id FROM loans WHERE id = $1 AND member_id = $2 FOR UPDATE",
+            [loanId, memberId]
+        );
+
+        if (loanRes.rows.length === 0) {
+            throw new Error('Pengajuan pinjaman tidak ditemukan atau Anda tidak berhak membatalkannya.');
+        }
+
+        const loan = loanRes.rows[0];
+        if (loan.status !== 'Pending') {
+            throw new Error(`Pengajuan tidak dapat dibatalkan karena statusnya sudah "${loan.status}".`);
+        }
+
+        // 2. Hapus pengajuan pinjaman
+        await client.query('DELETE FROM loans WHERE id = $1', [loanId]);
+
+        // 3. (Opsional) Kirim notifikasi ke admin bahwa pengajuan dibatalkan
+        const memberName = (await client.query('SELECT name FROM members WHERE id = $1', [memberId])).rows[0].name;
+        const notificationMessage = `Pengajuan pinjaman dari ${memberName} telah dibatalkan oleh yang bersangkutan.`;
+        const approversRes = await client.query("SELECT id FROM members WHERE role = ANY($1::varchar[]) AND status = 'Active'", [['admin', 'akunting']]);
+        for (const approver of approversRes.rows) {
+            createNotification(approver.id, notificationMessage, 'approvals').catch(err => console.error(`Gagal membuat notifikasi pembatalan untuk user ${approver.id}:`, err));
+        }
+
+        await client.query('COMMIT');
+        res.json({ message: 'Pengajuan pinjaman berhasil dibatalkan.' });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error cancelling loan application:', err.message);
+        res.status(400).json({ error: err.message || 'Gagal membatalkan pengajuan pinjaman.' });
+    } finally {
+        client.release();
+    }
+};
+
 const getVoluntarySavingsBalance = async (req, res) => {
     const memberId = req.user.id;
     try {
@@ -1187,6 +1237,7 @@ module.exports = {
     getMemberApplications,
     createLoanApplication,
     createSavingApplication,
+    cancelLoanApplication,
     getLoanDetails,
     getMemberShuHistory,
     getNotifications,
