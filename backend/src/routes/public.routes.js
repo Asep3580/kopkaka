@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const publicController = require('../controllers/public.controller'); // No change here, just for context
+const memberController = require('../controllers/member.controller');
 const protect = require('../middleware/auth.middleware');
 const authorize = require('../middleware/role.middleware');
 
@@ -24,6 +25,6 @@ router.get('/sales/:orderId', publicController.getPublicSaleDetailsByOrderId);
 router.post('/sales', publicController.createSaleOrder);
 // Route for cancelling an order. Requires authentication.
 // It can be cancelled by the member who made it, or by an admin/accounting staff.
-router.put('/sales/:orderId/cancel', protect, publicController.cancelSaleOrder);
+router.put('/sales/:orderId/cancel', protect, memberController.cancelSaleOrder);
 
 module.exports = router;
