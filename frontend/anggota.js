@@ -866,12 +866,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.reset();
                 loadPendingApplications(); // Reload the pending applications list
                 document.getElementById('amortization-preview-section').classList.add('hidden');
+                // Setelah berhasil, muat ulang bagian ini untuk menampilkan pesan status pending.
+                loadLoanPaymentSection();
     
             } catch (error) {
-                // Tampilkan pesan error yang lebih spesifik dari backend
-                const errorEl = form.querySelector('.form-error-message');
-                errorEl.textContent = error.message;
-                errorEl.classList.remove('hidden');
+                // PERBAIKAN: Tampilkan pesan error yang lebih spesifik dari backend di dalam form.
+                // Buat elemen error jika belum ada.
+                let errorEl = form.querySelector('.form-error-message');
+                if (!errorEl) {
+                    form.insertAdjacentHTML('beforeend', '<p class="form-error-message text-red-600 text-sm mt-2 hidden"></p>');
+                    errorEl = form.querySelector('.form-error-message');
+                }
+                errorEl.textContent = error.message; // Tampilkan pesan dari backend
+                errorEl.classList.remove('hidden'); // Tampilkan elemen error
                 setTimeout(() => errorEl.classList.add('hidden'), 5000); // Sembunyikan setelah 5 detik
             } finally {
                 submitBtn.disabled = false;
@@ -1645,6 +1652,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'application':
                 loadApplicationData();
+                setupLoanApplicationForm(); // <-- TAMBAHKAN BARIS INI
                 loadLoanPaymentSection(); // Tentukan form mana yang akan ditampilkan
                 loadAvailableVoluntarySavings(); // Muat saldo untuk penarikan
                 loadPendingApplications();
