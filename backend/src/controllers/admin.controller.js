@@ -57,35 +57,6 @@ const getIncomeStatementSummary = async (req, res) => {
     }
 };
 
-const getPendingLoans = async (req, res) => {
-    try {
-        const query = `
-            SELECT 
-                l.id, 
-                l.amount, 
-                l.date, 
-                l.status, 
-                m.name AS "memberName", 
-                m.cooperative_number AS "cooperativeNumber",
-                lt.name AS "loanTypeName",
-                ltm.tenor_months AS "tenorMonths",
-                l.bank_name,
-                l.bank_account_number
-            FROM loans l
-            JOIN members m ON l.member_id = m.id
-            JOIN loan_types lt ON l.loan_type_id = lt.id
-            JOIN loan_terms ltm ON l.loan_term_id = ltm.id
-            WHERE l.status IN ('Pending', 'Approved by Accounting')
-            ORDER BY l.date ASC
-        `;
-        const result = await pool.query(query);
-        res.json(result.rows);
-    } catch (err) {
-        console.error('Error fetching pending loans:', err.message);
-        res.status(500).json({ error: 'Gagal mengambil data pinjaman yang tertunda.' });
-    }
-};
-
 // Helper function to handle side effects of final loan approval
 const handleFinalLoanApproval = async (client, loanDetails) => {
     const { id: loanId, member_id, amount, loan_type_name, member_name, account_id } = loanDetails;
@@ -124,6 +95,43 @@ const handleFinalLoanApproval = async (client, loanDetails) => {
         `Selamat! Pinjaman Anda sebesar ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount)} telah disetujui dan dicairkan.`,
         'loans'
     );
+};
+
+const getPendingLoansForAdmin = async (req, res) => {
+    try {
+        // Query ini mengambil semua pinjaman dengan status yang memerlukan tindakan,
+        // dan menggabungkannya dengan informasi anggota dan tipe pinjaman.
+        const query = `
+            SELECT 
+                l.id,
+                l.amount,
+                l.date,
+                l.status,
+                l.bank_name,
+                l.bank_account_number,
+                m.name AS "memberName",
+                m.cooperative_number AS "cooperativeNumber",
+                lt.tenor_months AS "tenorMonths",
+                ltp.name AS "loanTypeName"
+            FROM loans l
+            JOIN members m ON l.member_id = m.id
+            JOIN loan_terms lt ON l.loan_term_id = lt.id
+            JOIN loan_types ltp ON lt.loan_type_id = ltp.id
+            WHERE l.status IN ('Pending', 'Approved by Accounting')
+            ORDER BY l.date ASC
+        `;
+        const result = await pool.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching pending loans for admin:', err.message);
+        res.status(500).json({ error: 'Gagal mengambil data pengajuan pinjaman.' });
+    }
+};
+
+const getPendingLoans = async (req, res) => {
+    // This function is now an alias for the new, more descriptive function.
+    // This ensures backward compatibility if it's called elsewhere.
+    return getPendingLoansForAdmin(req, res);
 };
 
 const getPendingLoanPayments = async (req, res) => {
@@ -3648,6 +3656,7 @@ module.exports = {
     getDashboardStats,
     getMemberGrowth,
     getCashFlowSummary,
+    getPendingLoansForAdmin,
     getPendingLoans,
     updateLoanStatus,
     recordLoanPayment,
