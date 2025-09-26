@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Endpoint ini perlu dibuat di backend
             const activeLoan = await apiFetch(`${MEMBER_API_URL}/active-loan-for-payment`);
-    
+
             if (activeLoan && activeLoan.loanId) {
                 // Member memiliki pinjaman aktif, tampilkan form pembayaran
                 paymentContainer.classList.remove('hidden');
@@ -916,9 +916,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('payment-date').valueAsDate = new Date();
     
             } else {
-                // Tidak ada pinjaman aktif, tampilkan form pengajuan
-                appContainer.classList.remove('hidden');
-                paymentContainer.classList.add('hidden');
+                // Jika tidak ada pinjaman aktif yang perlu dibayar, periksa apakah ada pinjaman yang sedang diproses
+                const pendingApplications = await apiFetch(`${MEMBER_API_URL}/applications`);
+                const pendingLoan = pendingApplications.find(app => app.type === 'Pinjaman');
+
+                if (pendingLoan) {
+                    // Jika ada pinjaman yang sedang diproses, sembunyikan kedua form dan tampilkan pesan status
+                    appContainer.classList.add('hidden');
+                    paymentContainer.classList.add('hidden');
+                    // Tampilkan pesan status di tempat yang sesuai, misalnya di dalam loan-application-container
+                    const appContainerParent = document.getElementById('application-loan-tab');
+                    appContainerParent.innerHTML = `
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg text-center">
+                            <p class="text-yellow-800">Anda memiliki pengajuan pinjaman yang sedang diproses dengan status <strong>${pendingLoan.status}</strong>.</p>
+                            <p class="text-sm text-yellow-700 mt-1">Anda dapat mengajukan pinjaman baru setelah pengajuan saat ini selesai diproses.</p>
+                        </div>
+                    `;
+                } else {
+                    // Tidak ada pinjaman aktif atau pending, tampilkan form pengajuan
+                    appContainer.classList.remove('hidden');
+                    paymentContainer.classList.add('hidden');
+                }
             }
     
         } catch (error) {
