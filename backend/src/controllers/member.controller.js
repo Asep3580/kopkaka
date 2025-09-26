@@ -1168,6 +1168,56 @@ const getSaleDetailsByOrderIdForMember = async (req, res) => {
     }
 };
 
+/**
+ * @desc    Membatalkan pesanan penjualan (sale order) oleh admin atau anggota pemilik.
+ * @route   POST /api/public/sales/:orderId/cancel
+ * @access  Private (Admin, Akunting, atau pemilik pesanan)
+ */
+const cancelSaleOrder = async (req, res) => {
+    const { orderId } = req.params;
+    const { id: userId, role: userRole } = req.user; // Diambil dari token JWT
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        // 1. Dapatkan detail pesanan
+        const saleRes = await client.query(
+            'SELECT id, member_id, status FROM sales WHERE order_id = $1 FOR UPDATE',
+            [orderId]
+        );
+
+        if (saleRes.rows.length === 0) {
+            throw new Error('Pesanan tidak ditemukan.');
+        }
+
+        const sale = saleRes.rows[0];
+
+        // 2. Otorisasi: Hanya admin/akunting atau pemilik pesanan yang bisa membatalkan
+        if (userRole !== 'admin' && userRole !== 'akunting' && sale.member_id !== userId) {
+            throw new Error('Anda tidak memiliki izin untuk membatalkan pesanan ini.');
+        }
+
+        // 3. Cek apakah pesanan masih bisa dibatalkan
+        if (sale.status !== 'Menunggu Pengambilan') {
+            throw new Error(`Pesanan dengan status "${sale.status}" tidak dapat dibatalkan.`);
+        }
+
+        // 4. Dapatkan item yang dipesan untuk mengembalikan stok
+        const itemsRes = await client.query('SELECT product_id, quantity FROM sale_items WHERE sale_id = $1', [sale.id]);
+        for (const item of itemsRes.rows) {
+            await client.query('UPDATE products SET stock = stock + $1 WHERE id = $2', [item.quantity, item.product_id]);
+        }
+        await client.query("UPDATE sales SET status = 'Dibatalkan' WHERE id = $1", [sale.id]);
+        if (sale.member_id) {
+            const cancelledBy = (userRole === 'admin' || userRole === 'akunting') ? 'oleh Admin' : 'oleh Anda';
+            await createNotification(sale.member_id, `Pesanan Anda #${orderId} telah dibatalkan ${cancelledBy}.`, 'transactions');
+        }
+        await client.query('COMMIT');
+        res.json({ message: `Pesanan ${orderId} berhasil dibatalkan.` });
+    } catch (err) { await client.query('ROLLBACK'); console.error('Error cancelling sale order:', err.message); res.status(400).json({ error: err.message || 'Gagal membatalkan pesanan.' }); } finally { client.release(); }
+};
+
 module.exports = {
     getMemberStats,
     getMemberProfile,
@@ -1198,4 +1248,5 @@ module.exports = {
     createWithdrawalApplication,
     getActiveLoanForPayment,
     submitLoanPayment,
+    cancelSaleOrder,
 };
