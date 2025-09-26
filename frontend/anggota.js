@@ -590,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Menggunakan kelas .virtual-card dan .card-logo untuk gaya modern
         return `
-            <div class="virtual-card text-white rounded-xl shadow-lg p-6 flex flex-col justify-between h-full">
+            <div class="virtual-card card-enter-animation text-white rounded-xl shadow-lg p-6 flex flex-col justify-between h-full">
                 <div>
                     <div class="flex justify-between items-start">
                         <h3 class="text-xl font-bold">KARTU ANGGOTA</h3>
@@ -1022,9 +1022,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = form.querySelector('button[type="submit"]');
             const amount = document.getElementById('withdrawal-amount').value;
             const description = document.getElementById('withdrawal-description').value;
+            const bank_name = document.getElementById('withdrawal-bank-name').value;
+            const bank_account_number = document.getElementById('withdrawal-bank-account-number').value;
 
-            if (!amount || parseFloat(amount) <= 0 || !description.trim()) {
-                alert('Harap isi jumlah dan keterangan penarikan.');
+            if (!amount || parseFloat(amount) <= 0 || !description.trim() || !bank_name.trim() || !bank_account_number.trim()) {
+                alert('Harap lengkapi semua field: Jumlah, Keterangan, Nama Bank, dan Nomor Rekening.');
                 return;
             }
 
@@ -1045,7 +1047,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Endpoint ini akan kita buat di backend
                 await apiFetch(`${MEMBER_API_URL}/savings/withdrawal`, {
                     method: 'POST',
-                    body: JSON.stringify({ amount, description }),
+                    body: JSON.stringify({ amount, description, bank_name, bank_account_number }),
                 });
                 alert('Pengajuan penarikan berhasil dikirim dan menunggu persetujuan admin.');
                 form.reset();
