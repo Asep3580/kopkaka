@@ -1254,5 +1254,4 @@ module.exports = {
     getActiveLoanForPayment,
     submitLoanPayment,
     cancelSaleOrder,
-    getPendingLoansForAdmin, // <-- Tambahkan fungsi baru ke exports
 };
