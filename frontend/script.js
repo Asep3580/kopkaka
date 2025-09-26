@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const amortizationSection = document.getElementById('amortization-section');
         const amortizationTableBody = document.getElementById('amortization-table-body');
         const amortizationTableFooter = document.getElementById('amortization-table-footer');
-        const downloadExcelBtn = document.getElementById('download-amortization-excel-btn');
+        const downloadPdfBtn = document.getElementById('download-amortization-pdf-btn');
 
         const formatCurrency = (value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
         const formatNumber = (value) => value.toLocaleString('id-ID');
@@ -189,17 +189,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
         interestRateInput.addEventListener('input', calculateLoan);
 
-        downloadExcelBtn.addEventListener('click', () => {
+        downloadPdfBtn.addEventListener('click', () => {
             if (amortizationData.length === 0) return;
-            const headers = "Bulan,Cicilan Pokok,Bunga,Total Cicilan,Sisa Pinjaman\n";
-            const csvContent = "data:text/csv;charset=utf-8," + headers + amortizationData.map(e => `${e.bulan},${e.pokok},${e.bunga},${e.total},${e.sisa}`).join("\n");
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "estimasi_cicilan.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const tableColumn = ["Bulan", "Cicilan Pokok", "Bunga", "Total Cicilan", "Sisa Pinjaman"];
+            const tableRows = [];
+
+            amortizationData.forEach(item => {
+                const row = [
+                    item.bulan,
+                    formatCurrency(item.pokok),
+                    formatCurrency(item.bunga),
+                    formatCurrency(item.total),
+                    formatCurrency(item.sisa)
+                ];
+                tableRows.push(row);
+            });
+
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 20,
+                headStyles: { fillColor: [127, 29, 29] }, // Warna merah KOPKAKA
+            });
+            doc.text("Estimasi Rincian Cicilan Pinjaman", 14, 15);
+            doc.save("estimasi_cicilan.pdf");
         });
 
         // Initial calculation

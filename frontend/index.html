@@ -6,6 +6,9 @@
     <title>Koperasi Karya Kagum Abadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Pustaka untuk generate PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -266,7 +269,7 @@
                 <div id="amortization-section" class="mt-8 bg-white p-8 rounded-lg shadow-md hidden">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold text-accent">Estimasi Rincian Cicilan</h3>
-                        <button id="download-amortization-excel-btn" class="bg-green-600 text-white text-sm px-3 py-2 rounded-md hover:bg-green-700">Unduh Excel</button>
+                        <button id="download-amortization-pdf-btn" class="bg-green-600 text-white text-sm px-3 py-2 rounded-md hover:bg-green-700">Unduh PDF</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
