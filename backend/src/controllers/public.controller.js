@@ -183,6 +183,11 @@ const getPublicSaleDetailsByOrderId = async (req, res) => {
     }
 };
 
+/**
+ * @desc    Membatalkan pesanan penjualan (sale order) oleh admin atau anggota pemilik.
+ * @route   POST /api/public/sales/:orderId/cancel
+ * @access  Private (Admin, Akunting, atau pemilik pesanan)
+ */
 const cancelSaleOrderForMember = async (req, res) => {
     const { orderId } = req.params;
     const { id: userId, role: userRole } = req.user; // Diambil dari token JWT
