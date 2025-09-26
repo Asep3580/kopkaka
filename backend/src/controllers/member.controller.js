@@ -436,11 +436,11 @@ const _getInstallmentDetails = (loan, installmentNumber) => {
 const getActiveLoanForPayment = async (req, res) => {
     const memberId = req.user.id;
     try {
-        const loanRes = await pool.query(
+        const loanRes = await pool.query( // Periksa semua pinjaman yang belum lunas
             `SELECT l.id, l.amount, l.remaining_principal, lt.tenor_months, lt.interest_rate
              FROM loans l
              JOIN loan_terms lt ON l.loan_term_id = lt.id
-             WHERE l.member_id = $1 AND l.status = 'Approved'`,
+             WHERE l.member_id = $1 AND l.status != 'Lunas' AND l.status != 'Rejected'`,
             [memberId]
         );
 
@@ -448,6 +448,11 @@ const getActiveLoanForPayment = async (req, res) => {
             return res.json(null); // Kembalikan null jika tidak ada pinjaman aktif
         }
         const loan = loanRes.rows[0];
+
+        // Jika statusnya belum 'Approved', berarti masih pending. Kembalikan null agar frontend tahu.
+        if (loan.status !== 'Approved') {
+            return res.json(null);
+        }
 
         // Cari angsuran berikutnya yang harus dibayar
         const lastPaymentRes = await pool.query(
