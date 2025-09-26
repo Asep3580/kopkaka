@@ -36,8 +36,11 @@ const storage = multer.diskStorage({
 
 // Filter file untuk hanya menerima gambar
 const fileFilter = (req, file, cb) => {
-    // Hanya terima gambar untuk logo dan gambar produk
+    // Hanya terima gambar untuk field-field tertentu
     if (['logo', 'partnerLogo', 'productImage', 'testimonialPhoto'].includes(file.fieldname) && !file.mimetype.startsWith('image/')) {
+        return cb(new Error('Hanya file gambar yang diizinkan!'), false);
+    }
+    if (['ktp_photo', 'selfie_photo', 'kk_photo', 'proof'].includes(file.fieldname) && !file.mimetype.startsWith('image/')) {
         return cb(new Error('Hanya file gambar yang diizinkan!'), false);
     }
     cb(null, true);
