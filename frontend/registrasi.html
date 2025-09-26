@@ -43,18 +43,24 @@
                         <label for="reg-telepon" class="block text-sm font-medium text-gray-700">No. Telepon</label>
                         <input type="tel" inputmode="numeric" pattern="[0-9+]*" id="reg-telepon" required placeholder="Contoh: 08123456789" class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="reg-perusahaan" class="block text-sm font-medium text-gray-700">Perusahaan</label>
-                            <select id="reg-perusahaan" required class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
-                                <option value="">Memuat perusahaan...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="reg-jabatan" class="block text-sm font-medium text-gray-700">Jabatan</label>
-                            <select id="reg-jabatan" required class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
-                                <option value="">Memuat jabatan...</option>
-                            </select>
+                    <div class="flex items-center">
+                        <input id="individual-registration" type="checkbox" class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                        <label for="individual-registration" class="ml-2 block text-sm text-gray-900">Daftar sebagai individual (umum)</label>
+                    </div>
+                    <div id="company-section">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="reg-perusahaan" class="block text-sm font-medium text-gray-700">Perusahaan</label>
+                                <select id="reg-perusahaan" required class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                                    <option value="">Memuat perusahaan...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="reg-jabatan" class="block text-sm font-medium text-gray-700">Jabatan</label>
+                                <select id="reg-jabatan" required class="mt-1 block w-full rounded-md border-gray-400 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                                    <option value="">Memuat jabatan...</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -264,5 +270,25 @@
     </footer>
 
     <script type="module" src="registrasi.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const individualCheckbox = document.getElementById('individual-registration');
+            const companySection = document.getElementById('company-section');
+            const companySelect = document.getElementById('reg-perusahaan');
+            const positionSelect = document.getElementById('reg-jabatan');
+
+            individualCheckbox.addEventListener('change', function () {
+                if (this.checked) {
+                    companySection.classList.add('hidden');
+                    companySelect.required = false;
+                    positionSelect.required = false;
+                } else {
+                    companySection.classList.remove('hidden');
+                    companySelect.required = true;
+                    positionSelect.required = true;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
