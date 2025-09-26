@@ -684,7 +684,7 @@ const renderCashFlowChart = (data) => {
             const filters = { ...currentMemberFilters, page, limit: 10 };
             const queryParams = new URLSearchParams(filters).toString();
             
-            const { data: members, pagination } = await apiFetch(`${ADMIN_API_URL}/members?${queryParams}`);
+            const { data: members, pagination } = await apiFetch(`${API_URL}/members?${queryParams}`);
 
             // Saring daftar untuk hanya menampilkan pengguna dengan peran 'member'
             const memberOnlyList = members.filter(user => user.role === 'member');
@@ -1625,12 +1625,15 @@ const renderCashFlowChart = (data) => {
                 let actionButtons = `<span class="text-xs text-gray-400">Tidak ada aksi</span>`;
 
                 if (isLoan) { // Logic for Loans
+                    // Tombol Detail selalu ada
+                    actionButtons = `<button class="details-member-btn text-blue-600 hover:text-blue-900" data-id="${item.member_id}">Detail</button>`;
+
                     if (item.status === 'Pending' && ['admin', 'akunting'].includes(userRole)) {
-                        actionButtons = `<button class="approve-btn text-green-600" data-id="${item.id}" data-type="loans" data-new-status="Approved by Accounting">Setujui (Akunting)</button>
-                                         <button class="reject-btn text-red-600" data-id="${item.id}" data-type="loans" data-new-status="Rejected">Tolak</button>`;
+                        actionButtons += `<button class="approve-btn text-green-600" data-id="${item.id}" data-type="loans" data-new-status="Approved by Accounting">Setujui (Akunting)</button>
+                                          <button class="reject-btn text-red-600" data-id="${item.id}" data-type="loans" data-new-status="Rejected">Tolak</button>`;
                     } else if (item.status === 'Approved by Accounting' && ['admin', 'manager'].includes(userRole)) {
-                        actionButtons = `<button class="approve-btn text-green-600" data-id="${item.id}" data-type="loans" data-new-status="Approved">Finalisasi (Manager)</button>
-                                         <button class="reject-btn text-red-600" data-id="${item.id}" data-type="loans" data-new-status="Rejected">Tolak</button>`;
+                        actionButtons += `<button class="approve-btn text-green-600" data-id="${item.id}" data-type="loans" data-new-status="Approved">Finalisasi (Manager)</button>
+                                          <button class="reject-btn text-red-600" data-id="${item.id}" data-type="loans" data-new-status="Rejected">Tolak</button>`;
                     }
                     row.innerHTML = `
                         <td class="px-6 py-4 text-sm text-gray-900">${item.memberName || 'N/A'}</td>
