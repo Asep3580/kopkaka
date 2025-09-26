@@ -109,6 +109,7 @@ const getPendingLoansForAdmin = async (req, res) => {
                 l.status,
                 l.bank_name,
                 l.bank_account_number,
+                l.member_id,
                 m.name AS "memberName",
                 m.cooperative_number AS "cooperativeNumber",
                 lt.tenor_months AS "tenorMonths",
