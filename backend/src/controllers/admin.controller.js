@@ -101,7 +101,19 @@ const handleFinalLoanApproval = async (client, loanDetails) => {
 
     const description = `Pencairan pinjaman ${loan_type_name} a/n ${member_name}`;
 
-    const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description) VALUES (NOW(), $1) RETURNING id', [description]);
+    // --- Generate Automatic Journal Reference Number ---
+    const entryDate = new Date();
+    const year = entryDate.getFullYear();
+    const month = String(entryDate.getMonth() + 1).padStart(2, '0');
+    const day = String(entryDate.getDate()).padStart(2, '0');
+    const prefix = `JRNL-${year}${month}${day}-`;
+
+    const seqResult = await client.query("SELECT COUNT(*) FROM general_journal WHERE reference_number LIKE $1", [`${prefix}%`]);
+    const nextSeq = parseInt(seqResult.rows[0].count, 10) + 1;
+    const referenceNumber = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+    // --- End of Generation ---
+
+    const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description, reference_number) VALUES (NOW(), $1, $2) RETURNING id', [description, referenceNumber]);
     const journalId = journalHeaderRes.rows[0].id;
 
     const journalEntriesQuery = 'INSERT INTO journal_entries (journal_id, account_id, debit, credit) VALUES ($1, $2, $3, 0), ($1, $4, 0, $3)';
@@ -391,7 +403,18 @@ const recordLoanPayment = async (req, res) => {
         const description = `Pembayaran angsuran ke-${requestedInstallmentNumber} pinjaman ${loan.loan_type_name} a/n ${loan.member_name}`;
 
         // 7. Buat header jurnal
-        const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description) VALUES (NOW(), $1) RETURNING id', [description]);
+        // --- Generate Automatic Journal Reference Number ---
+        const entryDate = new Date();
+        const year = entryDate.getFullYear();
+        const month = String(entryDate.getMonth() + 1).padStart(2, '0');
+        const day = String(entryDate.getDate()).padStart(2, '0');
+        const prefix = `JRNL-${year}${month}${day}-`;
+
+        const seqResult = await client.query("SELECT COUNT(*) FROM general_journal WHERE reference_number LIKE $1", [`${prefix}%`]);
+        const nextSeq = parseInt(seqResult.rows[0].count, 10) + 1;
+        const referenceNumber = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+        // --- End of Generation ---
+        const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description, reference_number) VALUES (NOW(), $1, $2) RETURNING id', [description, referenceNumber]);
         const journalId = journalHeaderRes.rows[0].id;
 
         // 8. Buat entri jurnal (Debit Kas, Kredit Piutang, Kredit Pendapatan Bunga)
@@ -2404,8 +2427,21 @@ const createManualSaving = async (req, res) => {
 
         // 3. Create Journal Entry
         const cashAccountId = 3; // Asumsi ID Akun Kas adalah 3
-        const journalDescription = `Setoran ${details.saving_type_name} a/n ${details.member_name}`;
-        const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description) VALUES ($1, $2) RETURNING id', [date, journalDescription]);
+        const journalDescription = `Setoran ${details.saving_type_name} a/n ${details.member_name} (Manual)`;
+
+        // --- Generate Automatic Journal Reference Number ---
+        const entryDate = new Date(date);
+        const year = entryDate.getFullYear();
+        const month = String(entryDate.getMonth() + 1).padStart(2, '0');
+        const day = String(entryDate.getDate()).padStart(2, '0');
+        const prefix = `JRNL-${year}${month}${day}-`;
+
+        const seqResult = await client.query("SELECT COUNT(*) FROM general_journal WHERE reference_number LIKE $1", [`${prefix}%`]);
+        const nextSeq = parseInt(seqResult.rows[0].count, 10) + 1;
+        const referenceNumber = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+        // --- End of Generation ---
+
+        const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description, reference_number) VALUES ($1, $2, $3) RETURNING id', [date, journalDescription, referenceNumber]);
         const journalId = journalHeaderRes.rows[0].id;
         const journalEntriesQuery = 'INSERT INTO journal_entries (journal_id, account_id, debit, credit) VALUES ($1, $2, $3, 0), ($1, $4, 0, $3)';
         await client.query(journalEntriesQuery, [journalId, cashAccountId, amount, details.account_id]);
@@ -3032,7 +3068,18 @@ const processResignation = async (req, res) => {
             if (cashAccountRes.rows.length === 0) throw new Error("Akun 'Kas' (1-1110) tidak ditemukan di COA.");
             const cashAccountId = cashAccountRes.rows[0].id;
 
-            const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description) VALUES (NOW(), $1) RETURNING id', [description]);
+            // --- Generate Automatic Journal Reference Number ---
+            const entryDate = new Date();
+            const year = entryDate.getFullYear();
+            const month = String(entryDate.getMonth() + 1).padStart(2, '0');
+            const day = String(entryDate.getDate()).padStart(2, '0');
+            const prefix = `JRNL-${year}${month}${day}-`;
+
+            const seqResult = await client.query("SELECT COUNT(*) FROM general_journal WHERE reference_number LIKE $1", [`${prefix}%`]);
+            const nextSeq = parseInt(seqResult.rows[0].count, 10) + 1;
+            const referenceNumber = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+            // --- End of Generation ---
+            const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description, reference_number) VALUES (NOW(), $1, $2) RETURNING id', [description, referenceNumber]);
             const journalId = journalHeaderRes.rows[0].id;
 
             const journalEntries = [];
@@ -3159,7 +3206,19 @@ const processMonthlyClosing = async (req, res) => {
         // 5. Create closing journal entry
         const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const description = `Jurnal Penutup Bulan ${monthNames[month - 1]} ${year}`;
-        const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description) VALUES ($1, $2) RETURNING id', [endDate, description]);
+
+        // --- Generate Automatic Journal Reference Number ---
+        const entryDate = new Date(endDate);
+        const refYear = entryDate.getFullYear();
+        const refMonth = String(entryDate.getMonth() + 1).padStart(2, '0');
+        const refDay = String(entryDate.getDate()).padStart(2, '0');
+        const prefix = `JRNL-${refYear}${refMonth}${refDay}-`;
+
+        const seqResult = await client.query("SELECT COUNT(*) FROM general_journal WHERE reference_number LIKE $1", [`${prefix}%`]);
+        const nextSeq = parseInt(seqResult.rows[0].count, 10) + 1;
+        const referenceNumber = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+        // --- End of Generation ---
+        const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description, reference_number) VALUES ($1, $2, $3) RETURNING id', [endDate, description, referenceNumber]);
         const journalId = journalHeaderRes.rows[0].id;
 
         // Improvement: Fetch account ID dynamically

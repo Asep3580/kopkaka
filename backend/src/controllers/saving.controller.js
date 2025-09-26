@@ -185,8 +185,20 @@ const updateSavingStatus = async (req, res) => {
                 ? `Penarikan simpanan sukarela a/n ${saving.member_name}`
                 : `Setoran ${saving.saving_type_name} a/n ${saving.member_name}`;
 
+            // --- Generate Automatic Journal Reference Number ---
+            const entryDate = new Date();
+            const year = entryDate.getFullYear();
+            const month = String(entryDate.getMonth() + 1).padStart(2, '0');
+            const day = String(entryDate.getDate()).padStart(2, '0');
+            const prefix = `JRNL-${year}${month}${day}-`;
+
+            const seqResult = await client.query("SELECT COUNT(*) FROM general_journal WHERE reference_number LIKE $1", [`${prefix}%`]);
+            const nextSeq = parseInt(seqResult.rows[0].count, 10) + 1;
+            const referenceNumber = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+            // --- End of Generation ---
+
             // 1. Buat header jurnal
-            const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description) VALUES (NOW(), $1) RETURNING id', [description]);
+            const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description, reference_number) VALUES (NOW(), $1, $2) RETURNING id', [description, referenceNumber]);
             const journalId = journalHeaderRes.rows[0].id;
 
             // 2. Update simpanan dengan journal_id
@@ -467,12 +479,24 @@ const uploadBulkSavings = async (req, res) => {
                 throw new Error(`Tipe simpanan "${saving.saving_type_name}" belum terhubung ke akun COA. Harap lakukan maping di Pengaturan.`);
             }
 
-            const journalDescription = `Setoran ${saving.saving_type_name} a/n ${memberName} via Excel`;
             const amount = parseFloat(saving.amount);
             const date = saving.date && !isNaN(new Date(saving.date)) ? new Date(saving.date) : new Date();
+            const journalDescription = `Setoran ${saving.saving_type_name} a/n ${memberName} via Excel`;
+
+            // --- Generate Automatic Journal Reference Number ---
+            const entryDate = new Date(date);
+            const year = entryDate.getFullYear();
+            const month = String(entryDate.getMonth() + 1).padStart(2, '0');
+            const day = String(entryDate.getDate()).padStart(2, '0');
+            const prefix = `JRNL-${year}${month}${day}-`;
+
+            const seqResult = await client.query("SELECT COUNT(*) FROM general_journal WHERE reference_number LIKE $1", [`${prefix}%`]);
+            const nextSeq = parseInt(seqResult.rows[0].count, 10) + 1;
+            const referenceNumber = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+            // --- End of Generation ---
 
             // 1. Buat header jurnal untuk setiap transaksi
-            const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description) VALUES ($1, $2) RETURNING id', [date, journalDescription]);
+            const journalHeaderRes = await client.query('INSERT INTO general_journal (entry_date, description, reference_number) VALUES ($1, $2, $3) RETURNING id', [date, journalDescription, referenceNumber]);
             const journalId = journalHeaderRes.rows[0].id;
 
             // 2. Buat entri jurnal (Debit Kas, Kredit Akun Simpanan)
