@@ -885,7 +885,7 @@ const updateProduct = async (req, res) => {
         const oldImageUrl = oldProductRes.rows[0]?.image_url;
         let newImageUrl = oldImageUrl;
 
-        if (req.file) {
+        if (req.file) { // Path dari multer sudah benar (contoh: uploads/products/...)
             newImageUrl = '/' + req.file.path.replace(/\\/g, '/');
         }
 
@@ -903,8 +903,8 @@ const updateProduct = async (req, res) => {
         }
 
         // Hapus file gambar lama setelah database berhasil diperbarui
-        if (req.file && oldImageUrl && oldImageUrl.startsWith('/uploads/') && oldImageUrl !== newImageUrl) {
-            const oldImagePath = path.join(__dirname, '..', '..', oldImageUrl.substring(1));
+        if (req.file && oldImageUrl && oldImageUrl !== newImageUrl) {
+            const oldImagePath = path.resolve(process.cwd(), oldImageUrl.startsWith('/') ? oldImageUrl.substring(1) : oldImageUrl);
             fs.unlink(oldImagePath, (err) => {
                 if (err) console.error("Gagal menghapus gambar lama:", oldImagePath, err);
             });
@@ -928,10 +928,9 @@ const deleteProduct = async (req, res) => {
         const oldImageUrl = oldProductRes.rows[0]?.image_url;
         
         await pool.query('DELETE FROM products WHERE id = $1', [id]);
-
-        // Hanya hapus file jika itu adalah file lokal (bukan URL eksternal)
-        if (oldImageUrl && oldImageUrl.startsWith('/uploads/')) {
-            const oldImagePath = path.join(__dirname, '..', '..', oldImageUrl.substring(1));
+        
+        if (oldImageUrl) {
+            const oldImagePath = path.resolve(process.cwd(), oldImageUrl.startsWith('/') ? oldImageUrl.substring(1) : oldImageUrl);
             fs.unlink(oldImagePath, (err) => { if (err) console.error("Gagal menghapus gambar produk:", oldImagePath, err); });
         }
         res.status(204).send();
@@ -1229,13 +1228,13 @@ const updateCompanyInfo = async (req, res) => {
         const oldInfoResult = await client.query('SELECT logo_url FROM company_info WHERE id = 1');
         const oldLogoPath = oldInfoResult.rows.length > 0 ? oldInfoResult.rows[0].logo_url : null;
         let newLogoUrl = oldLogoPath;
-        if (req.file) {
+        if (req.file) { // Path dari multer sudah benar (contoh: uploads/logo/...)
             newLogoUrl = req.file.path.replace(/\\/g, '/');
         }
         const query = `UPDATE company_info SET name = $1, address = $2, phone = $3, logo_url = $4 WHERE id = 1 RETURNING *;`;
         const result = await client.query(query, [name, address, phone, newLogoUrl]);
-        if (req.file && oldLogoPath && oldLogoPath !== newLogoUrl) {
-            const fullOldPath = path.join(__dirname, '..', '..', oldLogoPath);
+        if (req.file && oldLogoPath && oldLogoPath !== newLogoUrl) { // Jika ada file baru dan path lama ada
+            const fullOldPath = path.resolve(process.cwd(), oldLogoPath.startsWith('/') ? oldLogoPath.substring(1) : oldLogoPath);
             fs.unlink(fullOldPath, (err) => { if (err) console.error('Gagal menghapus file logo lama:', err); });
         }
         await client.query('COMMIT');
@@ -1367,7 +1366,7 @@ const getTestimonialById = async (req, res) => {
 const createTestimonial = async (req, res) => {
     const { name, division, text } = req.body;
     let photoUrl = null;
-    if (req.file) {
+    if (req.file) { // Path dari multer sudah benar (contoh: uploads/testimonials/...)
         photoUrl = '/' + req.file.path.replace(/\\/g, '/');
     }
 
@@ -1407,16 +1406,16 @@ const updateTestimonial = async (req, res) => {
         const oldPhotoUrl = oldTestimonialRes.rows[0].photo_url;
         let newPhotoUrl = oldPhotoUrl;
 
-        if (req.file) {
+        if (req.file) { // Path dari multer sudah benar
             newPhotoUrl = '/' + req.file.path.replace(/\\/g, '/');
         }
 
         const query = `UPDATE testimonials SET name = $1, division = $2, text = $3, photo_url = $4 WHERE id = $5 RETURNING *;`;
         const values = [name, division, text, newPhotoUrl, id];
         const result = await client.query(query, values);
-
-        if (req.file && oldPhotoUrl && oldPhotoUrl !== newPhotoUrl && oldPhotoUrl.startsWith('/uploads/')) {
-            const oldPhotoPath = path.join(__dirname, '..', '..', oldPhotoUrl.substring(1));
+        
+        if (req.file && oldPhotoUrl && oldPhotoUrl !== newPhotoUrl) {
+            const oldPhotoPath = path.resolve(process.cwd(), oldPhotoUrl.startsWith('/') ? oldPhotoUrl.substring(1) : oldPhotoUrl);
             fs.unlink(oldPhotoPath, (err) => {
                 if (err) console.error("Gagal menghapus foto testimoni lama:", oldPhotoPath, err);
             });
@@ -1442,9 +1441,9 @@ const deleteTestimonial = async (req, res) => {
         
         const oldPhotoUrl = oldTestimonialRes.rows[0].photo_url;
         await client.query('DELETE FROM testimonials WHERE id = $1', [id]);
-
-        if (oldPhotoUrl && oldPhotoUrl.startsWith('/uploads/')) {
-            const oldPhotoPath = path.join(__dirname, '..', '..', oldPhotoUrl.substring(1));
+        
+        if (oldPhotoUrl) {
+            const oldPhotoPath = path.resolve(process.cwd(), oldPhotoUrl.startsWith('/') ? oldPhotoUrl.substring(1) : oldPhotoUrl);
             fs.unlink(oldPhotoPath, (err) => { if (err) console.error("Gagal menghapus foto testimoni:", oldPhotoPath, err); });
         }
         await client.query('COMMIT');

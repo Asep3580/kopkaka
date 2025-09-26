@@ -62,8 +62,8 @@ const updatePartner = async (req, res) => {
         if (req.file) {
             logo_url = req.file.path.replace(/\\/g, '/');
             if (oldLogoPath) {
-                // FIX: Construct the absolute path from the project root directory.
-                const fullOldPath = path.join(process.cwd(), oldLogoPath);
+                // FIX: Construct the absolute path from the project root directory, handling leading slashes.
+                const fullOldPath = path.resolve(process.cwd(), oldLogoPath.startsWith('/') ? oldLogoPath.substring(1) : oldLogoPath);
                 fs.unlink(fullOldPath, err => {
                     // If the file doesn't exist, it's not a critical error, so we only log other errors.
                     if (err && err.code !== 'ENOENT') {
@@ -103,8 +103,8 @@ const deletePartner = async (req, res) => {
         await client.query('COMMIT');
 
         if (logoPath) {
-            // FIX: Construct the absolute path from the project root directory.
-            const fullPath = path.join(process.cwd(), logoPath);
+            // FIX: Construct the absolute path from the project root directory, handling leading slashes.
+            const fullPath = path.resolve(process.cwd(), logoPath.startsWith('/') ? logoPath.substring(1) : logoPath);
             fs.unlink(fullPath, err => {
                 if (err && err.code !== 'ENOENT') {
                     console.error("Gagal hapus file logo:", err);
