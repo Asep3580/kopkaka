@@ -1764,14 +1764,19 @@ const renderCashFlowChart = (data) => {
                 mainView.classList.add('hidden');
                 if (targetContent) {
                     targetContent.classList.remove('hidden');
-                    // Panggil fungsi load data yang sesuai dengan tab yang diklik
-                    const loadFunction = { 
-                        'approval-members-tab': renderPendingMembers, 
-                        'approval-savings-tab': loadPendingDeposits, // This will now be correctly called
-                        'approval-loans-tab': () => loadPendingApprovals('loans'), 
-                        'approval-withdrawals-tab': loadPendingWithdrawals, 
-                        'approval-resignations-tab': loadPendingResignations, 
-                        'approval-loan-payments-tab': loadPendingLoanPayments, 'resignation-history-tab': loadPendingHistory, }[targetId];
+                    // Panggil fungsi load data yang sesuai dengan tab yang diklik.
+                    // Ini adalah perbaikan utama.
+                    const loadFunction = {
+                        'approval-members-tab': renderPendingMembers,
+                        'approval-savings-tab': loadPendingDeposits,
+                        'approval-loans-tab': () => loadPendingApprovals('loans'),
+                        'approval-withdrawals-tab': loadPendingWithdrawals,
+                        'approval-resignations-tab': () => {
+                            loadPendingResignations();
+                            loadResignationHistory(); // Muat juga riwayatnya
+                        },
+                        'approval-loan-payments-tab': loadPendingLoanPayments,
+                    }[targetId];
                     if (loadFunction) loadFunction();
                 }
             });
