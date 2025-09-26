@@ -1091,12 +1091,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (applications.length === 0) { tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">Tidak ada pengajuan yang sedang diproses.</td></tr>`; return; }
             tableBody.innerHTML = '';
             applications.forEach(app => {
-                const statusClasses = { 
-                    'Pending': 'bg-yellow-100 text-yellow-800', 
-                    'Approved by Accounting': 'bg-cyan-100 text-cyan-800'
+                const statusClasses = {
+                    'Pending': 'bg-yellow-100 text-yellow-800',
+                    'Approved by Accounting': 'bg-cyan-100 text-cyan-800',
+                    'Rejected': 'bg-red-100 text-red-800'
                 };
                 const statusClass = statusClasses[app.status] || 'bg-gray-100 text-gray-800';
-                tableBody.innerHTML += `<tr><td class="px-6 py-4 text-sm text-gray-500">${formatDate(app.date)}</td><td class="px-6 py-4 text-sm text-gray-900">${app.type}</td><td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(app.amount)}</td><td class="px-6 py-4 text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${app.status}</span></td></tr>`;
+
+                // Tambahkan tombol "Batalkan" hanya untuk pengajuan pinjaman yang statusnya 'Pending'
+                let actionButton = '-';
+                if (app.type === 'Pinjaman' && app.status === 'Pending') {
+                    actionButton = `<button class="cancel-loan-application-btn text-red-600 hover:underline text-xs" data-id="${app.id}">Batalkan</button>`;
+                }
+
+                const row = tableBody.insertRow();
+                // Tambahkan kolom baru untuk Aksi
+                row.innerHTML = `<tr><td class="px-6 py-4 text-sm text-gray-500">${formatDate(app.date)}</td><td class="px-6 py-4 text-sm text-gray-900">${app.type}</td><td class="px-6 py-4 text-sm text-gray-500 text-right">${formatCurrency(app.amount)}</td><td class="px-6 py-4 text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${app.status}</span></td><td class="px-6 py-4 text-sm text-center">${actionButton}</td></tr>`;
             });
         } catch (error) { console.error(error); tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-500">${error.message}</td></tr>`; }
     };
@@ -2015,15 +2025,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Dibatalkan': 'bg-red-100 text-red-800'
                 };
                 const statusClass = statusClasses[tx.status] || 'bg-gray-100 text-gray-800';
+                
+                // Tambahkan tombol aksi berdasarkan status pesanan
+                let actionButtons = `<button class="show-qr-btn text-blue-600 hover:underline" data-order-id="${tx.order_id}">Tampilkan QR</button>`;
+                if (tx.status === 'Menunggu Pengambilan') {
+                    actionButtons += `
+                        <button class="cancel-order-btn text-red-600 hover:underline ml-2" data-order-id="${tx.order_id}">Batalkan</button>
+                    `;
+                }
+
                 const row = tableBody.insertRow();
                 row.innerHTML = `
                     <td class="px-6 py-4 text-sm font-mono text-gray-700">${tx.order_id}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">${formatDate(tx.sale_date)}</td>
                     <td class="px-6 py-4 text-sm text-gray-800 font-semibold text-right">${formatCurrency(tx.total_amount)}</td>
                     <td class="px-6 py-4 text-center"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${tx.status}</span></td>
-                    <td class="px-6 py-4 text-center text-sm font-medium">
-                        <button class="show-qr-btn text-blue-600 hover:underline" data-order-id="${tx.order_id}">Tampilkan QR</button>
-                    </td>
+                    <td class="px-6 py-4 text-center text-sm font-medium">${actionButtons}</td>
                 `;
             });
         } catch (error) {
@@ -2138,6 +2155,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (e.target.matches('.show-qr-btn')) {
                         const orderId = e.target.dataset.orderId;
                         showQRCodeModal(orderId);
+                    } else if (e.target.matches('.cancel-order-btn')) {
+                        const orderId = e.target.dataset.orderId;
+                        if (confirm(`Anda yakin ingin membatalkan pesanan #${orderId}? Stok barang akan dikembalikan.`)) {
+                            apiFetch(`${API_URL}/sales/${orderId}/cancel`, { method: 'POST' }) // Endpoint ini sudah ada di backend
+                                .then(() => {
+                                    alert('Pesanan berhasil dibatalkan.');
+                                    loadTransactionsData(); // Muat ulang daftar transaksi
+                                }).catch(err => alert(`Gagal membatalkan: ${err.message}`));
+                        }
                     }
                 });
             }
@@ -2152,6 +2178,25 @@ document.addEventListener('DOMContentLoaded', () => {
         setupTransactionPageListeners();
         setupAmortizationPreviewListeners();
         
+        // Tambahkan event listener untuk tombol pembatalan pengajuan
+        const applicationsTableBody = document.getElementById('applications-table-body');
+        if (applicationsTableBody) {
+            applicationsTableBody.addEventListener('click', async (e) => {
+                if (e.target.matches('.cancel-loan-application-btn')) {
+                    const loanId = e.target.dataset.id;
+                    if (confirm('Anda yakin ingin membatalkan pengajuan pinjaman ini?')) {
+                        try {
+                            await apiFetch(`${MEMBER_API_URL}/loans/${loanId}/cancel`, { method: 'DELETE' });
+                            alert('Pengajuan pinjaman berhasil dibatalkan.');
+                            loadPendingApplications(); // Muat ulang daftar
+                        } catch (error) {
+                            alert(`Gagal membatalkan: ${error.message}`);
+                        }
+                    }
+                }
+            });
+        }
+
         // NOTE: Tombol dengan ID 'mark-all-read-btn' tidak ada di HTML Anda,
         // namun fungsi ini ditambahkan untuk mencegah error jika tombol tersebut ditambahkan nanti.
         // Setup event handler untuk tombol "Tandai Semua Dibaca"
