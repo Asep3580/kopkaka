@@ -234,16 +234,14 @@
                         </h2>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <!-- Card untuk Grafik Arus Kas dengan Filter -->
-                            <div class="bg-white p-6 rounded-lg shadow-md">
-                                <div class="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h3 id="cashflow-chart-title" class="text-lg font-medium text-gray-600">Arus Kas (30 Hari Terakhir)</h3>
-                                    </div>
-                                    <div class="flex items-center space-x-2 text-sm">
-                                        <input type="date" id="cf-chart-start-date" class="border-gray-300 rounded-md shadow-sm text-sm p-1 w-32">
-                                        <span class="text-gray-500">-</span>
-                                        <input type="date" id="cf-chart-end-date" class="border-gray-300 rounded-md shadow-sm text-sm p-1 w-32">
-                                        <button id="apply-cf-chart-filter" class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 text-xs">Terapkan</button>
+                            <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4">
+                                    <h3 id="cashflow-chart-title" class="text-lg font-medium text-gray-600 mb-2 sm:mb-0">Arus Kas (30 Hari Terakhir)</h3>
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm w-full sm:w-auto">
+                                        <input type="date" id="cf-chart-start-date" class="border-gray-300 rounded-md shadow-sm text-sm p-1 w-full sm:w-32">
+                                        <span class="text-gray-500 text-center hidden sm:block">-</span>
+                                        <input type="date" id="cf-chart-end-date" class="border-gray-300 rounded-md shadow-sm text-sm p-1 w-full sm:w-32">
+                                        <button id="apply-cf-chart-filter" class="bg-red-600 text-white px-3 py-2 sm:py-1 rounded-md hover:bg-red-700 text-sm sm:text-xs w-full sm:w-auto">Terapkan</button>
                                     </div>
                                 </div>
                                 <div class="h-60 relative">
